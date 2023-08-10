@@ -1,0 +1,15 @@
+mutation BecomeSupport(
+  $appTenantId: UUID!
+) {
+  becomeSupport(input: {
+    _appTenantId: $appTenantId
+  }) {
+    appUserTenancy {
+      id
+      email
+      displayName
+      appTenantName
+      status
+    }
+  }
+}

@@ -1,0 +1,22 @@
+query AppTenantById(
+  $appTenantId: UUID!
+) {
+  appTenantById(id: $appTenantId) {
+    id
+    name
+    identifier
+    status
+    type
+    createdAt
+    appUserTenancies: appUserTenanciesByAppTenantId {
+      totalCount
+    }
+    appTenantSubscriptions: appTenantSubscriptionsByAppTenantIdList {
+      id
+      licensePackKey
+      licenses:licensesByAppTenantSubscriptionId {
+        totalCount
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+query AppTenantAppUserTenancies {
+  appTenantAppUserTenancies {
+    nodes {
+      id
+      appTenantName
+      email
+      status      
+      displayName
+    }
+  }
+}

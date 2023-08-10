@@ -1,0 +1,12 @@
+query AllAppTenantSubscriptions {
+  allAppTenantSubscriptions {
+    nodes {
+      id
+      licensePackKey
+      appTenant: appTenantByAppTenantId {
+        id
+        name
+      }
+    }
+  }
+}

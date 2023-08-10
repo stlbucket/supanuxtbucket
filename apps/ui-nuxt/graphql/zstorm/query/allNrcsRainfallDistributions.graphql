@@ -1,0 +1,11 @@
+query AllNrcsRainFallDistributions {
+  allNrcsRainfallDistribrutions {
+    nodes {
+      id
+      name
+      distributionPeriod
+      distributionCurve
+      rainfallType
+    }
+  }
+}

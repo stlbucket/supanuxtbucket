@@ -1,0 +1,16 @@
+mutation AssignTodo(
+  $todoId: UUID!
+  $appUserTenancyId: UUID!
+) {
+  assignTodo(input: {
+  	_todoId: $todoId
+    _appUserTenancyId: $appUserTenancyId
+  }) {
+    todo {
+      id
+      name
+      description
+      appUserTenancyId
+    }
+  }
+}

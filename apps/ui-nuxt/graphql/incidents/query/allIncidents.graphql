@@ -1,0 +1,11 @@
+query AllIncidents {
+  allIncidents {
+    nodes {
+      id
+      name
+      description
+      status
+      identifier
+    }
+  }
+}

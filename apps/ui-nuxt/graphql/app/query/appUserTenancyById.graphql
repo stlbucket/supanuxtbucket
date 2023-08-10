@@ -1,0 +1,39 @@
+query AppUserTenancyById(
+  $appUserTenancyId: UUID!
+) {
+  appUserTenancyById(id: $appUserTenancyId) {
+    id
+    email
+    appTenantName
+    displayName
+    status
+    licenses: licensesByAppUserTenancyIdList {
+      id
+      licenseTypeKey
+      createdAt
+      expiresAt
+    }
+  }
+  
+  appTenantSubscriptions: allAppTenantSubscriptions {
+    nodes {
+      id
+      licensePackKey
+      licensePack: licensePackByLicensePackKey {
+        key
+        displayName
+        licenseTypes: licensePackLicenseTypesByLicensePackKeyList {
+          licensePackKey
+          licenseTypeKey
+          numberOfLicenses
+          expirationIntervalType
+          expirationIntervalMultiplier
+          licenseType: licenseTypeByLicenseTypeKey {
+            key
+	          assignmentScope
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+query GetAbListings {
+  getAbListings {
+    nodes {
+      appUserId
+      fullName
+      email
+      phone
+      displayName
+      canInvite
+    }
+  }
+}

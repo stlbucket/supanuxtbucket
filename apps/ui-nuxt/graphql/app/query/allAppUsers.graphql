@@ -1,0 +1,25 @@
+query AllAppUsers {
+  allAppUsers {
+    nodes {
+      id
+      email
+      identifier
+      firstName
+      lastName
+      displayName
+      avatarKey
+      status
+      createdAt
+      updatedAt
+      appUserTenancies: appUserTenanciesByAppUserIdList {
+        id
+        appTenantId
+        appTenantName
+        licenses:licensesByAppUserTenancyIdList {
+          id
+          licenseTypeKey
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+mutation AssumeAppUserTenancy(
+  $appUserTenancyId: UUID!
+) {
+  assumeAppUserTenancy(input: {
+    _appUserTenancyId: $appUserTenancyId
+  }) {
+    appUserTenancy {
+      id
+      appTenantId
+      appUserId
+      appTenantName
+      createdAt
+      email
+      status
+    }
+  }
+}

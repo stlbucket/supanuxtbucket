@@ -1,0 +1,10 @@
+query DemoAppUserTenancies {
+  tenancies: appFnApiDemoAppUserTenancies {
+    nodes {
+      id
+      email
+      appTenantName
+      status      
+    }
+  }
+}

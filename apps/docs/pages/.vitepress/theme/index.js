@@ -1,5 +1,5 @@
 import DefaultTheme from 'vitepress/theme'
-import MyButton from '@myturborepo/ui/components/Button.vue'
+import MyButton from '@supanuxtbucket/ui/components/Button.vue'
 
 export default {
   ...DefaultTheme,

@@ -1,0 +1,28 @@
+query AllAppTenants {
+	allAppTenants(orderBy: NAME_ASC) {
+    nodes {
+      id
+      name
+      createdAt
+      identifier
+      status
+      type
+      licenses: licensesByAppTenantId {
+        totalCount
+      }
+      appTenantSubscriptions: appTenantSubscriptionsByAppTenantIdList(orderBy: LICENSE_PACK_KEY_ASC) {
+        id
+        licensePackKey
+        createdAt
+        licensePack: licensePackByLicensePackKey {
+          key
+          displayName
+          licenseTypes: licensePackLicenseTypesByLicensePackKeyList(orderBy: LICENSE_TYPE_KEY_ASC) {
+            licensePackKey
+            licenseTypeKey
+          }
+        }
+      }
+    }
+  }
+}

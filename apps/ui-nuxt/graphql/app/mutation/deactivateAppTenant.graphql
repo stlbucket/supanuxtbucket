@@ -1,0 +1,13 @@
+mutation DeactivateAppTenant(
+  $appTenantId: UUID!
+) {
+  deactivateAppTenant(input: {
+    _appTenantId: $appTenantId
+  }) {
+    appTenant {
+      id
+      name
+      status
+    }
+  }
+}

@@ -1,0 +1,14 @@
+mutation CreateAppTenant(
+  $name: String!
+  $email: String!
+) {
+  createAppTenant(input: {
+    _name: $name
+    _email: $email    
+  }) {
+    appTenant {
+      id
+      name
+    }
+  }
+}

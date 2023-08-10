@@ -1,0 +1,120 @@
+query TodoById(
+  $id: UUID!
+) {
+  todoById(id: $id) {
+    id
+    name
+    description
+    type
+    status
+    createdAt
+    updatedAt
+    parentTodoId
+    owner: todoUserByAppUserTenancyId {
+      appUserTenancyId
+      displayName
+    }
+    parent: todoByParentTodoId {
+      id
+      name
+      description
+      type
+      status
+      createdAt
+      updatedAt
+      parentTodoId
+      owner: todoUserByAppUserTenancyId {
+        appUserTenancyId
+        displayName
+      }
+      parent: todoByParentTodoId {
+        id
+        name
+        description
+        type
+        status
+        createdAt
+        updatedAt
+        parentTodoId
+        owner: todoUserByAppUserTenancyId {
+          appUserTenancyId
+          displayName
+        }
+        children: todosByParentTodoIdList {
+          id
+          name
+          description
+          type
+          status
+          createdAt
+          updatedAt
+          parentTodoId
+          owner: todoUserByAppUserTenancyId {
+            appUserTenancyId
+            displayName
+          }
+          children: todosByParentTodoIdList {
+            id
+            name
+            type
+            status
+            owner: todoUserByAppUserTenancyId {
+              appUserTenancyId
+              displayName
+            }
+          }
+        }
+      }
+      children: todosByParentTodoIdList {
+        id
+        name
+        description
+        type
+        status
+        createdAt
+        updatedAt
+        parentTodoId
+        owner: todoUserByAppUserTenancyId {
+          appUserTenancyId
+          displayName
+				}
+        children: todosByParentTodoIdList {
+          id
+          name
+          type
+          status
+          owner: todoUserByAppUserTenancyId {
+         		appUserTenancyId
+          	displayName
+        	}
+        }
+      }
+    }
+    children: todosByParentTodoIdList {
+      id
+      name
+      description
+      type
+      status
+      createdAt
+      updatedAt
+      parentTodoId
+      owner: todoUserByAppUserTenancyId {
+          appUserTenancyId
+          displayName
+      }
+      children: todosByParentTodoIdList {
+        id
+        name
+        type
+        status
+        owner: todoUserByAppUserTenancyId {
+          appUserTenancyId
+          displayName
+        }
+      }
+    }
+  }
+
+  getFullTodoTree(_todoId: $id)
+}

@@ -1,0 +1,15 @@
+mutation BlockAppUserTenancy(
+  $appUserTenancyId: UUID!
+) {
+  blockAppUserTenancy(input: {
+    _appUserTenancyId: $appUserTenancyId
+  }) {
+    appUserTenancy {
+      id
+      email
+      appTenantName
+      status
+      displayName
+    }
+  }
+}

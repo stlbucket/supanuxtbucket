@@ -1,0 +1,44 @@
+query AppTenantSubscriptions(
+  $appTenantId: UUID!
+)  {
+  allAppTenantSubscriptions(condition: {
+    appTenantId: $appTenantId
+  }) {
+    nodes {
+      id
+      licensePackKey
+      appTenant: appTenantByAppTenantId {
+        id
+        name
+        type
+      }
+      licenses: licensesByAppTenantSubscriptionId {
+        totalCount
+      }
+      licensePack: licensePackByLicensePackKey {
+        key
+        displayName
+        licensePackLicenseTypes: licensePackLicenseTypesByLicensePackKeyList {
+          licensePackKey
+          licenseTypeKey
+          numberOfLicenses
+          expirationIntervalType
+          expirationIntervalMultiplier
+          issuedCount
+          licenseType: licenseTypeByLicenseTypeKey {
+            key
+            displayName
+            assignmentScope
+            permissions: licenseTypePermissionsByLicenseTypeKeyList {
+              licenseTypeKey
+              permissionKey
+            }
+            licenses: licensesByLicenseTypeKey {
+              totalCount
+            }
+          }
+        }        
+      }
+    }
+  }
+}

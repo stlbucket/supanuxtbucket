@@ -1,0 +1,10 @@
+mutation ExitSupportMode {
+  exitSupportMode(input: {}) {
+    appUserTenancy {
+      id
+      email
+      appTenantName
+      status
+    }
+  }
+}

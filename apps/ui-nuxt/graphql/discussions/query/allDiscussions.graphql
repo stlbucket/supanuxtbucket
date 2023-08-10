@@ -1,0 +1,20 @@
+query AllDiscussions {
+  allTopics {
+    nodes {
+      id
+      name
+      status
+      subscriptions: subscriptionsByTopicIdList {
+        id
+        status
+        msgUser: msgUserBySubscriberMsgUserId {
+          id
+          displayName
+        }
+      }
+      messages: messagesByTopicId {
+        totalCount
+      }
+    }
+  }
+}

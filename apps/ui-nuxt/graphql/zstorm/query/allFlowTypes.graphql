@@ -1,0 +1,13 @@
+query allFlowTypes {
+  allFlowTypes {
+    nodes {
+      name
+      frictionCoefficientUnits
+      travelTimeMaterials: travelTimeMaterialsByFlowTypeList {
+        id
+        name
+        frictionCoefficient
+      }
+    }
+  }
+}

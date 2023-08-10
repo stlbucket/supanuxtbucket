@@ -1,0 +1,13 @@
+query AppTenantLicenses{
+  appTenantLicenses {
+    nodes {
+      id
+      licenseTypeKey
+      appUserTenancy: appUserTenancyByAppUserTenancyId {
+        id
+        email
+        status
+      }
+    }
+  }
+}

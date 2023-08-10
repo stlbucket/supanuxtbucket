@@ -1,0 +1,14 @@
+mutation GrantUserLicense(
+  $appUserTenancyId: UUID!
+  $licenseTypeKey: String!
+) {
+  grantUserLicense(input: {
+    _appUserTenancyId: $appUserTenancyId
+    _licenseTypeKey: $licenseTypeKey
+  }) {
+    license {
+      id
+      licenseTypeKey
+    }
+  }
+}

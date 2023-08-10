@@ -1,0 +1,8 @@
+query AllAmcConversions {
+  allAmcConversions {
+    nodes {
+      name
+      dataList
+    }
+  }
+}

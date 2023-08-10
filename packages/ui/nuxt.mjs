@@ -9,7 +9,7 @@ export default defineNuxtModule({
     'components:dirs'(dirs) {
       dirs.push({
         path: join(__dirname, 'components'),
-        prefix: 'MyTurborepo',
+        prefix: 'supanuxtbucket',
       })
     },
   },

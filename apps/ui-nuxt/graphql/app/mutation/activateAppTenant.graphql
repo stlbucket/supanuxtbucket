@@ -1,0 +1,13 @@
+mutation ActivateAppTenant(
+  $appTenantId: UUID!
+) {
+  activateAppTenant(input: {
+    _appTenantId: $appTenantId
+  }) {
+    appTenant {
+      id
+      name
+      status
+    }
+  }
+}

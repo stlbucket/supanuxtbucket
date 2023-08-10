@@ -1,0 +1,31 @@
+{
+  "name": "@supanuxtbucket/ui-nuxt",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "^0.8.0",
+    "@nuxthq/ui": "^2.7.0",
+    "@nuxtjs/supabase": "^1.0.2",
+    "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
+    "@supanuxtbucket/tsconfig": "workspace:*",
+    "@supanuxtbucket/ui": "workspace:*",
+    "@types/node": "^18",
+    "nuxt": "^3.6.5",
+    "sass": "^1.63.6"
+  },
+  "dependencies": {
+    "@pinia/nuxt": "^0.4.11",
+    "nuxt-graphql-client": "^0.2.27",
+    "pinia": "^2.1.6",
+    "postgraphile": "5.0.0-beta.6"
+  }
+}
