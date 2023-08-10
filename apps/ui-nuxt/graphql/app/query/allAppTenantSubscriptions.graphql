@@ -1,9 +1,9 @@
-query AllAppTenantSubscriptions {
-  allAppTenantSubscriptions {
+query AllTenantSubscriptions {
+  allTenantSubscriptions {
     nodes {
       id
       licensePackKey
-      appTenant: appTenantByAppTenantId {
+      tenant: tenantByTenantId {
         id
         name
       }

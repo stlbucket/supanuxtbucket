@@ -1,18 +1,18 @@
-query AppTenantSubscriptions(
-  $appTenantId: UUID!
+query TenantSubscriptions(
+  $tenantId: UUID!
 )  {
-  allAppTenantSubscriptions(condition: {
-    appTenantId: $appTenantId
+  allTenantSubscriptions(condition: {
+    tenantId: $tenantId
   }) {
     nodes {
       id
       licensePackKey
-      appTenant: appTenantByAppTenantId {
+      tenant: tenantByTenantId {
         id
         name
         type
       }
-      licenses: licensesByAppTenantSubscriptionId {
+      licenses: licensesByTenantSubscriptionId {
         totalCount
       }
       licensePack: licensePackByLicensePackKey {

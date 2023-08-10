@@ -1,6 +1,6 @@
 mutation JoinAddressBook {
   joinAddressBook(input:{}) {
-     appUser {
+     appProfile {
       id
       email
       displayName

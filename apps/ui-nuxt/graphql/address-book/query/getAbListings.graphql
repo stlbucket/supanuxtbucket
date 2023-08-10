@@ -1,7 +1,7 @@
 query GetAbListings {
   getAbListings {
     nodes {
-      appUserId
+      appProfileId
       fullName
       email
       phone

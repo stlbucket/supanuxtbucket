@@ -57,7 +57,7 @@
 
   const props = defineProps<{
     licensePack: any,
-    appUserTenancy: any
+    resident: any
   }>()
 
   const selectedScoped = ref()
@@ -86,7 +86,7 @@
         }
       })
     const scopedLicenseTypeKeys = scopedChoices.value.map(sc => sc.value)
-    selectedScoped.value = props.appUserTenancy.licenses.find((l: any) => scopedLicenseTypeKeys.indexOf(l.licenseTypeKey) > -1)?.licenseTypeKey
+    selectedScoped.value = props.resident.licenses.find((l: any) => scopedLicenseTypeKeys.indexOf(l.licenseTypeKey) > -1)?.licenseTypeKey
 
     unscopedChoices.value = props.licensePack.licenseTypes
       .filter((lt: any) => ['ALL', 'NONE'].indexOf(lt.licenseType.assignmentScope) > -1)
@@ -99,7 +99,7 @@
       })
     selectedUnscoped.value = unscopedChoices.value.reduce(
       (a, c) => {
-        const license = props.appUserTenancy.licenses.find((l: any) => l.licenseTypeKey === c.value)
+        const license = props.resident.licenses.find((l: any) => l.licenseTypeKey === c.value)
         return {
           ...a,
           [c.value]: !!license
@@ -112,7 +112,7 @@
   })
 
   const onUnscopedLicenseChange = async (licenseTypeInfo: any) => {
-    const existingLicense = props.appUserTenancy.licenses.find((l:any) => l.licenseTypeKey === licenseTypeInfo.value)
+    const existingLicense = props.resident.licenses.find((l:any) => l.licenseTypeKey === licenseTypeInfo.value)
     if (existingLicense) {
       emit('revokeLicense', existingLicense)
     } else {
@@ -125,6 +125,6 @@
   }
 
   const userIsUser = computed(() => {
-    return user.value?.user_metadata.app_user_tenancy_id === props.appUserTenancy.id
+    return user.value?.user_metadata.resident_id === props.resident.id
   })
 </script>

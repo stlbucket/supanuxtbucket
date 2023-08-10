@@ -1,12 +1,12 @@
-mutation CreateAppTenant(
+mutation CreateTenant(
   $name: String!
   $email: String!
 ) {
-  createAppTenant(input: {
+  createTenant(input: {
     _name: $name
     _email: $email    
   }) {
-    appTenant {
+    tenant {
       id
       name
     }

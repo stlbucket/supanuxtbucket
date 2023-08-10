@@ -14,7 +14,7 @@
       {
           label: 'App Users',
           icon: 'i-heroicons-users',
-          to: '/admin/app-tenant-user-tenancies',
+          to: '/admin/app-tenant-user-residents',
           title: 'App Users',
         },
         {

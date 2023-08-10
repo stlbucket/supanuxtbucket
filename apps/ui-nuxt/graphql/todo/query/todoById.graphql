@@ -10,8 +10,8 @@ query TodoById(
     createdAt
     updatedAt
     parentTodoId
-    owner: todoUserByAppUserTenancyId {
-      appUserTenancyId
+    owner: todoUserByResidentId {
+      residentId
       displayName
     }
     parent: todoByParentTodoId {
@@ -23,8 +23,8 @@ query TodoById(
       createdAt
       updatedAt
       parentTodoId
-      owner: todoUserByAppUserTenancyId {
-        appUserTenancyId
+      owner: todoUserByResidentId {
+        residentId
         displayName
       }
       parent: todoByParentTodoId {
@@ -36,8 +36,8 @@ query TodoById(
         createdAt
         updatedAt
         parentTodoId
-        owner: todoUserByAppUserTenancyId {
-          appUserTenancyId
+        owner: todoUserByResidentId {
+          residentId
           displayName
         }
         children: todosByParentTodoIdList {
@@ -49,8 +49,8 @@ query TodoById(
           createdAt
           updatedAt
           parentTodoId
-          owner: todoUserByAppUserTenancyId {
-            appUserTenancyId
+          owner: todoUserByResidentId {
+            residentId
             displayName
           }
           children: todosByParentTodoIdList {
@@ -58,8 +58,8 @@ query TodoById(
             name
             type
             status
-            owner: todoUserByAppUserTenancyId {
-              appUserTenancyId
+            owner: todoUserByResidentId {
+              residentId
               displayName
             }
           }
@@ -74,8 +74,8 @@ query TodoById(
         createdAt
         updatedAt
         parentTodoId
-        owner: todoUserByAppUserTenancyId {
-          appUserTenancyId
+        owner: todoUserByResidentId {
+          residentId
           displayName
 				}
         children: todosByParentTodoIdList {
@@ -83,8 +83,8 @@ query TodoById(
           name
           type
           status
-          owner: todoUserByAppUserTenancyId {
-         		appUserTenancyId
+          owner: todoUserByResidentId {
+         		residentId
           	displayName
         	}
         }
@@ -99,8 +99,8 @@ query TodoById(
       createdAt
       updatedAt
       parentTodoId
-      owner: todoUserByAppUserTenancyId {
-          appUserTenancyId
+      owner: todoUserByResidentId {
+          residentId
           displayName
       }
       children: todosByParentTodoIdList {
@@ -108,8 +108,8 @@ query TodoById(
         name
         type
         status
-        owner: todoUserByAppUserTenancyId {
-          appUserTenancyId
+        owner: todoUserByResidentId {
+          residentId
           displayName
         }
       }

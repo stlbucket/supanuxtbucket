@@ -1,11 +1,11 @@
---- app_fn_api policies
-grant usage on schema app_fn_api to anon, authenticated, service_role;
-grant all on all tables in schema app_fn_api to anon, authenticated, service_role;
-grant all on all routines in schema app_fn_api to anon, authenticated, service_role;
-grant all on all sequences in schema app_fn_api to anon, authenticated, service_role;
-alter default privileges for role postgres in schema app_fn_api grant all on tables to anon, authenticated, service_role;
-alter default privileges for role postgres in schema app_fn_api grant all on routines to anon, authenticated, service_role;
-alter default privileges for role postgres in schema app_fn_api grant all on sequences to anon, authenticated, service_role;
+--- app_api policies
+grant usage on schema app_api to anon, authenticated, service_role;
+grant all on all tables in schema app_api to anon, authenticated, service_role;
+grant all on all routines in schema app_api to anon, authenticated, service_role;
+grant all on all sequences in schema app_api to anon, authenticated, service_role;
+alter default privileges for role postgres in schema app_api grant all on tables to anon, authenticated, service_role;
+alter default privileges for role postgres in schema app_api grant all on routines to anon, authenticated, service_role;
+alter default privileges for role postgres in schema app_api grant all on sequences to anon, authenticated, service_role;
 
 --- app_fn policies
 grant usage on schema app_fn to anon, authenticated, service_role;
@@ -25,56 +25,56 @@ alter default privileges for role postgres in schema app grant all on tables to 
 alter default privileges for role postgres in schema app grant all on routines to anon, authenticated, service_role;
 alter default privileges for role postgres in schema app grant all on sequences to anon, authenticated, service_role;
 
------------------------------------------------------------------------- app_user
-alter table app.app_user enable row level security;
-    CREATE POLICY view_self ON app.app_user
+------------------------------------------------------------------------ profile
+alter table app.profile enable row level security;
+    CREATE POLICY view_self ON app.profile
       FOR SELECT
       USING (auth.uid() = id);
-    CREATE POLICY update_self ON app.app_user
+    CREATE POLICY update_self ON app.profile
       FOR UPDATE
       USING (auth.uid() = id)
       WITH CHECK (auth.uid() = id)
       ;
-    CREATE POLICY manage_all_super_admin ON app.app_user
+    CREATE POLICY manage_all_super_admin ON app.profile
       FOR ALL
       USING (auth_ext.has_permission('p:app-admin-super'));
------------------------------------------------------------------------- app_user_tenancy
-alter table app.app_user_tenancy enable row level security;
-    CREATE POLICY view_own_tenancy_email ON app.app_user_tenancy
+------------------------------------------------------------------------ resident
+alter table app.resident enable row level security;
+    CREATE POLICY view_ownresident_email ON app.resident
       FOR SELECT
       USING (auth.jwt()->>'email' = email);
-    CREATE POLICY view_own_tenancy_user_id ON app.app_user_tenancy
+    CREATE POLICY view_ownresident_user_id ON app.resident
       FOR SELECT
-      USING (auth.uid() = app_user_id);
-    CREATE POLICY update_own_tenancy ON app.app_user_tenancy
+      USING (auth.uid() = profile_id);
+    CREATE POLICY update_ownresident ON app.resident
       FOR UPDATE
-      USING (auth.uid() = app_user_id)
-      WITH CHECK (auth.uid() = app_user_id);
-    CREATE POLICY manage_app_user_tenancy ON app.app_user_tenancy
+      USING (auth.uid() = profile_id)
+      WITH CHECK (auth.uid() = profile_id);
+    CREATE POLICY manage_resident ON app.resident
       FOR ALL
       USING (auth_ext.has_permission('p:app-admin-super'));
-    CREATE POLICY manage_own_tenant_tenancies ON app.app_user_tenancy
+    CREATE POLICY manage_own_tenant_residencies ON app.resident
       FOR ALL
-      USING (auth_ext.has_permission('p:app-admin', app_tenant_id));
------------------------------------------------------------------------- app_tenant
-alter table app.app_tenant enable row level security;
-    CREATE POLICY view_own_tenant_user ON app.app_tenant
+      USING (auth_ext.has_permission('p:app-admin', tenant_id));
+------------------------------------------------------------------------ tenant
+alter table app.tenant enable row level security;
+    CREATE POLICY view_own_tenant_user ON app.tenant
       FOR SELECT
       USING (auth_ext.has_permission('p:app-user', id));
-    CREATE POLICY manage_own_tenant_admin ON app.app_tenant
+    CREATE POLICY manage_own_tenant_admin ON app.tenant
       FOR ALL
       USING (auth_ext.has_permission('p:app-admin', id));
-    CREATE POLICY manage_app_tenant ON app.app_tenant
+    CREATE POLICY manage_tenant ON app.tenant
       FOR ALL
       USING (auth_ext.has_permission('p:app-admin-super'));
------------------------------------------------------------------------- app_tenant_subscription
-alter table app.app_tenant_subscription enable row level security;
-    CREATE POLICY manage_app_tenant_subscription ON app.app_tenant_subscription
+------------------------------------------------------------------------ tenant_subscription
+alter table app.tenant_subscription enable row level security;
+    CREATE POLICY manage_tenant_subscription ON app.tenant_subscription
       FOR ALL
       USING (auth_ext.has_permission('p:app-admin-super'));
-    CREATE POLICY view_own_tenant_subscriptions ON app.app_tenant_subscription
+    CREATE POLICY view_own_tenant_subscriptions ON app.tenant_subscription
       FOR ALL
-      USING (auth_ext.has_permission('p:app-admin', app_tenant_id));
+      USING (auth_ext.has_permission('p:app-admin', tenant_id));
 ------------------------------------------------------------------------ license
 alter table app.license enable row level security;
     CREATE POLICY manage_license ON app.license
@@ -82,7 +82,7 @@ alter table app.license enable row level security;
       USING (auth_ext.has_permission('p:app-admin-super'));
     CREATE POLICY view_own_tenant_licenses ON app.license
       FOR ALL
-      USING (auth_ext.has_permission('p:app-admin', app_tenant_id));
+      USING (auth_ext.has_permission('p:app-admin', tenant_id));
 ------------------------------------------------------------------------ application
 alter table app.application enable row level security;
     CREATE POLICY view_all_users ON app.application

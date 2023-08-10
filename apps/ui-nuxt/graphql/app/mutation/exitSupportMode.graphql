@@ -1,9 +1,9 @@
 mutation ExitSupportMode {
   exitSupportMode(input: {}) {
-    appUserTenancy {
+    resident {
       id
       email
-      appTenantName
+      tenantName
       status
     }
   }

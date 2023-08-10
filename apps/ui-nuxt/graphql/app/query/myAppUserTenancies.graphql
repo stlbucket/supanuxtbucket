@@ -1,8 +1,0 @@
-query MyAppUserTenancies {
-  myAppUserTenanciesList {
-    id
-    appTenantName
-    email
-    status
-  }
-}

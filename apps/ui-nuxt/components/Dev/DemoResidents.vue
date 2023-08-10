@@ -7,12 +7,12 @@
       </div>
     </template>
     <UTable
-      :rows="tenancies"
+      :rows="residents"
       :columns="[
         {key: 'actions'},
         {key: 'email', label: 'Email', sortable: true},
         {key: 'status', label: 'Status', sortable: true},
-        {key: 'appTenantName', label: 'Tenant', sortable: true},
+        {key: 'tenantName', label: 'Tenant', sortable: true},
       ]"
       :sort="{ column: 'email', direction: 'asc'}"
     >
@@ -25,16 +25,16 @@
 
 <script lang="ts" setup>
   const supabase = useSupabaseClient()
-  const tenancies = ref([])
-  const loadTenancies = async () => {
-    const result = await GqlDemoAppUserTenancies()
-    tenancies.value = result.tenancies.nodes || []
+  const residents = ref([])
+  const loadResidents = async () => {
+    const result = await GqlDemoResidents()
+    residents.value = result.residents.nodes || []
   }
-  loadTenancies()
+  loadResidents()
 
-  // const handleLogin = async (appUserTenancy: AppUserTenancy) => {
+  // const handleLogin = async (resident: Resident) => {
   //   const { error } = await supabase.auth.signInWithOtp({
-  //     email: appUserTenancy.email,
+  //     email: resident.email,
   //     options: {
   //       emailRedirectTo: 'http://localhost:3025'
   //     }

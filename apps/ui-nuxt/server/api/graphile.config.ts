@@ -1,6 +1,6 @@
 // Only needed for TypeScript types support
 import "postgraphile";
-// import { PgSimplifyInflectionPreset } from "@graphile/simplify-inflection";
+import { PgSimplifyInflectionPreset } from "@graphile/simplify-inflection";
 import { PostGraphileAmberPreset as amber} from "postgraphile/presets/amber";
 // Use the 'pg' module to connect to the database
 import { makePgService } from "postgraphile/adaptors/pg";
@@ -8,7 +8,7 @@ import { makePgService } from "postgraphile/adaptors/pg";
 const preset: GraphileConfig.Preset = {
   extends: [
     amber,
-    // PgSimplifyInflectionPreset
+    PgSimplifyInflectionPreset
     /* Add more presets here */
   ],
 

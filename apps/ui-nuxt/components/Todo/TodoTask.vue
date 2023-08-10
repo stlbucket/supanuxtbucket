@@ -74,10 +74,10 @@
     })
     emit('subtaskAdded', props.todo, result.createTodo.todo)
   }
-  const handleAssigned = async (appUserTenancyId: string) => {
+  const handleAssigned = async (residentId: string) => {
     const result = await GqlAssignTodo({
       todoId: props.todo.id,
-      appUserTenancyId: appUserTenancyId
+      residentId: residentId
     })
     emit('assigned', props.todo)
   }

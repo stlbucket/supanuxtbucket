@@ -23,7 +23,7 @@ query AllLicensePacks {
           }
         }
       }
-    	appTenantSubscriptions: appTenantSubscriptionsByLicensePackKey {
+    	tenantSubscriptions: tenantSubscriptionsByLicensePackKey {
         totalCount
       }
     }

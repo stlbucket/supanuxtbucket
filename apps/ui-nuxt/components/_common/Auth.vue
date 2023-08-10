@@ -46,7 +46,7 @@
     })
   }
   const showExitSupportMode = computed(() => {
-    return !(!supUser.value?.user_metadata.actual_app_user_tenancy_id)
+    return !(!supUser.value?.user_metadata.actual_residency_id)
   })
   const exitSupportMode = async () => {
     const { data, error } = await GqlExitSupportMode()

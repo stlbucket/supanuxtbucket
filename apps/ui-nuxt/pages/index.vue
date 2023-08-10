@@ -1,5 +1,5 @@
 <template>
-  <DemoAppUserTenancies />
+  <DemoResidents />
 </template>
 
 <script lang="ts" setup>

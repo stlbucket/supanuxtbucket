@@ -1,9 +1,9 @@
 mutation GrantUserLicense(
-  $appUserTenancyId: UUID!
+  $residentId: UUID!
   $licenseTypeKey: String!
 ) {
   grantUserLicense(input: {
-    _appUserTenancyId: $appUserTenancyId
+    _residentId: $residentId
     _licenseTypeKey: $licenseTypeKey
   }) {
     license {

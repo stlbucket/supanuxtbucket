@@ -4,7 +4,7 @@
 create schema if not exists app;
 create schema if not exists app_fn;
 ----------------------------------------------------------------------------------------------
-create type app.app_tenant_type as enum (
+create type app.tenant_type as enum (
     'anchor'
     ,'customer'
     ,'demo'
@@ -12,19 +12,19 @@ create type app.app_tenant_type as enum (
     ,'trial'
   );
 ----------------------------------------------------------------------------------------------
-create type app.app_tenant_status as enum (
+create type app.tenant_status as enum (
     'active'
     ,'inactive'
     ,'paused'
   );
 ----------------------------------------------------------------------------------------------
-create type app.app_user_status as enum (
+create type app.profile_status as enum (
     'active'
     ,'inactive'
     ,'blocked'
   );
 ----------------------------------------------------------------------------------------------
-create type app.app_user_tenancy_status as enum (
+create type app.resident_status as enum (
     'invited'
     ,'declined'
     ,'active'
@@ -108,25 +108,25 @@ CREATE TABLE app.license_type_permission (
   ,unique(license_type_key, permission_key)
 );
 --------------------------------------------------------------------------------------------
-create table if not exists app.app_tenant (
+create table if not exists app.tenant (
     id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
     ,created_at timestamptz not null default current_timestamp
     ,updated_at timestamptz not null default current_timestamp
     ,identifier citext unique
     ,name citext not null unique
-    ,type app.app_tenant_type not null default 'customer'
-    ,status app.app_tenant_status not null default 'active'
+    ,type app.tenant_type not null default 'customer'
+    ,status app.tenant_status not null default 'active'
   );
 --------------------------------------------------------------------------------------------
-CREATE TABLE app.app_tenant_subscription (
+CREATE TABLE app.tenant_subscription (
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
-  ,app_tenant_id uuid not null references app.app_tenant(id)
+  ,tenant_id uuid not null references app.tenant(id)
   ,license_pack_key citext not null references app.license_pack(key)
   ,created_at timestamptz not null default current_timestamp
   ,updated_at timestamptz not null default current_timestamp
 );
 ----------------------------------------------------------------------------------------------
-create table if not exists app.app_user (
+create table if not exists app.profile (
     id uuid not null references auth.users on delete cascade primary key  -- this is for supabase
     ,created_at timestamptz not null default current_timestamp
     ,updated_at timestamptz not null default current_timestamp
@@ -137,30 +137,30 @@ create table if not exists app.app_user (
     ,phone citext null
     ,display_name citext null unique
     ,avatar_key citext null
-    ,status app.app_user_status not null default 'active'
+    ,status app.profile_status not null default 'active'
     ,is_public boolean not null default false
     ,full_name citext GENERATED ALWAYS AS (first_name||' '||last_name) STORED
   );
 ----------------------------------------------------------------------------------------------
-create table if not exists app.app_user_tenancy (
+create table if not exists app.resident (
     id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
-    ,app_user_id uuid null references app.app_user(id)
-    ,invited_by_app_user_id uuid null references app.app_user(id)
+    ,profile_id uuid null references app.profile(id)
+    ,invited_by_profile_id uuid null references app.profile(id)
     ,invited_by_display_name citext
-    ,app_tenant_id uuid not null references app.app_tenant(id)
-    ,app_tenant_name citext not null
+    ,tenant_id uuid not null references app.tenant(id)
+    ,tenant_name citext not null
     ,email text not null
     ,display_name citext null
     ,created_at timestamptz not null default current_timestamp
     ,updated_at timestamptz not null default current_timestamp
-    ,status app.app_user_tenancy_status not null default 'invited'
+    ,status app.resident_status not null default 'invited'
   );
 ----------------------------------------------------------------------------------------------
 CREATE TABLE app.license (
     id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
-    ,app_tenant_id uuid not null references app.app_tenant(id)
-    ,app_user_tenancy_id uuid not null references app.app_user_tenancy(id)
-    ,app_tenant_subscription_id uuid not null references app.app_tenant_subscription(id)
+    ,tenant_id uuid not null references app.tenant(id)
+    ,resident_id uuid not null references app.resident(id)
+    ,tenant_subscription_id uuid not null references app.tenant_subscription(id)
     ,license_type_key citext not null references app.license_type(key)
     ,created_at timestamptz not null default current_timestamp
     ,updated_at timestamptz not null default current_timestamp
@@ -203,8 +203,8 @@ CREATE OR REPLACE FUNCTION app.license_pack_license_type_issued_count(_license_p
       select count(*)
       from app.license_pack_license_type lplt
       join app.license_pack lp on lp.key = lplt.license_pack_key
-      join app.app_tenant_subscription ats on ats.license_pack_key = lp.key
-      join app.license l on l.app_tenant_subscription_id = ats.id
+      join app.tenant_subscription ats on ats.license_pack_key = lp.key
+      join app.license l on l.tenant_subscription_id = ats.id
       where lplt.license_pack_key = _license_pack_license_type.license_pack_key
       and lplt.license_type_key = _license_pack_license_type.license_type_key
       and l.license_type_key = _license_pack_license_type.license_type_key
@@ -231,22 +231,22 @@ create index idx_lplt_permission on app.license_type_permission(permission_key);
 
 ------------------------------------------------- license
 create index idx_app_license_license_type_key on app.license(license_type_key);
-alter table only app.license add constraint uq_tenancy_license unique(app_user_tenancy_id, license_type_key);
+alter table only app.license add constraint uqresident_license unique(resident_id, license_type_key);
 
 ------------------------------------------------- license
-create index idx_license_app_user_tenancy on app.license(app_user_tenancy_id);
-create index idx_license_app_tenant on app.license(app_tenant_id);
-create index idx_license_app_tenant_subscription on app.license(app_tenant_subscription_id);
-------------------------------------------------- app_tenant_subscription
-create index idx_ats_license_pack on app.app_tenant_subscription(license_pack_key);
-create index idx_app_app_tenant_subscription_app_tenant_id on app.app_tenant_subscription(app_tenant_id);
+create index idx_license_resident on app.license(resident_id);
+create index idx_license_tenant on app.license(tenant_id);
+create index idx_license_tenant_subscription on app.license(tenant_subscription_id);
+------------------------------------------------- tenant_subscription
+create index idx_ats_license_pack on app.tenant_subscription(license_pack_key);
+create index idx_app_tenant_subscription_tenant_id on app.tenant_subscription(tenant_id);
 
-------------------------------------------------- app_user_tenancy
-create index idx_app_user_tenancy_app_user on app.app_user_tenancy(app_user_id);
-create index idx_app_user_tenancy_app_tenant on app.app_user_tenancy(app_tenant_id);
-create unique index idx_uq_app_user_tenancy on app.app_user_tenancy(app_user_id) where status = 'active';
-create index idx_app_app_user_tenancy_invited_by_app_user_id on app.app_user_tenancy(invited_by_app_user_id);
-alter table only app.app_user_tenancy add constraint uq_app_user_tenancy unique(app_tenant_id, app_user_id);
+------------------------------------------------- resident
+create index idx_resident_profile on app.resident(profile_id);
+create index idx_resident_tenant on app.resident(tenant_id);
+create unique index idx_uq_resident on app.resident(profile_id) where status = 'active';
+create index idx_app_resident_invited_by_profile_id on app.resident(invited_by_profile_id);
+alter table only app.resident add constraint uq_resident unique(tenant_id, profile_id);
 
 ----------------------------------------------------------------------------------------------
 
@@ -256,7 +256,7 @@ alter table only app.app_user_tenancy add constraint uq_app_user_tenancy unique(
 create unique index idx_uq_lplt_admin_super on app.license_pack_license_type(license_pack_key) where license_type_key = 'app-admin-super';
 create unique index idx_uq_lplt_admin_support on app.license_pack_license_type(license_pack_key) where license_type_key = 'app-admin-support';
 -- there can only ever be one subscriber to the anchor license pack, the anchor tenant
-create unique index idx_uq_anchor_subscription on app.app_tenant_subscription(id) where license_pack_key = 'anchor';
+create unique index idx_uq_anchor_subscription on app.tenant_subscription(id) where license_pack_key = 'anchor';
 -- these two are just for extra strictness to doubly enforce there can only be one of each of these.  it will be in the anchor license pack.
 
 --------------- indexes to enforce uniqueness of scoped license types in an application

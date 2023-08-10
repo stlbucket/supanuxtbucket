@@ -1,0 +1,8 @@
+query MyResidents {
+  myResidentsList {
+    id
+    tenantName
+    email
+    status
+  }
+}

@@ -1,17 +1,17 @@
 create schema if not exists app_fn;
-create schema if not exists app_fn_api;
+create schema if not exists app_api;
 
 ----------------------------------------------------------------------------------------------
-create type app_fn.app_user_claims as (
-  app_user_id uuid
-  ,app_tenant_id uuid
-  ,app_user_tenancy_id uuid
-  ,actual_app_user_tenancy_id uuid
-  ,app_user_status app.app_user_status
+create type app_fn.profile_claims as (
+  profile_id uuid
+  ,tenant_id uuid
+  ,resident_id uuid
+  ,actual_resident_id uuid
+  ,profile_status app.profile_status
   ,permissions citext[]
   ,email citext
   ,display_name citext
-  ,app_tenant_name citext
+  ,tenant_name citext
 );
 ----------------------------------------------------------------------------------------------
 create type app_fn.license_type_info as (
@@ -42,7 +42,7 @@ create type app_fn.application_info as (
 );
 ----------------------------------------------------------------------------------------------
 create type app_fn.ab_listing as (
-  app_user_id uuid
+  profile_id uuid
   ,email citext
   ,phone citext
   ,full_name citext
@@ -56,9 +56,9 @@ create type app_fn.paging_options as (
   ,item_limit integer
 );
 -----------------------------------------------
-create type app_fn.search_app_user_tenancies_options as (
+create type app_fn.search_profile_residencies_options as (
   search_term citext
-  ,status app.app_user_tenancy_status
+  ,status app.resident_status
   ,roots_only boolean
   ,paging_options app_fn.paging_options
 );

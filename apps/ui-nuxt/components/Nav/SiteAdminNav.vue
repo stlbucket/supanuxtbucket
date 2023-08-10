@@ -18,10 +18,10 @@
         title: 'Tenants',
       },
       {
-        label: 'User Tenancies',
+        label: 'User Residents',
         icon: 'i-heroicons-building-office',
-        to: '/site-admin/app-user-tenancies',
-        title: 'User Tenancies',
+        to: '/site-admin/app-user-residents',
+        title: 'User Residents',
       },
       {
         label: 'Auth Users',

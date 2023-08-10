@@ -1,0 +1,17 @@
+mutation AssumeResident(
+  $residentId: UUID!
+) {
+  assumeResident(input: {
+    _residentId: $residentId
+  }) {
+    resident {
+      id
+      tenantId
+      appProfileId
+      tenantName
+      createdAt
+      email
+      status
+    }
+  }
+}

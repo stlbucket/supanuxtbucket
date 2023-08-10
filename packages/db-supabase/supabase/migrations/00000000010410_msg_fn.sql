@@ -1,42 +1,42 @@
--------------------------------------- ensure_msg_user
-CREATE OR REPLACE FUNCTION msg_fn.ensure_msg_user(
-    _app_user_tenancy_id uuid
-  ) RETURNS msg.msg_user
+-------------------------------------- ensure_msg_resident
+CREATE OR REPLACE FUNCTION msg_fn.ensure_msg_resident(
+    _resident_id uuid
+  ) RETURNS msg.msg_resident
     LANGUAGE plpgsql VOLATILE
     AS $$
   DECLARE
     _msg_tenant msg.msg_tenant;
-    _msg_user msg.msg_user;
+    _msg_resident msg.msg_resident;
   BEGIN
-    -- ensure that the tenancy has a msg_user and msg_tenant.  add them if not.
+    -- ensure that the resident has a msg_resident and msg_tenant.  add them if not.
     select mt.* 
     into _msg_tenant 
     from msg.msg_tenant mt 
-    join app.app_user_tenancy aut on mt.app_tenant_id = aut.app_tenant_id and aut.id = _app_user_tenancy_id
+    join app.resident aut on mt.tenant_id = aut.tenant_id and aut.id = _resident_id
     ;
 
-    if _msg_tenant.app_tenant_id is null then
-      insert into msg.msg_tenant(app_tenant_id, name)
-        select app_tenant_id, app_tenant_name
-        from app.app_user_tenancy 
-        where id = _app_user_tenancy_id
+    if _msg_tenant.tenant_id is null then
+      insert into msg.msg_tenant(tenant_id, name)
+        select tenant_id, tenant_name
+        from app.resident 
+        where id = _resident_id
       returning * into _msg_tenant;
     end if;
 
-    select * into _msg_user from msg.msg_user where id = _app_user_tenancy_id;
-    if _msg_user.id is null then
-      insert into msg.msg_user(id, display_name, app_tenant_id)
-        select id, display_name, app_tenant_id
-        from app.app_user_tenancy 
-        where id = _app_user_tenancy_id 
-      returning * into _msg_user;
+    select * into _msg_resident from msg.msg_resident where id = _resident_id;
+    if _msg_resident.id is null then
+      insert into msg.msg_resident(id, display_name, tenant_id)
+        select id, display_name, tenant_id
+        from app.resident 
+        where id = _resident_id 
+      returning * into _msg_resident;
     end if;
-    return _msg_user;
+    return _msg_resident;
   end;
   $$;
 
 -------------------------------------- upsert_topic
-CREATE OR REPLACE FUNCTION msg_fn_api.upsert_topic(
+CREATE OR REPLACE FUNCTION msg_api.upsert_topic(
     _topic_info msg_fn.topic_info
   ) RETURNS msg.topic
     LANGUAGE plpgsql VOLATILE
@@ -48,7 +48,7 @@ CREATE OR REPLACE FUNCTION msg_fn_api.upsert_topic(
 
     _topic := msg_fn.upsert_topic(
       _topic_info
-      ,auth_ext.app_user_tenancy_id()
+      ,auth_ext.resident_id()
     );
     return _topic;
   end;
@@ -56,23 +56,23 @@ CREATE OR REPLACE FUNCTION msg_fn_api.upsert_topic(
 
 CREATE OR REPLACE FUNCTION msg_fn.upsert_topic(
     _topic_info msg_fn.topic_info
-    ,_app_user_tenancy_id uuid
+    ,_resident_id uuid
   ) RETURNS msg.topic
     LANGUAGE plpgsql VOLATILE
     AS $$
   DECLARE
-    _msg_user msg.msg_user;
+    _msg_resident msg.msg_resident;
     _topic msg.topic;
     _topic_id uuid;
   BEGIN
-    _msg_user := msg_fn.ensure_msg_user(_app_user_tenancy_id);
+    _msg_resident := msg_fn.ensure_msg_resident(_resident_id);
 
     _topic_id = coalesce(_topic_info.id, gen_random_uuid());
     select *
       into _topic
     from msg.topic
     where (id = _topic_id or identifier = _topic_info.identifier)
-    and app_tenant_id = _msg_user.app_tenant_id
+    and tenant_id = _msg_resident.tenant_id
     ;
 
     if _topic.id is not null then
@@ -83,14 +83,14 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_topic(
     else
       insert into msg.topic(
         id
-        ,app_tenant_id
+        ,tenant_id
         ,name
         ,identifier
         ,status
       )
       select
         _topic_id
-        ,_msg_user.app_tenant_id
+        ,_msg_resident.tenant_id
         ,_topic_info.name
         ,_topic_info.identifier
         ,coalesce(_topic_info.status, 'open')
@@ -103,7 +103,7 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_topic(
   end;
   $$;
 -------------------------------------- upsert_message
-CREATE OR REPLACE FUNCTION msg_fn_api.upsert_message(
+CREATE OR REPLACE FUNCTION msg_api.upsert_message(
     _message_info msg_fn.message_info
   ) RETURNS msg.message
     LANGUAGE plpgsql VOLATILE
@@ -115,7 +115,7 @@ CREATE OR REPLACE FUNCTION msg_fn_api.upsert_message(
 
     _message := msg_fn.upsert_message(
       _message_info
-      ,auth_ext.app_user_tenancy_id()
+      ,auth_ext.resident_id()
     );
     return _message;
   end;
@@ -123,16 +123,16 @@ CREATE OR REPLACE FUNCTION msg_fn_api.upsert_message(
 
 CREATE OR REPLACE FUNCTION msg_fn.upsert_message(
     _message_info msg_fn.message_info
-    ,_app_user_tenancy_id uuid
+    ,_resident_id uuid
   ) RETURNS msg.message
     LANGUAGE plpgsql VOLATILE
     AS $$
   DECLARE
-    _msg_user msg.msg_user;
+    _msg_resident msg.msg_resident;
     _topic msg.topic;
     _message msg.message;
   BEGIN
-    _msg_user := msg_fn.ensure_msg_user(_app_user_tenancy_id);
+    _msg_resident := msg_fn.ensure_msg_resident(_resident_id);
 
     select * 
     into _topic 
@@ -151,7 +151,7 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_message(
           ,null::citext
           ,'open'::msg.topic_status
         )
-        ,_msg_user.app_user_tenancy_id
+        ,_msg_resident.resident_id
       );
     end if;
 
@@ -165,16 +165,16 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_message(
       ;
     else
       insert into msg.message(
-        app_tenant_id
+        tenant_id
         ,topic_id
-        ,posted_by_msg_user_id
+        ,posted_by_msg_resident_id
         ,content
         ,tags
       )
       select
-        _topic.app_tenant_id
+        _topic.tenant_id
         ,_message_info.topic_id
-        ,_msg_user.id
+        ,_msg_resident.id
         ,_message_info.content
         ,coalesce(_message_info.tags, '{}')
       returning *
@@ -186,7 +186,7 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_message(
   end;
   $$;
 -------------------------------------- upsert_subscription
-CREATE OR REPLACE FUNCTION msg_fn_api.upsert_subscription(
+CREATE OR REPLACE FUNCTION msg_api.upsert_subscription(
     _subscription_info msg_fn.subscription_info
   ) RETURNS msg.subscription
     LANGUAGE plpgsql VOLATILE
@@ -211,9 +211,9 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_subscription(
   DECLARE
     _topic msg.topic;
     _subscription msg.subscription;
-    _msg_user msg.msg_user;
+    _msg_resident msg.msg_resident;
   BEGIN
-    _msg_user := msg_fn.ensure_msg_user(_subscription_info.subscriber_msg_user_id);
+    _msg_resident := msg_fn.ensure_msg_resident(_subscription_info.subscriber_msg_resident_id);
 
     select *
     into _topic
@@ -227,7 +227,7 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_subscription(
     select * into _subscription
     from msg.subscription
     where topic_id = _subscription_info.topic_id
-    and subscriber_msg_user_id = _subscription_info.subscriber_msg_user_id
+    and subscriber_msg_resident_id = _subscription_info.subscriber_msg_resident_id
     ;
 
     if _subscription.id is not null then
@@ -237,14 +237,14 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_subscription(
       ;
     else
       insert into msg.subscription(
-        app_tenant_id
+        tenant_id
         ,topic_id
-        ,subscriber_msg_user_id
+        ,subscriber_msg_resident_id
       )
       select
-        _topic.app_tenant_id
+        _topic.tenant_id
         ,_topic.id
-        ,_subscription_info.subscriber_msg_user_id
+        ,_subscription_info.subscriber_msg_resident_id
       returning *
       into _subscription
       ;
@@ -254,7 +254,7 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_subscription(
   end;
   $$;
 -------------------------------------- upsert_subscription
-CREATE OR REPLACE FUNCTION msg_fn_api.deactivate_subscription(
+CREATE OR REPLACE FUNCTION msg_api.deactivate_subscription(
     _subscription_id uuid
   ) RETURNS msg.subscription
     LANGUAGE plpgsql VOLATILE

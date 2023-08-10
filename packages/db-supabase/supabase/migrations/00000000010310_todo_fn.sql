@@ -2,48 +2,48 @@
 -- script  todo_fn schema
 -----------------------------------------------
 
-create schema if not exists todo_fn_api;
+create schema if not exists todo_api;
 create schema if not exists todo_fn;
 
 -------------------------------------------------------------------------------- todo-functions
--------------------------------------- ensure_todo_user
-CREATE OR REPLACE FUNCTION todo_fn.ensure_todo_user(
-    _app_user_tenancy_id uuid
-  ) RETURNS todo.todo_user
+-------------------------------------- ensure_todo_resident
+CREATE OR REPLACE FUNCTION todo_fn.ensure_todo_resident(
+    _resident_id uuid
+  ) RETURNS todo.todo_resident
     LANGUAGE plpgsql VOLATILE
     AS $$
   DECLARE
     _todo_tenant todo.todo_tenant;
-    _todo_user todo.todo_user;
+    _todo_resident todo.todo_resident;
   BEGIN
-    -- ensure that the tenancy has a todo_user and todo_tenant.  add them if not.
+    -- ensure that the resident has a todo_resident and todo_tenant.  add them if not.
     select mt.* 
     into _todo_tenant 
     from todo.todo_tenant mt 
-    join app.app_user_tenancy aut on mt.app_tenant_id = aut.app_tenant_id and aut.id = _app_user_tenancy_id
+    join app.resident aut on mt.tenant_id = aut.tenant_id and aut.id = _resident_id
     ;
 
-    if _todo_tenant.app_tenant_id is null then
-      insert into todo.todo_tenant(app_tenant_id, name)
-        select app_tenant_id, app_tenant_name
-        from app.app_user_tenancy 
-        where id = _app_user_tenancy_id
+    if _todo_tenant.tenant_id is null then
+      insert into todo.todo_tenant(tenant_id, name)
+        select tenant_id, tenant_name
+        from app.resident 
+        where id = _resident_id
       returning * into _todo_tenant;
     end if;
 
-    select * into _todo_user from todo.todo_user where app_user_tenancy_id = _app_user_tenancy_id;
-    if _todo_user.app_user_tenancy_id is null then
-      insert into todo.todo_user(app_user_tenancy_id, display_name, app_tenant_id)
-        select id, display_name, app_tenant_id
-        from app.app_user_tenancy 
-        where id = _app_user_tenancy_id 
-      returning * into _todo_user;
+    select * into _todo_resident from todo.todo_resident where resident_id = _resident_id;
+    if _todo_resident.resident_id is null then
+      insert into todo.todo_resident(resident_id, display_name, tenant_id)
+        select id, display_name, tenant_id
+        from app.resident 
+        where id = _resident_id 
+      returning * into _todo_resident;
     end if;
-    return _todo_user;
+    return _todo_resident;
   end;
   $$;
 ---------------------------------------------- create_todo
-CREATE OR REPLACE FUNCTION todo_fn_api.create_todo(
+CREATE OR REPLACE FUNCTION todo_api.create_todo(
     _name citext
     ,_options todo_fn.create_todo_options
   )
@@ -56,7 +56,7 @@ CREATE OR REPLACE FUNCTION todo_fn_api.create_todo(
     _retval todo.todo;
   BEGIN
     _retval := todo_fn.create_todo(
-      auth_ext.app_user_tenancy_id()::uuid
+      auth_ext.resident_id()::uuid
       ,_name::citext
       ,_options::todo_fn.create_todo_options
     );
@@ -65,7 +65,7 @@ CREATE OR REPLACE FUNCTION todo_fn_api.create_todo(
   $$;
 
 CREATE OR REPLACE FUNCTION todo_fn.create_todo(
-    _app_user_tenancy_id uuid
+    _resident_id uuid
     ,_name citext
     ,_options todo_fn.create_todo_options
   )
@@ -76,10 +76,10 @@ CREATE OR REPLACE FUNCTION todo_fn.create_todo(
   AS $$
   DECLARE
     _ordinal integer;
-    _todo_user todo.todo_user;
+    _todo_resident todo.todo_resident;
     _retval todo.todo;
   BEGIN
-    _todo_user := todo_fn.ensure_todo_user(_app_user_tenancy_id);
+    _todo_resident := todo_fn.ensure_todo_resident(_resident_id);
 
     _ordinal := 0;
     if _options.parent_todo_id is not null then
@@ -87,16 +87,16 @@ CREATE OR REPLACE FUNCTION todo_fn.create_todo(
     end if;
 
     insert into todo.todo(
-      app_tenant_id
-      ,app_user_tenancy_id
+      tenant_id
+      ,resident_id
       ,name
       ,description
       ,parent_todo_id
       ,ordinal
     ) 
     values(
-      _todo_user.app_tenant_id
-      ,_todo_user.app_user_tenancy_id
+      _todo_resident.tenant_id
+      ,_todo_resident.resident_id
       ,_name
       ,_options.description
       ,_options.parent_todo_id
@@ -119,7 +119,7 @@ CREATE OR REPLACE FUNCTION todo_fn.create_todo(
   $$;
 
 ---------------------------------------------- update_todo
-CREATE OR REPLACE FUNCTION todo_fn_api.update_todo(
+CREATE OR REPLACE FUNCTION todo_api.update_todo(
     _todo_id uuid
     ,_name citext
     ,_description citext default null
@@ -166,7 +166,7 @@ CREATE OR REPLACE FUNCTION todo_fn.update_todo(
   $$;
 
 ---------------------------------------------- update_todo_status
-CREATE OR REPLACE FUNCTION todo_fn_api.update_todo_status(
+CREATE OR REPLACE FUNCTION todo_api.update_todo_status(
     _todo_id uuid
     ,_status todo.todo_status
   )
@@ -223,7 +223,7 @@ CREATE OR REPLACE FUNCTION todo_fn.update_todo_status(
   ;
 
 ---------------------------------------------- delete_todo
-CREATE OR REPLACE FUNCTION todo_fn_api.delete_todo(_todo_id uuid)
+CREATE OR REPLACE FUNCTION todo_api.delete_todo(_todo_id uuid)
   RETURNS boolean
   LANGUAGE plpgsql
   VOLATILE
@@ -267,7 +267,7 @@ CREATE OR REPLACE FUNCTION todo_fn.delete_todo(_todo_id uuid)
   $$;
 
 ---------------------------------------------- pin_todo
-CREATE OR REPLACE FUNCTION todo_fn_api.pin_todo(_todo_id uuid)
+CREATE OR REPLACE FUNCTION todo_api.pin_todo(_todo_id uuid)
   RETURNS todo.todo
   LANGUAGE plpgsql
   VOLATILE
@@ -296,7 +296,7 @@ CREATE OR REPLACE FUNCTION todo_fn.pin_todo(_todo_id uuid)
   $$;
 
 ---------------------------------------------- unpin_todo
-CREATE OR REPLACE FUNCTION todo_fn_api.unpin_todo(_todo_id uuid)
+CREATE OR REPLACE FUNCTION todo_api.unpin_todo(_todo_id uuid)
   RETURNS todo.todo
   LANGUAGE plpgsql
   VOLATILE
@@ -325,7 +325,7 @@ CREATE OR REPLACE FUNCTION todo_fn.unpin_todo(_todo_id uuid)
   $$;
 
 ---------------------------------------------- assign_todo
-CREATE OR REPLACE FUNCTION todo_fn_api.assign_todo(_todo_id uuid, _app_user_tenancy_id uuid)
+CREATE OR REPLACE FUNCTION todo_api.assign_todo(_todo_id uuid, _resident_id uuid)
   RETURNS todo.todo
   LANGUAGE plpgsql
   VOLATILE
@@ -334,12 +334,12 @@ CREATE OR REPLACE FUNCTION todo_fn_api.assign_todo(_todo_id uuid, _app_user_tena
   DECLARE
     _retval todo.todo;
   BEGIN
-    _retval := todo_fn.assign_todo(_todo_id, _app_user_tenancy_id);
+    _retval := todo_fn.assign_todo(_todo_id, _resident_id);
     return _retval;
   end;
   $$;
 
-CREATE OR REPLACE FUNCTION todo_fn.assign_todo(_todo_id uuid, _app_user_tenancy_id uuid)
+CREATE OR REPLACE FUNCTION todo_fn.assign_todo(_todo_id uuid, _resident_id uuid)
   RETURNS todo.todo
   LANGUAGE plpgsql
   VOLATILE
@@ -348,13 +348,13 @@ CREATE OR REPLACE FUNCTION todo_fn.assign_todo(_todo_id uuid, _app_user_tenancy_
   DECLARE
     _todo todo.todo;
   BEGIN
-    update todo.todo set app_user_tenancy_id = _app_user_tenancy_id where id = _todo_id returning * into _todo;
+    update todo.todo set resident_id = _resident_id where id = _todo_id returning * into _todo;
     return _todo;
   end;
   $$;
 
 ---------------------------------------------- get_full_todo_tree
-CREATE OR REPLACE FUNCTION todo_fn_api.get_full_todo_tree(_todo_id uuid)
+CREATE OR REPLACE FUNCTION todo_api.get_full_todo_tree(_todo_id uuid)
   RETURNS jsonb
   LANGUAGE plpgsql
   STABLE
@@ -402,7 +402,7 @@ CREATE OR REPLACE FUNCTION todo_fn.get_full_todo_tree(_todo_id uuid)
 
 
 ---------------------------------------------- search_todos
-  CREATE OR REPLACE FUNCTION todo_fn_api.search_todos(_options todo_fn.search_todos_options)
+  CREATE OR REPLACE FUNCTION todo_api.search_todos(_options todo_fn.search_todos_options)
     RETURNS setof todo.todo
     LANGUAGE plpgsql
     stable
@@ -428,7 +428,7 @@ CREATE OR REPLACE FUNCTION todo_fn.get_full_todo_tree(_todo_id uuid)
       return query
       select t.* 
       from todo.todo t
-      join app.app_tenant a on a.id = t.app_tenant_id
+      join app.tenant a on a.id = t.tenant_id
       where (
         _options.search_term is null 
         or t.name like '%'||_options.search_term||'%'

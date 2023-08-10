@@ -7,7 +7,7 @@
       </template>
       <div class="flex flex-col gap-3">
         <UFormGroup name="assignedTo" label="Assigned to">
-          <USelect v-model="assignedAppUserTenancyId" :options="appUserTenancies" option-attribute="name" />    
+          <USelect v-model="assignedResidentId" :options="appProfileResidents" option-attribute="name" />    
         </UFormGroup>
       </div>
       <template #footer>
@@ -27,9 +27,9 @@
 
   const showModal = ref(false)
 
-  const assignedAppUserTenancyId = ref()
+  const assignedResidentId = ref()
 
-  const appUserTenancies = ref()
+  const appProfileResidents = ref()
 
   const defaultFormData = {
     name: '',
@@ -45,23 +45,23 @@
   })
 
   const emit = defineEmits<{
-    (e: 'assigned', appUserTenancyId: string): void
+    (e: 'assigned', residentId: string): void
   }>()
 
   const handleBeginAssign = async () => {
-    const result = await GqlAppTenantAppUserTenancies()
-    appUserTenancies.value = result.appTenantAppUserTenancies.nodes.map(n => {
+    const result = await GqlTenantResidents()
+    appProfileResidents.value = result.tenantResidents.nodes.map(n => {
       return {
         name: n.displayName,
         value: n.id
       }
     })
-    assignedAppUserTenancyId.value = props.todo.owner.id
+    assignedResidentId.value = props.todo.owner.id
     showModal.value = true
   }
 
   const handleSave = async () => {
-    emit('assigned', assignedAppUserTenancyId.value)
+    emit('assigned', assignedResidentId.value)
     showModal.value = false
   }
 </script>

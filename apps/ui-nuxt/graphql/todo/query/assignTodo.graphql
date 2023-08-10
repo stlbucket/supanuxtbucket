@@ -1,16 +1,16 @@
 mutation AssignTodo(
   $todoId: UUID!
-  $appUserTenancyId: UUID!
+  $residentId: UUID!
 ) {
   assignTodo(input: {
   	_todoId: $todoId
-    _appUserTenancyId: $appUserTenancyId
+    _residentId: $residentId
   }) {
     todo {
       id
       name
       description
-      appUserTenancyId
+      residentId
     }
   }
 }

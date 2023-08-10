@@ -2,7 +2,7 @@ BEGIN;
 \set _superadmin_email 'app-admin-super@example.com'
 \set _user_email 'anchor-tenant-user@example.com'
 ------------------------------------
--- THESE TEST EXPLICITLY ENSURE THE BASIC APP USER TENANCY FOR THE INITIAL SUPER ADMIN USER
+-- THESE TEST EXPLICITLY ENSURE THE BASIC APP USER resident FOR THE INITIAL SUPER ADMIN USER
 -- LATER TESTS WILL USE ONLY THE HELPER FUNCTIONS TO SETUP FOR TESTS AS NECESSARY
 ------------------------------------
 
@@ -12,9 +12,9 @@ SELECT * FROM no_plan();
 select is(
   (
     select count(*)
-    from app.app_user_tenancy aut
-    join app.app_tenant t on t.id = aut.app_tenant_id
-    where t.type = 'demo'::app.app_tenant_type
+    from app.resident aut
+    join app.tenant t on t.id = aut.tenant_id
+    where t.type = 'demo'::app.tenant_type
   )::integer
   ,6::integer
   ,'demo user count'
@@ -23,21 +23,21 @@ select is(
 -- Examples: https://pgtap.org/documentation.html
 ------------------------------------
 select is(
-  (select count(*) from app.app_tenant where type = 'anchor'::app.app_tenant_type)::integer
+  (select count(*) from app.tenant where type = 'anchor'::app.tenant_type)::integer
   ,1::integer
   ,'should be an anchor app tenant'
 );
 ------------------------------------
 -- select is(
---   (select count(*) from app.app_user_tenancy where app_tenant_id = (select id from app.app_tenant where type = 'anchor'))::integer
+--   (select count(*) from app.resident where tenant_id = (select id from app.tenant where type = 'anchor'))::integer
 --   ,3::integer
---   ,'should be an app_user_tenancy'
+--   ,'should be an resident'
 -- );
 ------------------------------------
 -- select is(
---   (select count(*) from app.app_tenant_subscription where  app_tenant_id = (select id from app.app_tenant where type = 'anchor'))::integer
+--   (select count(*) from app.tenant_subscription where  tenant_id = (select id from app.tenant where type = 'anchor'))::integer
 --   ,3::integer
---   ,'should be 3 app_tenant_subscription'
+--   ,'should be 3 tenant_subscription'
 -- );
 -- ------------------------------------
 --     select is(
@@ -47,25 +47,25 @@ select is(
 --         ,'tenant' ,t.name
 --       )))
 --         from app.license l
---         join app.app_user_tenancy aut on l.app_user_tenancy_id = aut.id
---         join app.app_tenant t on t.id = aut.app_tenant_id
+--         join app.resident aut on l.resident_id = aut.id
+--         join app.tenant t on t.id = aut.tenant_id
 --       )::jsonb
 --       ,'{}'::jsonb
 --       ,'licenses'
 --     );
 -- select is(
---   (select count(*) from app.license where app_user_tenancy_id in (
---     select id from app.app_user_tenancy 
---     where app_tenant_id = (select id from app.app_tenant where type = 'anchor'))
+--   (select count(*) from app.license where resident_id in (
+--     select id from app.resident 
+--     where tenant_id = (select id from app.tenant where type = 'anchor'))
 --   )::integer
 --   ,6::integer
 --   ,'should be 6 licenses'
 -- );
 ------------------------------------
 select is(
-  (select count(*) from app.app_user where email = :'_superadmin_email'::citext)::integer
+  (select count(*) from app.profile where email = :'_superadmin_email'::citext)::integer
   ,0::integer
-  ,'should be no app.app_user ---  SUPABASE DB RESET WILL FIX THIS MOST LIKELY'
+  ,'should be no app.profile ---  SUPABASE DB RESET WILL FIX THIS MOST LIKELY'
 );
 ------------------------------------
 select is(
@@ -75,9 +75,9 @@ select is(
 );
 ------------------------------------
 select is(
-  (select app_user_id is null from app.app_user_tenancy where email = :'_superadmin_email'::citext)::boolean
+  (select profile_id is null from app.resident where email = :'_superadmin_email'::citext)::boolean
   ,true
-  ,'app_user_id should be null'
+  ,'profile_id should be null'
 );
 ------------------------------------
 select isa_ok(
@@ -91,9 +91,9 @@ select isa_ok(
 );
 ------------------------------------
 select is(
-  (select count(*) from app.app_user where email = :'_superadmin_email'::citext)::integer
+  (select count(*) from app.profile where email = :'_superadmin_email'::citext)::integer
   ,1::integer
-  ,'should be 1 app.app_user'
+  ,'should be 1 app.profile'
 );
 ------------------------------------
 select is(
@@ -107,17 +107,17 @@ select test_helpers.login_as_user(
 );
 ------------------------------------
 select is(
-  (select status from app.app_user_tenancy where email = :'_superadmin_email'::citext)::app.app_user_tenancy_status
-  ,'active'::app.app_user_tenancy_status
-  ,'tenancy should still be in status of invited'
+  (select status from app.resident where email = :'_superadmin_email'::citext)::app.resident_status
+  ,'active'::app.resident_status
+  ,'resident should still be in status of invited'
 );
 ------------------------------------ logout so we can evaluate data as postgres user
 select test_helpers.logout();
 ------------------------------------
 select is(
-  (select status from app.app_user_tenancy where email = :'_superadmin_email'::citext)::app.app_user_tenancy_status
-  ,'active'::app.app_user_tenancy_status
-  ,'tenancy should be in status of active'
+  (select status from app.resident where email = :'_superadmin_email'::citext)::app.resident_status
+  ,'active'::app.resident_status
+  ,'resident should be in status of active'
 );
 ------------------------------------ login as anchor user
 select test_helpers.login_as_user(
@@ -179,7 +179,7 @@ select is(
 select is(
   (select auth_ext.has_permission(
     _permission_key => 'p:discussions'::citext
-    ,_app_tenant_id => (select id from app.app_tenant where type = 'anchor')
+    ,_tenant_id => (select id from app.tenant where type = 'anchor')
   ))
   ,true
   ,'user should have p:discussions permission for tenant'

@@ -14,15 +14,15 @@ SELECT * FROM no_plan();
 -- PROCESS IS AS FOLLOWS:
 --
 --    1 - CREATE SUPABASE USER
---        inserts auth.users record, which triggers insert of app.app_user and association of tenancies
+--        inserts auth.users record, which triggers insert of app.profile and association of tenancies
 --    2 - LOGIN AS SUPERADMIN USER
---    3 - ASSUME TENANCY
---        - changes app.app_user_tenancy record from 'invited' to 'active'
+--    3 - ASSUME resident
+--        - changes app.resident record from 'invited' to 'active'
 --    4 and 5 - LOGOUT and LOGIN AS SUPERASMIN USER
---        this is so that the auth.jwt() value gets properly set after assuming tenancy
+--        this is so that the auth.jwt() value gets properly set after assuming resident
 --        this value will be set thru pgSettings with postgraphile on every request for the actual site
 --        but for unit tests, this is necessary
-------------------------------------  create a new supabase user, which will insert app.app_user via trigger
+------------------------------------  create a new supabase user, which will insert app.profile via trigger
 select isa_ok(
   test_helpers.create_supabase_user(
     _email => :'_superadmin_email'::citext
@@ -32,17 +32,17 @@ select isa_ok(
   ,'uuid'
   ,'create_supabase_user should return uuid'
 );
------------------------------------- login as anchor user, this is first-time login for this user, so tenancy gets connected
+------------------------------------ login as anchor user, this is first-time login for this user, so resident gets connected
 select test_helpers.login_as_user(
   _email => :'_superadmin_email'::citext
 );
------------------------------------- on first login, user will confirm tenancy (can be automatic), which sets tenancy to active
+------------------------------------ on first login, user will confirm resident (can be automatic), which sets resident to active
 select isa_ok(
-  app_fn_api.assume_app_user_tenancy(
-    _app_user_tenancy_id => (select id from app.app_user_tenancy where email = :'_superadmin_email'::citext)
+  app_api.assume_resident(
+    _resident_id => (select id from app.resident where email = :'_superadmin_email'::citext)
   )
-  ,'app.app_user_tenancy'
-  ,'should assume the tenancy'
+  ,'app.resident'
+  ,'should assume the resident'
 );
 ------------------------------------ logout so we can evaluate data as postgres user
 select test_helpers.logout();
@@ -59,8 +59,8 @@ select test_helpers.login_as_user(
     --     ,'tenant' ,t.name
     --   )))
     --     from app.license l
-    --     join app.app_user_tenancy aut on l.app_user_tenancy_id = aut.id
-    --     join app.app_tenant t on t.id = aut.app_tenant_id
+    --     join app.resident aut on l.resident_id = aut.id
+    --     join app.tenant t on t.id = aut.tenant_id
     --     where aut.email = :'_superadmin_email'::citext
     --   )::jsonb
     --   ,null::jsonb

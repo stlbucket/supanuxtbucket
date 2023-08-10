@@ -9,17 +9,17 @@ SELECT schemas_are(ARRAY[
   'auth_ext'
   ,'app'
   ,'app_fn'
-  ,'app_fn_api'
+  ,'app_api'
   -- delete this if you don't want todo
   ,'todo'
   ,'todo_fn'
-  ,'todo_fn_api'
+  ,'todo_api'
   ,'msg'
   ,'msg_fn'
-  ,'msg_fn_api'
+  ,'msg_api'
   ,'inc'
   ,'inc_fn'
-  ,'inc_fn_api'
+  ,'inc_api'
   -- put your app here
 
   -- below here are supabase-specific schemas
@@ -43,10 +43,10 @@ select tables_are(
   'app'
   ,array[
     'app_settings'
-    ,'app_tenant'
-    ,'app_user'
-    ,'app_user_tenancy'
-    ,'app_tenant_subscription'
+    ,'tenant'
+    ,'profile'
+    ,'resident'
+    ,'tenant_subscription'
     ,'application'
     ,'license'
     ,'license_pack'

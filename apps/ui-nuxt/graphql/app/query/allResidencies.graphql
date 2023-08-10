@@ -1,0 +1,10 @@
+query AllResidents {
+  allResidents {
+    nodes {
+      id
+      tenantName
+      email
+      status
+    }
+  }
+}

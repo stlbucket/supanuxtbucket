@@ -38,26 +38,26 @@ $$ LANGUAGE plpgsql;
 -----------------------------------------------------
 -----------------------------------------------------
 -- -- https://supabase.com/docs/guides/auth/row-level-security
-create or replace function test_helpers.assume_super_admin (_superadmin_email citext) returns app.app_user_tenancy
+create or replace function test_helpers.assume_super_admin (_superadmin_email citext) returns app.resident
     language plpgsql
     as $$
 declare
-  _app_user_tenancy app.app_user_tenancy;
+  _resident app.resident;
 begin
-  _app_user_tenancy = (select app_fn.assume_app_user_tenancy(
-    _app_user_tenancy_id => (select id from app.app_user_tenancy where email = _superadmin_email)
+  _resident = (select app_fn.assume_resident(
+    _resident_id => (select id from app.resident where email = _superadmin_email)
     ,_email => _superadmin_email
   ));
 
-  return _app_user_tenancy;
+  return _resident;
 end;
 $$;
 -- -----------------------------------------------------
--- create or replace function test_helpers.setup_super_admin(_email citext) returns app.app_user_tenancy
+-- create or replace function test_helpers.setup_super_admin(_email citext) returns app.resident
 --     language plpgsql
 --     as $$
 --   declare
---     _app_user_tenancy app.app_user_tenancy;
+--     _resident app.resident;
 --   begin
 --   ------------------------------------ login as anchor user
 --   perform test_helpers.create_supabase_user(
@@ -69,10 +69,10 @@ $$;
 --   perform test_helpers.login_as_user(
 --     _email => _email
 --   );
---   _app_user_tenancy := (select app_fn.assume_app_user_tenancy(
---     _app_user_tenancy_id => (select id from app.app_user_tenancy where email = _email)
+--   _resident := (select app_fn.assume_resident(
+--     _resident_id => (select id from app.resident where email = _email)
 --   ));
---   return _app_user_tenancy;
+--   return _resident;
 -- end;
 -- $$;
 -----------------------------------------------------
@@ -83,15 +83,15 @@ create or replace function test_helpers.login_as_user (_email text) returns void
     as $$
 declare
     _auth_user auth.users;
-    _app_user_claims app_fn.app_user_claims;
+    _profile_claims app_fn.profile_claims;
 begin
     -- raise notice 'LOGGING IN AS USER: %', _email;
     select * into _auth_user from auth.users where email = _email;
-    select * into _app_user_claims from app_fn.current_app_user_claims(_auth_user.id);
+    select * into _profile_claims from app_fn.current_profile_claims(_auth_user.id);
 
     -- execute format('set request.jwt.claim=%L', json_strip_nulls(json_build_object('user_meta_data', (_auth_user).raw_user_meta_data))::text);
-    -- execute format('set request.jwt.claim=%L', jsonb_strip_nulls(to_jsonb(_app_user_claims))::text);
-    execute format('set request.jwt.claim=%L', jsonb_build_object('user_metadata', jsonb_strip_nulls(to_jsonb(_app_user_claims)))::text);
+    -- execute format('set request.jwt.claim=%L', jsonb_strip_nulls(to_jsonb(_profile_claims))::text);
+    execute format('set request.jwt.claim=%L', jsonb_build_object('user_metadata', jsonb_strip_nulls(to_jsonb(_profile_claims)))::text);
     execute format('set request.jwt.claim.sub=%L', (_auth_user).id::text);
     execute format('set request.jwt.claim.role=%I', (_auth_user).role);
     execute format('set request.jwt.claim.email=%L', (_auth_user).email);
@@ -124,25 +124,25 @@ end;
 $$;
 -----------------------------------------------------
 create or replace function test_helpers.setup_test_tenant (
-  _app_tenant_name citext
+  _tenant_name citext
   ,_identifier citext
   ,_admin_email citext
   ,_license_pack_key citext
-) returns app.app_tenant
+) returns app.tenant
     language plpgsql
     as $$
   declare
-    _app_tenant app.app_tenant;
-    _app_user_tenancy app.app_user_tenancy;
-    _app_tenant_subcription app.app_tenant_subscription;
+    _tenant app.tenant;
+    _resident app.resident;
+    _tenant_subcription app.tenant_subscription;
   begin
-  _app_tenant := (select app_fn.create_app_tenant(
-    _name => _app_tenant_name
+  _tenant := (select app_fn.create_tenant(
+    _name => _tenant_name
     ,_identifier => _identifier
     ,_email => _admin_email
   ));
-  _app_tenant_subcription := (select app_fn.subscribe_tenant_to_license_pack(
-    _app_tenant_id => _app_tenant.id
+  _tenant_subcription := (select app_fn.subscribe_tenant_to_license_pack(
+    _tenant_id => _tenant.id
     ,_license_pack_key => _license_pack_key
   ));
   ------------------------------------------------------------------------
@@ -153,13 +153,13 @@ create or replace function test_helpers.setup_test_tenant (
     ,_password => 'badpassword'
   );
   ------------------------------------------------------------------------
-  ------------------------------------------------------------------------ assume_app_user_tenancy
-  select * into _app_user_tenancy from app.app_user_tenancy where id = _app_tenant.id and email = _admin_email;
-  perform app_fn.assume_app_user_tenancy(
-    _app_user_tenancy_id => _app_user_tenancy.id
+  ------------------------------------------------------------------------ assume_resident
+  select * into _resident from app.resident where id = _tenant.id and email = _admin_email;
+  perform app_fn.assume_resident(
+    _resident_id => _resident.id
     ,_email => _admin_email
   );
-  return _app_tenant;
+  return _tenant;
 end;
 $$;
 
@@ -310,7 +310,7 @@ select is(current_setting('role'), 'postgres', 'role should be postgres');
 ------------------------------------
 select isa_ok(
   (select test_helpers.assume_super_admin(:'_superadmin_email'::citext))
-  , 'app.app_user_tenancy', 'should have superadmin tenancy'
+  , 'app.resident', 'should have superadmin resident'
 );
 
 select * from finish();

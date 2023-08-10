@@ -1,14 +1,14 @@
 mutation BecomeSupport(
-  $appTenantId: UUID!
+  $tenantId: UUID!
 ) {
   becomeSupport(input: {
-    _appTenantId: $appTenantId
+    _tenantId: $tenantId
   }) {
-    appUserTenancy {
+    resident {
       id
       email
       displayName
-      appTenantName
+      tenantName
       status
     }
   }

@@ -12,12 +12,12 @@
 
   -- select todo_fn.install_todo_application();
   -- select app_fn.subscribe_tenant_to_license_pack(
-  --   _app_tenant_id => (select id from app.app_tenant where identifier = 'anchor')::uuid
+  --   _tenant_id => (select id from app.tenant where identifier = 'anchor')::uuid
   --   ,_license_pack_key => 'todo'
   -- );
       -- select your_app_fn.install_your_application();
       -- select app_fn.subscribe_tenant_to_license_pack(
-      --   _app_tenant_id => (select id from app.app_tenant where identifier = 'anchor')::uuid
+      --   _tenant_id => (select id from app.tenant where identifier = 'anchor')::uuid
       --   ,_license_pack_key => 'YOUR LICENSE PACK NAME FROM your_app_fn.install_your_application()'
       -- );
 
@@ -26,7 +26,7 @@
 ------------------------------------------------------------------------------------------------------------
 ------------------------------------- DEMO AND INITIAL TENANTS -------------------------------------------------
 --
--- These app_tenants and users are to support local development as they are currently configured. They are
+-- These tenants and users are to support local development as they are currently configured. They are
 -- used in conjuction with the DemoAppUserTenancies component to allow for quick context switching between
 -- tenants and users in conjunction with the Inbucket service
 -- 
@@ -43,12 +43,12 @@
 -------------------------------  ANCHOR TENANT
   BEGIN;
     select app_fn.invite_user(
-      _app_tenant_id => (select id from app.app_tenant where identifier = 'anchor')::uuid
+      _tenant_id => (select id from app.tenant where identifier = 'anchor')::uuid
       ,_email => 'anchor-tenant-admin@example.com'::citext
       ,_assignment_scope => 'admin'::app.license_type_assignment_scope
     );
     select app_fn.invite_user(
-      _app_tenant_id => (select id from app.app_tenant where identifier = 'anchor')::uuid
+      _tenant_id => (select id from app.tenant where identifier = 'anchor')::uuid
       ,_email => 'anchor-tenant-user@example.com'::citext
       ,_assignment_scope => 'user'::app.license_type_assignment_scope
     );
@@ -56,23 +56,23 @@
 
 -------------------------------  DEMO TENANT 1
   BEGIN;
-    select app_fn.create_app_tenant(
+    select app_fn.create_tenant(
       _name =>'Demo Tenant 1'::citext
       ,_identifier =>'demo-tenant-1'::citext
       ,_email => 'demo-tenant-1-admin@example.com'::citext
-      , _type => 'demo'::app.app_tenant_type
+      , _type => 'demo'::app.tenant_type
     );
     -- select app_fn.subscribe_tenant_to_license_pack(
-    --   _app_tenant_id => (select id from app.app_tenant where identifier = 'demo-tenant-1')::uuid
+    --   _tenant_id => (select id from app.tenant where identifier = 'demo-tenant-1')::uuid
     --   ,_license_pack_key => 'todo'
     -- );
     select app_fn.invite_user(
-      _app_tenant_id => (select id from app.app_tenant where identifier = 'demo-tenant-1')::uuid
+      _tenant_id => (select id from app.tenant where identifier = 'demo-tenant-1')::uuid
       ,_email => 'demo-tenant-1-user-1@example.com'::citext
       ,_assignment_scope => 'user'::app.license_type_assignment_scope
     );
     select app_fn.invite_user(
-      _app_tenant_id => (select id from app.app_tenant where identifier = 'demo-tenant-1')::uuid
+      _tenant_id => (select id from app.tenant where identifier = 'demo-tenant-1')::uuid
       ,_email => 'demo-tenant-1-user-2@example.com'::citext
       ,_assignment_scope => 'user'::app.license_type_assignment_scope
     );
@@ -80,23 +80,23 @@
 
 -------------------------------  DEMO TENANT 2
   BEGIN;
-    select app_fn.create_app_tenant(
+    select app_fn.create_tenant(
       _name =>'Demo Tenant 2'::citext
       ,_identifier =>'demo-tenant-2'::citext
       ,_email => 'demo-tenant-2-admin@example.com'::citext
-      , _type => 'demo'::app.app_tenant_type
+      , _type => 'demo'::app.tenant_type
     );
     -- select app_fn.subscribe_tenant_to_license_pack(
-    --   _app_tenant_id => (select id from app.app_tenant where identifier = 'demo-tenant-2')::uuid
+    --   _tenant_id => (select id from app.tenant where identifier = 'demo-tenant-2')::uuid
     --   ,_license_pack_key => 'todo'
     -- );
     select app_fn.invite_user(
-      _app_tenant_id => (select id from app.app_tenant where identifier = 'demo-tenant-2')::uuid
+      _tenant_id => (select id from app.tenant where identifier = 'demo-tenant-2')::uuid
       ,_email => 'demo-tenant-2-user-1@example.com'::citext
       ,_assignment_scope => 'user'::app.license_type_assignment_scope
     );
     select app_fn.invite_user(
-      _app_tenant_id => (select id from app.app_tenant where identifier = 'demo-tenant-2')::uuid
+      _tenant_id => (select id from app.tenant where identifier = 'demo-tenant-2')::uuid
       ,_email => 'demo-tenant-2-user-2@example.com'::citext
       ,_assignment_scope => 'user'::app.license_type_assignment_scope
     );
@@ -112,9 +112,9 @@
       ,'{}'::citext[]
       ,false::boolean
     )::inc_fn.incident_info
-    ,_app_user_tenancy_id => aut.id::uuid
+    ,_resident_id => aut.id::uuid
   )
-  from app.app_user_tenancy aut;
+  from app.resident aut;
 
   select msg_fn.upsert_subscription(
     row(
@@ -123,7 +123,7 @@
     )
   )
   from msg.topic t
-  join msg.msg_user mu on mu.app_tenant_id = t.app_tenant_id
+  join msg.msg_resident mu on mu.tenant_id = t.tenant_id
   ;
 
   select msg_fn.upsert_message(
@@ -136,22 +136,22 @@
     ,mu.id
   )
   from msg.topic t
-  join msg.msg_user mu on mu.app_tenant_id = t.app_tenant_id
+  join msg.msg_resident mu on mu.tenant_id = t.tenant_id
   ;
 
 ------------------------------- TODO DEMO DATA
     select todo_fn.create_todo(
-      _app_user_tenancy_id => id::uuid
+      _resident_id => id::uuid
       ,_name => (display_name||' todo list')::citext
       ,_options => row(
         'a list just for demos'::citext
         ,null
       )::todo_fn.create_todo_options
-    ) from app.app_user_tenancy
+    ) from app.resident
     ;
 
     select todo_fn.create_todo(
-      _app_user_tenancy_id => app_user_tenancy_id::uuid
+      _resident_id => resident_id::uuid
       ,_name => 'This is a subtask'::citext
       ,_options => row(
         'it''s a tree, really....'::citext
@@ -161,7 +161,7 @@
     ;
 
   select todo_fn.create_todo(
-    _app_user_tenancy_id => app_user_tenancy_id::uuid
+    _resident_id => resident_id::uuid
     ,_name => 'This is a subtask'::citext
     ,_options => row(
       'it''s a tree, really....'::citext

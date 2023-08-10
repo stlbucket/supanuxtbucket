@@ -4,46 +4,46 @@ SELECT * FROM no_plan();
 
 -- Examples: https://pgtap.org/documentation.html
 \set _superadmin_email 'app-admin-super@example.com'
-\set _app_tenant_name 'todo-test-tenant'
-\set _app_tenant_admin_email 'todo-test-tenant1-admin@example.com'
+\set _tenant_name 'todo-test-tenant'
+\set _tenant_admin_email 'todo-test-tenant1-admin@example.com'
 -- \set _license_pack_key 'todo'
 \set _identifier 'todo-test-tenant'
 ------------------------------------------------------------------------
------------------------------------------------------------------------- create_app_tenant
+------------------------------------------------------------------------ create_tenant
 select isa_ok(
-  (select app_fn.create_app_tenant(
-    :'_app_tenant_name'::citext
+  (select app_fn.create_tenant(
+    :'_tenant_name'::citext
     ,:'_identifier'::citext
-    ,:'_app_tenant_admin_email'::citext
+    ,:'_tenant_admin_email'::citext
   ))
-  ,'app.app_tenant'
-  ,'should create an app_tenant'
+  ,'app.tenant'
+  ,'should create an tenant'
 );
 -- select isa_ok(
 --   (select app_fn.subscribe_tenant_to_license_pack(
---     _app_tenant_id => (select id from app.app_tenant where name = :'_app_tenant_name'::citext)
+--     _tenant_id => (select id from app.tenant where name = :'_tenant_name'::citext)
 --     ,_license_pack_key => :'_license_pack_key'::citext
 --   ))
---   ,'app.app_tenant_subscription'
+--   ,'app.tenant_subscription'
 --   ,'should subscribe tenant to license pack'
 -- );
     ------------------------------------
     select is(
-      (select count(*) from app.app_tenant where name = :'_app_tenant_name'::citext)::integer
+      (select count(*) from app.tenant where name = :'_tenant_name'::citext)::integer
       ,1::integer
       ,'should be an app tenant'
     );
     ------------------------------------
     select is(
-      (select count(*) from app.app_user_tenancy where email = :'_app_tenant_admin_email'::citext)::integer
+      (select count(*) from app.resident where email = :'_tenant_admin_email'::citext)::integer
       ,1::integer
-      ,'should be an app_user_tenancy'
+      ,'should be an resident'
     );
     ------------------------------------
     select is(
-      (select count(*) from app.app_tenant_subscription where app_tenant_id = (select id from app.app_tenant where identifier = :'_identifier'::citext))::integer
+      (select count(*) from app.tenant_subscription where tenant_id = (select id from app.tenant where identifier = :'_identifier'::citext))::integer
       ,2::integer
-      ,'should be 2 app_tenant_subscriptions'
+      ,'should be 2 tenant_subscriptions'
     );
     ------------------------------------
     -- select is(
@@ -53,27 +53,27 @@ select isa_ok(
     --     ,'tenant' ,t.name
     --   )))
     --     from app.license l
-    --     join app.app_user_tenancy aut on l.app_user_tenancy_id = aut.id
-    --     join app.app_tenant t on t.id = aut.app_tenant_id
-    --     where aut.email = :'_app_tenant_admin_email'::citext
+    --     join app.resident aut on l.resident_id = aut.id
+    --     join app.tenant t on t.id = aut.tenant_id
+    --     where aut.email = :'_tenant_admin_email'::citext
     --   )::jsonb
     --   ,'{}'::jsonb
     --   ,'licenses'
     -- );
     -- select is(
-    --   (select count(*) from app.license where app_user_tenancy_id = (select id from app.app_user_tenancy where email = :'_app_tenant_admin_email'::citext))::integer
+    --   (select count(*) from app.license where resident_id = (select id from app.resident where email = :'_tenant_admin_email'::citext))::integer
     --   ,2::integer
     --   ,'should be 2 licenses'
     -- );
     ------------------------------------
     select is(
-      (select count(*) from app.app_user where email = :'_app_tenant_admin_email'::citext)::integer
+      (select count(*) from app.profile where email = :'_tenant_admin_email'::citext)::integer
       ,0::integer
-      ,'should be no app.app_user'
+      ,'should be no app.profile'
     );
     ------------------------------------
     select is(
-      (select count(*) from auth.users where email = :'_app_tenant_admin_email'::citext)::integer
+      (select count(*) from auth.users where email = :'_tenant_admin_email'::citext)::integer
       ,0::integer
       ,'should be no auth.users'
     );
@@ -81,7 +81,7 @@ select isa_ok(
 ------------------------------------------------------------------------ create_supabase_user
 select isa_ok(
   test_helpers.create_supabase_user(
-    _email => :'_app_tenant_admin_email'::text
+    _email => :'_tenant_admin_email'::text
     ,_user_metadata => '{"test": "meta"}'::jsonb
     ,_password => 'badpassword'
   )
@@ -90,69 +90,69 @@ select isa_ok(
 );
     ------------------------------------
     select is(
-      (select count(*) from app.app_user where email = :'_app_tenant_admin_email'::citext)::integer
+      (select count(*) from app.profile where email = :'_tenant_admin_email'::citext)::integer
       ,1::integer
-      ,'should be 1 app.app_user'
+      ,'should be 1 app.profile'
     );
     ------------------------------------
     select is(
-      (select count(*) from auth.users where email = :'_app_tenant_admin_email'::citext)::integer
+      (select count(*) from auth.users where email = :'_tenant_admin_email'::citext)::integer
       ,1::integer
       ,'should be 1 auth.users'
     );
     ------------------------------------
     select is(
-      (select status from app.app_user_tenancy where email = :'_app_tenant_admin_email'::citext and app_tenant_id = (select id from app.app_tenant where identifier = :'_identifier'::citext))::app.app_user_tenancy_status
-      ,'active'::app.app_user_tenancy_status
-      ,'app_user_tenancy should be active'
+      (select status from app.resident where email = :'_tenant_admin_email'::citext and tenant_id = (select id from app.tenant where identifier = :'_identifier'::citext))::app.resident_status
+      ,'active'::app.resident_status
+      ,'resident should be active'
     );
     ------------------------------------
     select is(
-      (select app_user_id is not null from app.app_user_tenancy where email = :'_app_tenant_admin_email'::citext)::boolean
+      (select profile_id is not null from app.resident where email = :'_tenant_admin_email'::citext)::boolean
       ,true
-      ,'app_user_id should not be null'
+      ,'profile_id should not be null'
     );
 ------------------------------------------------------------------------
 ------------------------------------------------------------------------ login as test user
 select test_helpers.login_as_user(
-  _email => :'_app_tenant_admin_email'::citext
+  _email => :'_tenant_admin_email'::citext
 );
 ------------------------------------------------------------------------
------------------------------------------------------------------------- assume_app_user_tenancy
+------------------------------------------------------------------------ assume_resident
 select isa_ok(
-  app_fn.assume_app_user_tenancy(
-    _app_user_tenancy_id => (select id from app.app_user_tenancy where email = :'_app_tenant_admin_email'::citext)
-    ,_email => :'_app_tenant_admin_email'
+  app_fn.assume_resident(
+    _resident_id => (select id from app.resident where email = :'_tenant_admin_email'::citext)
+    ,_email => :'_tenant_admin_email'
   )
-  ,'app.app_user_tenancy'
-  ,'should assume the tenancy'
+  ,'app.resident'
+  ,'should assume the resident'
 );
 ------------------------------------
 select is(
-  (select status from app.app_user_tenancy where email = :'_app_tenant_admin_email'::citext)::app.app_user_tenancy_status
-  ,'active'::app.app_user_tenancy_status
-  ,'tenancy should be in status of active'
+  (select status from app.resident where email = :'_tenant_admin_email'::citext)::app.resident_status
+  ,'active'::app.resident_status
+  ,'resident should be in status of active'
 );
 ------------------------------------------------------------------------
 ------------------------------------------------------------------------ logout
 select test_helpers.logout();
 ------------------------------------------------------------------------ test address book
 select test_helpers.login_as_user(
-  _email => :'_app_tenant_admin_email'::citext
+  _email => :'_tenant_admin_email'::citext
 );
   select isa_ok(
-    (select app_fn_api.join_address_book())
-    ,'app.app_user'
+    (select app_api.join_address_book())
+    ,'app.profile'
     ,'should join address book'
   );
   select is(
-    (select is_public from app.app_user where email = :'_app_tenant_admin_email'::citext)
+    (select is_public from app.profile where email = :'_tenant_admin_email'::citext)
     ,true
-    ,'_app_tenant_admin_email should be public'
+    ,'_tenant_admin_email should be public'
   );
   select is(
-    (select m.email from app_fn_api.get_myself() m)
-    ,:'_app_tenant_admin_email'
+    (select m.email from app_api.get_myself() m)
+    ,:'_tenant_admin_email'
     ,'should get myself'
   );
 select test_helpers.logout();

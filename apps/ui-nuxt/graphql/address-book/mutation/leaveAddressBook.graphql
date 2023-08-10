@@ -1,6 +1,6 @@
 mutation LeaveAddressBook {
   leaveAddressBook(input:{}) {
-     appUser {
+     appProfile {
       id
       email
       displayName

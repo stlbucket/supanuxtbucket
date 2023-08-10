@@ -13,7 +13,7 @@
       <template #footer>
         <div class="buttons">
           <UButton @click="showModal = false">Cancel</UButton>
-          <UButton @click="handleSave" :disabled="saveAppUserTenancyDisabled">Save</UButton>
+          <UButton @click="handleSave" :disabled="saveResidentDisabled">Save</UButton>
         </div>
       </template>
     </UCard>
@@ -36,15 +36,15 @@
   })
 
   const emit = defineEmits<{
-    (e: 'newAppUserTenancy', email: string): void
+    (e: 'newResident', email: string): void
   }>()
 
   const handleSave = async () => {
     showModal.value = false
-    emit('newAppUserTenancy', formData.value.email)
+    emit('newResident', formData.value.email)
   }
 
-  const saveAppUserTenancyDisabled = computed(() => {
+  const saveResidentDisabled = computed(() => {
     return false
     // return (!formData.value.name) || (formData.value.name.length < 4)
   })

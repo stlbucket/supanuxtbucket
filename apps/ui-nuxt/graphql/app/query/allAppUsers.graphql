@@ -1,5 +1,5 @@
-query AllAppUsers {
-  allAppUsers {
+query AllAppProfiles {
+  allAppProfiles {
     nodes {
       id
       email
@@ -11,11 +11,11 @@ query AllAppUsers {
       status
       createdAt
       updatedAt
-      appUserTenancies: appUserTenanciesByAppUserIdList {
+      appProfileResidents: appProfileResidentsByAppProfileIdList {
         id
-        appTenantId
-        appTenantName
-        licenses:licensesByAppUserTenancyIdList {
+        tenantId
+        tenantName
+        licenses:licensesByResidentIdList {
           id
           licenseTypeKey
         }

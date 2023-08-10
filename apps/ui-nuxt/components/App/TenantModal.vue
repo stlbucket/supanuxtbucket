@@ -16,7 +16,7 @@
       <template #footer>
         <div class="buttons">
           <UButton @click="showModal = false">Cancel</UButton>
-          <UButton @click="handleSave" :disabled="saveAppTenantDisabled">Save</UButton>
+          <UButton @click="handleSave" :disabled="saveTenantDisabled">Save</UButton>
         </div>
       </template>
     </UCard>
@@ -25,7 +25,7 @@
 
 <script lang="ts" setup>
   const props = defineProps<{
-    appTenant?: any
+    tenant?: any
   }>()
 
   const showModal = ref(false)
@@ -37,25 +37,25 @@
 
   onMounted(() => {
     formData.value = {
-      name: props.appTenant?.name || '',
-      email: props.appTenant?.email || ''
+      name: props.tenant?.name || '',
+      email: props.tenant?.email || ''
     }
   })
 
   const emit = defineEmits<{
-    (e: 'new', appTenant: AppTenant): void
-    (e: 'updated', appTenant: AppTenant): void
+    (e: 'new', tenant: Tenant): void
+    (e: 'updated', tenant: Tenant): void
   }>()
 
   const handleSave = async () => {
     showModal.value = false
     emit('updated', {
-      ...props.appTenant,
+      ...props.tenant,
       ...formData.value
     })
   }
 
-  const saveAppTenantDisabled = computed(() => {
+  const saveTenantDisabled = computed(() => {
     return (!formData.value.name) || (formData.value.name.length < 4)
   })
 </script>

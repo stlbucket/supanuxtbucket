@@ -1,4 +1,4 @@
-create schema if not exists inc_fn_api;
+create schema if not exists inc_api;
 create schema if not exists inc_fn;
 
 create type inc_fn.incident_info as (
@@ -8,44 +8,44 @@ create type inc_fn.incident_info as (
   ,tags citext[]
   ,is_template boolean
 );
--------------------------------------- ensure_inc_user
-CREATE OR REPLACE FUNCTION inc_fn.ensure_inc_user(
-    _app_user_tenancy_id uuid
-  ) RETURNS inc.inc_user
+-------------------------------------- ensure_inc_resident
+CREATE OR REPLACE FUNCTION inc_fn.ensure_inc_resident(
+    _resident_id uuid
+  ) RETURNS inc.inc_resident
     LANGUAGE plpgsql VOLATILE
     AS $$
   DECLARE
     _inc_tenant inc.inc_tenant;
-    _inc_user inc.inc_user;
+    _inc_resident inc.inc_resident;
   BEGIN
-    -- ensure that the tenancy has a inc_user and inc_tenant.  add them if not.
+    -- ensure that the resident has a inc_resident and inc_tenant.  add them if not.
     select t.* 
     into _inc_tenant 
     from inc.inc_tenant t 
-    join app.app_user_tenancy aut on t.app_tenant_id = aut.app_tenant_id and aut.id = _app_user_tenancy_id
+    join app.resident aut on t.tenant_id = aut.tenant_id and aut.id = _resident_id
     ;
 
-    if _inc_tenant.app_tenant_id is null then
-      insert into inc.inc_tenant(app_tenant_id, name)
-        select app_tenant_id, app_tenant_name
-        from app.app_user_tenancy 
-        where id = _app_user_tenancy_id
+    if _inc_tenant.tenant_id is null then
+      insert into inc.inc_tenant(tenant_id, name)
+        select tenant_id, tenant_name
+        from app.resident 
+        where id = _resident_id
       returning * into _inc_tenant;
     end if;
 
-    select * into _inc_user from inc.inc_user where app_user_tenancy_id = _app_user_tenancy_id;
-    if _inc_user.app_user_tenancy_id is null then
-      insert into inc.inc_user(app_user_tenancy_id, display_name, app_tenant_id)
-        select id, display_name, app_tenant_id
-        from app.app_user_tenancy 
-        where id = _app_user_tenancy_id 
-      returning * into _inc_user;
+    select * into _inc_resident from inc.inc_resident where resident_id = _resident_id;
+    if _inc_resident.resident_id is null then
+      insert into inc.inc_resident(resident_id, display_name, tenant_id)
+        select id, display_name, tenant_id
+        from app.resident 
+        where id = _resident_id 
+      returning * into _inc_resident;
     end if;
-    return _inc_user;
+    return _inc_resident;
   end;
   $$;
 ------------------------------------ create_incident
-CREATE OR REPLACE FUNCTION inc_fn_api.create_incident(
+CREATE OR REPLACE FUNCTION inc_api.create_incident(
     _incident_info inc_fn.incident_info
   ) RETURNS inc.incident
     LANGUAGE plpgsql VOLATILE
@@ -55,7 +55,7 @@ CREATE OR REPLACE FUNCTION inc_fn_api.create_incident(
   BEGIN
     _incident := inc_fn.create_incident(
       _incident_info
-      ,auth_ext.app_user_tenancy_id()
+      ,auth_ext.resident_id()
     );
     return _incident;
   end;
@@ -63,17 +63,17 @@ CREATE OR REPLACE FUNCTION inc_fn_api.create_incident(
 
 CREATE OR REPLACE FUNCTION inc_fn.create_incident(
     _incident_info inc_fn.incident_info
-    ,_app_user_tenancy_id uuid
+    ,_resident_id uuid
   ) RETURNS inc.incident
     LANGUAGE plpgsql VOLATILE
     AS $$
   DECLARE
-    _inc_user inc.inc_user;
+    _inc_resident inc.inc_resident;
     _incident inc.incident;
     _topic msg.topic;
     _todo todo.todo;
   BEGIN
-    _inc_user := inc_fn.ensure_inc_user(_app_user_tenancy_id);
+    _inc_resident := inc_fn.ensure_inc_resident(_resident_id);
 
     if _incident_info.identifier is not null then
       select * into _incident from inc.incident where identifier = _incident_info.identifier; -- this supports nonce from external sources
@@ -81,7 +81,7 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
 
     if _incident.id is null then
       _todo := todo_fn.create_todo(
-        _app_user_tenancy_id => _inc_user.app_user_tenancy_id::uuid
+        _resident_id => _inc_resident.resident_id::uuid
         ,_name => _incident_info.name::citext
         ,_options => row(
           _incident_info.description::citext
@@ -96,13 +96,13 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
           ,_incident_info.identifier::citext
           ,null::msg.topic_status
         )::msg_fn.topic_info
-        ,_inc_user.app_user_tenancy_id::uuid
+        ,_inc_resident.resident_id::uuid
       );
 
 
       insert into inc.incident(
-        app_tenant_id
-        ,created_by_app_user_tenancy_id
+        tenant_id
+        ,created_by_resident_id
         ,todo_id
         ,topic_id
         ,name
@@ -111,8 +111,8 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
         ,tags
         ,is_template
       ) values (
-        _inc_user.app_tenant_id
-        ,_inc_user.app_user_tenancy_id
+        _inc_resident.tenant_id
+        ,_inc_resident.resident_id
         ,_todo.id
         ,_topic.id
         ,_incident_info.name
@@ -128,7 +128,7 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
   end;
   $$;
 ---------------------------------------------- update_incident
-CREATE OR REPLACE FUNCTION inc_fn_api.update_incident(
+CREATE OR REPLACE FUNCTION inc_api.update_incident(
     _incident_id uuid
     ,_name citext
     ,_description citext default null
@@ -175,7 +175,7 @@ CREATE OR REPLACE FUNCTION inc_fn.update_incident(
   $$;
 
 ---------------------------------------------- update_incident_status
-CREATE OR REPLACE FUNCTION inc_fn_api.update_incident_status(
+CREATE OR REPLACE FUNCTION inc_api.update_incident_status(
     _incident_id uuid
     ,_status inc.incident_status
   )
@@ -218,7 +218,7 @@ CREATE OR REPLACE FUNCTION inc_fn.update_incident_status(
   ;
 
 ---------------------------------------------- delete_incident
-CREATE OR REPLACE FUNCTION inc_fn_api.delete_incident(_incident_id uuid)
+CREATE OR REPLACE FUNCTION inc_api.delete_incident(_incident_id uuid)
   RETURNS boolean
   LANGUAGE plpgsql
   VOLATILE

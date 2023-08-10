@@ -25,21 +25,21 @@ create type todo_fn.search_todos_options as (
 );
 ------------------------------------------------------------------------ todo_tenant
 create table todo.todo_tenant (
-  app_tenant_id uuid not null references app.app_tenant(id) primary key
+  tenant_id uuid not null references app.tenant(id) primary key
   ,name citext not null
 );
------------------------------------------------------------------------- todo_user
-create table todo.todo_user (
-  app_user_tenancy_id uuid not null references app.app_user_tenancy(id) primary key
-  ,app_tenant_id uuid not null references todo.todo_tenant(app_tenant_id)
+------------------------------------------------------------------------ todo_resident
+create table todo.todo_resident (
+  resident_id uuid not null references app.resident(id) primary key
+  ,tenant_id uuid not null references todo.todo_tenant(tenant_id)
   ,display_name citext not null
 );
 ------------------------------------------------------------------------ todo
 create table if not exists todo.todo (
   id uuid NOT NULL DEFAULT gen_random_uuid() primary key
   ,parent_todo_id uuid null references todo.todo(id)
-  ,app_tenant_id uuid not null references todo.todo_tenant(app_tenant_id)
-  ,app_user_tenancy_id uuid not null references todo.todo_user(app_user_tenancy_id)
+  ,tenant_id uuid not null references todo.todo_tenant(tenant_id)
+  ,resident_id uuid not null references todo.todo_resident(resident_id)
   ,created_at timestamptz not null default current_timestamp
   ,updated_at timestamptz not null default current_timestamp
   ,name citext not null
@@ -53,6 +53,6 @@ create table if not exists todo.todo (
   ,is_template boolean not null default false
 );
 -----------------------------------------------
- create index idx_todo_todo_app_tenant_id on todo.todo(app_tenant_id);
- create index idx_todo_todo_app_user_tenancy_id on todo.todo(app_user_tenancy_id);
+ create index idx_todo_todo_tenant_id on todo.todo(tenant_id);
+ create index idx_todo_todo_resident_id on todo.todo(resident_id);
  create index idx_todo_todo_parent_todo_id on todo.todo(parent_todo_id);

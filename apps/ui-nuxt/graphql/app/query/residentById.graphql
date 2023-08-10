@@ -1,13 +1,13 @@
-query AppUserTenancyById(
-  $appUserTenancyId: UUID!
+query ResidentById(
+  $residentId: UUID!
 ) {
-  appUserTenancyById(id: $appUserTenancyId) {
+  residentById(id: $residentId) {
     id
     email
-    appTenantName
+    tenantName
     displayName
     status
-    licenses: licensesByAppUserTenancyIdList {
+    licenses: licensesByResidentIdList {
       id
       licenseTypeKey
       createdAt
@@ -15,7 +15,7 @@ query AppUserTenancyById(
     }
   }
   
-  appTenantSubscriptions: allAppTenantSubscriptions {
+  tenantSubscriptions: allTenantSubscriptions {
     nodes {
       id
       licensePackKey

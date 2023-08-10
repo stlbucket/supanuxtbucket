@@ -1,20 +1,20 @@
-query AppTenantById(
-  $appTenantId: UUID!
+query TenantById(
+  $tenantId: UUID!
 ) {
-  appTenantById(id: $appTenantId) {
+  tenantById(id: $tenantId) {
     id
     name
     identifier
     status
     type
     createdAt
-    appUserTenancies: appUserTenanciesByAppTenantId {
+    appProfileResidents: appProfileResidentsByTenantId {
       totalCount
     }
-    appTenantSubscriptions: appTenantSubscriptionsByAppTenantIdList {
+    tenantSubscriptions: tenantSubscriptionsByTenantIdList {
       id
       licensePackKey
-      licenses:licensesByAppTenantSubscriptionId {
+      licenses:licensesByTenantSubscriptionId {
         totalCount
       }
     }

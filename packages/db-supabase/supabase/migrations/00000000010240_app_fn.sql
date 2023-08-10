@@ -225,20 +225,20 @@ CREATE OR REPLACE FUNCTION app_fn.install_anchor_application()
 
 ----------------------------------- create_anchor_tenant ---  NO API
 CREATE OR REPLACE FUNCTION app_fn.create_anchor_tenant(_name citext, _email citext default null)
-  RETURNS app.app_tenant
+  RETURNS app.tenant
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
     _application app.application;
-    _app_tenant app.app_tenant;
+    _tenant app.tenant;
   BEGIN
-    select * into _app_tenant from app.app_tenant where type = 'anchor';
-    if _app_tenant.id is null then
+    select * into _tenant from app.tenant where type = 'anchor';
+    if _tenant.id is null then
       _application := (select app_fn.install_anchor_application());
     --   -- create the app tenant
-      insert into app.app_tenant(
+      insert into app.tenant(
         name
         ,identifier
         ,type
@@ -246,144 +246,144 @@ CREATE OR REPLACE FUNCTION app_fn.create_anchor_tenant(_name citext, _email cite
         _name
         ,'anchor'
         ,'anchor'
-      ) returning * into _app_tenant
+      ) returning * into _tenant
       ;
 
-      perform app_fn.subscribe_tenant_to_license_pack(_app_tenant.id, 'anchor');
-      perform app_fn.subscribe_tenant_to_license_pack(_app_tenant.id, 'app');
+      perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'anchor');
+      perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'app');
 
-      perform app_fn.invite_user(_app_tenant.id, _email, 'superadmin');
+      perform app_fn.invite_user(_tenant.id, _email, 'superadmin');
     end if;
     
-    return _app_tenant;
+    return _tenant;
   end;
   $function$
   ;
 
------------------------------------ current_app_user_claims
-CREATE OR REPLACE FUNCTION app_fn_api.current_app_user_claims()
-  RETURNS app_fn.app_user_claims
+----------------------------------- current_profile_claims
+CREATE OR REPLACE FUNCTION app_api.current_profile_claims()
+  RETURNS app_fn.profile_claims
   LANGUAGE plpgsql
   STABLE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_user_claims app_fn.app_user_claims;
+    _profile_claims app_fn.profile_claims;
   BEGIN
-    _app_user_claims = (select app_fn.current_app_user_claims(auth.uid()));
-    return _app_user_claims;
+    _profile_claims = (select app_fn.current_profile_claims(auth.uid()));
+    return _profile_claims;
   end;
   $function$
   ;
 
-CREATE OR REPLACE FUNCTION app_fn.current_app_user_claims(_app_user_id uuid)
-  RETURNS app_fn.app_user_claims
+CREATE OR REPLACE FUNCTION app_fn.current_profile_claims(_profile_id uuid)
+  RETURNS app_fn.profile_claims
   LANGUAGE plpgsql
   STABLE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_user app.app_user;
-    _app_user_tenancy app.app_user_tenancy;
-    _app_user_claims app_fn.app_user_claims;
+    _profile app.profile;
+    _resident app.resident;
+    _profile_claims app_fn.profile_claims;
   BEGIN
-    select * into _app_user from app.app_user where id = _app_user_id;
-    select * into _app_user_tenancy from app.app_user_tenancy where app_user_id = _app_user_id and status = 'active';
+    select * into _profile from app.profile where id = _profile_id;
+    select * into _resident from app.resident where profile_id = _profile_id and status = 'active';
 
-    _app_user_claims.email = _app_user.email;
-    _app_user_claims.app_user_status = (select status from app.app_user where id = _app_user_id);
-    if _app_user_tenancy.id is not null then
-      _app_user_claims.display_name = _app_user_tenancy.display_name;
-      _app_user_claims.app_user_id = _app_user_tenancy.app_user_id;
-      _app_user_claims.app_tenant_id = _app_user_tenancy.app_tenant_id;
-      _app_user_claims.app_tenant_name = _app_user_tenancy.app_tenant_name;
-      _app_user_claims.app_user_tenancy_id = _app_user_tenancy.id;
-      _app_user_claims.permissions = (
+    _profile_claims.email = _profile.email;
+    _profile_claims.profile_status = (select status from app.profile where id = _profile_id);
+    if _resident.id is not null then
+      _profile_claims.display_name = _resident.display_name;
+      _profile_claims.profile_id = _resident.profile_id;
+      _profile_claims.tenant_id = _resident.tenant_id;
+      _profile_claims.tenant_name = _resident.tenant_name;
+      _profile_claims.resident_id = _resident.id;
+      _profile_claims.permissions = (
         select array_agg(ltp.permission_key) 
         from app.license_type_permission ltp 
         join app.license_type lt on lt.key = ltp.license_type_key
         join app.license l on l.license_type_key = lt.key
-        where l.app_user_tenancy_id = _app_user_tenancy.id
+        where l.resident_id = _resident.id
       );
     else
-      _app_user_claims.app_user_id = _app_user_id;
+      _profile_claims.profile_id = _profile_id;
     end if;
     
-    return _app_user_claims;
+    return _profile_claims;
   end;
   $function$
   ;
 
 ----------------------------------- decline_invitation
-CREATE OR REPLACE FUNCTION app_fn_api.decline_invitation(_app_user_tenancy_id uuid)
-  RETURNS app.app_user_tenancy
+CREATE OR REPLACE FUNCTION app_api.decline_invitation(_resident_id uuid)
+  RETURNS app.resident
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_user_tenancy app.app_user_tenancy;
+    _resident app.resident;
   BEGIN
-    _app_user_tenancy := app_fn.decline_invitation(_app_user_tenancy_id);
-    return _app_user_tenancy;
+    _resident := app_fn.decline_invitation(_resident_id);
+    return _resident;
   end;
   $function$
   ;
 
-CREATE OR REPLACE FUNCTION app_fn.decline_invitation(_app_user_tenancy_id uuid)
-  RETURNS app.app_user_tenancy
+CREATE OR REPLACE FUNCTION app_fn.decline_invitation(_resident_id uuid)
+  RETURNS app.resident
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_user_tenancy app.app_user_tenancy;
+    _resident app.resident;
   BEGIN
-    update app.app_user_tenancy set 
+    update app.resident set 
       status = 'declined'
       ,updated_at = current_timestamp 
-    where id = _app_user_tenancy_id 
+    where id = _resident_id 
     returning * 
-    into _app_user_tenancy;
+    into _resident;
 
-    return _app_user_tenancy;
+    return _resident;
   end;
   $function$
   ;
 
------------------------------------ create_app_tenant
-CREATE OR REPLACE FUNCTION app_fn_api.create_app_tenant(_name citext, _identifier citext default null, _email citext default null, _type app.app_tenant_type default 'customer'::app.app_tenant_type)
-  RETURNS app.app_tenant
+----------------------------------- create_tenant
+CREATE OR REPLACE FUNCTION app_api.create_tenant(_name citext, _identifier citext default null, _email citext default null, _type app.tenant_type default 'customer'::app.tenant_type)
+  RETURNS app.tenant
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_tenant app.app_tenant;
+    _tenant app.tenant;
   BEGIN
-    _app_tenant := app_fn.create_app_tenant(_name, _identifier, _email, _type);
-    return _app_tenant;
+    _tenant := app_fn.create_tenant(_name, _identifier, _email, _type);
+    return _tenant;
   end;
   $function$
   ;
 
-CREATE OR REPLACE FUNCTION app_fn.create_app_tenant(_name citext, _identifier citext default null, _email citext default null, _type app.app_tenant_type default 'customer'::app.app_tenant_type)
-  RETURNS app.app_tenant
+CREATE OR REPLACE FUNCTION app_fn.create_tenant(_name citext, _identifier citext default null, _email citext default null, _type app.tenant_type default 'customer'::app.tenant_type)
+  RETURNS app.tenant
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_tenant app.app_tenant;
+    _tenant app.tenant;
   BEGIN
     -- check for an existing tenant by this name
-    select * into _app_tenant from app.app_tenant where name = _name or (_identifier is not null and identifier = _identifier);
-    if _app_tenant.id is not null then
+    select * into _tenant from app.tenant where name = _name or (_identifier is not null and identifier = _identifier);
+    if _tenant.id is not null then
       raise exception '30002: APP TENANT WITH THIS NAME OR IDENTIFIER ALREADY EXISTS';
     end if;
 
     -- create the app tenant
-    insert into app.app_tenant(
+    insert into app.tenant(
       name
       ,identifier
       ,type
@@ -391,54 +391,54 @@ CREATE OR REPLACE FUNCTION app_fn.create_app_tenant(_name citext, _identifier ci
       _name
       ,_identifier
       ,_type
-    ) returning * into _app_tenant
+    ) returning * into _tenant
     ;
 
-    perform app_fn.subscribe_tenant_to_license_pack(_app_tenant.id, 'app');
-    perform app_fn.invite_user(_app_tenant.id, _email, 'admin');
+    perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'app');
+    perform app_fn.invite_user(_tenant.id, _email, 'admin');
 
-    return _app_tenant;
+    return _tenant;
   end;
   $function$
   ;
 
 ----------------------------------- subscribe_tenant_to_license_pack
-CREATE OR REPLACE FUNCTION app_fn_api.subscribe_tenant_to_license_pack(_app_tenant_id uuid, _license_pack_key citext)
-  RETURNS app.app_tenant_subscription
+CREATE OR REPLACE FUNCTION app_api.subscribe_tenant_to_license_pack(_tenant_id uuid, _license_pack_key citext)
+  RETURNS app.tenant_subscription
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_tenant_subcription app.app_tenant_subscription;
+    _tenant_subcription app.tenant_subscription;
   BEGIN
-    _app_tenant_subcription := app_fn.subscribe_tenant_to_license_pack(_app_tenant_id, _license_pack_key);
-    return _app_tenant_subcription;
+    _tenant_subcription := app_fn.subscribe_tenant_to_license_pack(_tenant_id, _license_pack_key);
+    return _tenant_subcription;
   end;
   $function$
   ;
 
-CREATE OR REPLACE FUNCTION app_fn.subscribe_tenant_to_license_pack(_app_tenant_id uuid, _license_pack_key citext)
-  RETURNS app.app_tenant_subscription
+CREATE OR REPLACE FUNCTION app_fn.subscribe_tenant_to_license_pack(_tenant_id uuid, _license_pack_key citext)
+  RETURNS app.tenant_subscription
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_tenant_subcription app.app_tenant_subscription;
-    _app_user app.app_user;
-    _app_user_tenancy app.app_user_tenancy;
+    _tenant_subcription app.tenant_subscription;
+    _profile app.profile;
+    _resident app.resident;
     _license_pack_license_type app.license_pack_license_type;
     _license_type_key citext;
   BEGIN
-    insert into app.app_tenant_subscription(
-      app_tenant_id
+    insert into app.tenant_subscription(
+      tenant_id
       ,license_pack_key
     ) values (
-      _app_tenant_id
+      _tenant_id
       ,_license_pack_key
     )
-    returning * into _app_tenant_subcription
+    returning * into _tenant_subcription
     ;
 
     for _license_type_key in
@@ -449,31 +449,31 @@ CREATE OR REPLACE FUNCTION app_fn.subscribe_tenant_to_license_pack(_app_tenant_i
         and lt.assignment_scope = 'admin'
     loop
       insert into app.license(
-        app_tenant_id
-        ,app_user_tenancy_id
-        ,app_tenant_subscription_id
+        tenant_id
+        ,resident_id
+        ,tenant_subscription_id
         ,license_type_key
       )
       select
-        _app_tenant_id
+        _tenant_id
         ,aut.id
-        ,_app_tenant_subcription.id
+        ,_tenant_subcription.id
         ,_license_type_key
-      from app.app_user_tenancy aut
-      join app.license l on l.app_user_tenancy_id = aut.id
+      from app.resident aut
+      join app.license l on l.resident_id = aut.id
       where l.license_type_key = 'app-admin'
-      and l.app_tenant_id = _app_tenant_id
-      on conflict (app_user_tenancy_id, license_type_key) DO UPDATE SET updated_at = EXCLUDED.updated_at
+      and l.tenant_id = _tenant_id
+      on conflict (resident_id, license_type_key) DO UPDATE SET updated_at = EXCLUDED.updated_at
       ;
     end loop;
       
-    return _app_tenant_subcription;
+    return _tenant_subcription;
   end;
   $function$
   ;
 
 ----------------------------------- grant_user_license
-CREATE OR REPLACE FUNCTION app_fn_api.grant_user_license(_app_user_tenancy_id uuid, _license_type_key citext)
+CREATE OR REPLACE FUNCTION app_api.grant_user_license(_resident_id uuid, _license_type_key citext)
   RETURNS app.license
   LANGUAGE plpgsql
   VOLATILE
@@ -484,33 +484,33 @@ CREATE OR REPLACE FUNCTION app_fn_api.grant_user_license(_app_user_tenancy_id uu
   BEGIN
     if auth_ext.has_permission('p:app-admin') != true then raise exception '30000: NOT AUTHORIZED'; end if;
 
-    _license := app_fn.grant_user_license(_app_user_tenancy_id, _license_type_key, auth_ext.app_user_tenancy_id());
+    _license := app_fn.grant_user_license(_resident_id, _license_type_key, auth_ext.resident_id());
     return _license;
   end;
   $function$
   ;
 
-CREATE OR REPLACE FUNCTION app_fn.grant_user_license(_app_user_tenancy_id uuid, _license_type_key citext, _current_user_app_tenancy_id uuid)
+CREATE OR REPLACE FUNCTION app_fn.grant_user_license(_resident_id uuid, _license_type_key citext, _current_user_appresident_id uuid)
   RETURNS app.license
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_tenant_subcription app.app_tenant_subscription;
-    _app_user_tenancy app.app_user_tenancy;
+    _tenant_subcription app.tenant_subscription;
+    _resident app.resident;
     _license_pack app.license_type;
     _license app.license;
     _license_type app.license_type;
   BEGIN
-    select aut.* into _app_user_tenancy from app.app_user_tenancy aut where id = _app_user_tenancy_id;
+    select aut.* into _resident from app.resident aut where id = _resident_id;
 
     select ats.* 
-    into _app_tenant_subcription 
-    from app.app_tenant_subscription ats 
+    into _tenant_subcription 
+    from app.tenant_subscription ats 
     join app.license_pack lp on lp.key = ats.license_pack_key
     join app.license_pack_license_type lplt on lplt.license_pack_key = lp.key
-    where ats.app_tenant_id = _app_user_tenancy.app_tenant_id
+    where ats.tenant_id = _resident.tenant_id
     and lplt.license_type_key = _license_type_key
         -- OPTIONAL TODO: check for license availablity
         -- here would go more filters to enforce license availability
@@ -521,19 +521,19 @@ CREATE OR REPLACE FUNCTION app_fn.grant_user_license(_app_user_tenancy_id uuid, 
         -- even refactory this statement out into a more complex function
     ;
     
-    select lp.* into _license_pack from app.license_pack lp where lp.key = _app_tenant_subcription.license_pack_key;
+    select lp.* into _license_pack from app.license_pack lp where lp.key = _tenant_subcription.license_pack_key;
     select lt.* into _license_type from app.license_type lt where key = _license_type_key;
 
     -- if license type is scoped as ('superadmin', 'admin', 'support', 'user') then remove any other scoped
     -- licenses for this application
     -- users should only ever have one of these four license scopes per application
     if _license_type.assignment_scope in ('superadmin', 'admin', 'support', 'user') then
-      if _current_user_app_tenancy_id = _app_user_tenancy.id then
+      if _current_user_appresident_id = _resident.id then
         raise exception '30025: USERS CANNOT ALTER OWN SCOPE LICENSE STATUS';
       end if;
 
       delete from app.license l
-      where l.app_user_tenancy_id = _app_user_tenancy.id
+      where l.resident_id = _resident.id
       and license_type_key in (
         select key from app.license_type where application_key = _license_type.application_key and assignment_scope in ('superadmin', 'admin', 'support', 'user')
       )
@@ -541,28 +541,28 @@ CREATE OR REPLACE FUNCTION app_fn.grant_user_license(_app_user_tenancy_id uuid, 
     end if;
 
     insert into app.license(
-      app_tenant_id
-      ,app_user_tenancy_id
-      ,app_tenant_subscription_id
+      tenant_id
+      ,resident_id
+      ,tenant_subscription_id
       ,license_type_key
     ) values (
-      _app_user_tenancy.app_tenant_id
-      ,_app_user_tenancy.id
-      ,_app_tenant_subcription.id
+      _resident.tenant_id
+      ,_resident.id
+      ,_tenant_subcription.id
       ,_license_type_key
     )
-    on conflict (app_user_tenancy_id, license_type_key) do update set
+    on conflict (resident_id, license_type_key) do update set
       updated_at = current_timestamp
     returning * into _license;
 
-    perform app_fn.configure_user_metadata(_app_user_tenancy.app_user_id);
+    perform app_fn.configure_user_metadata(_resident.profile_id);
 
     return _license;
   end;
   $function$
   ;
 ----------------------------------- revoke_user_license
-CREATE OR REPLACE FUNCTION app_fn_api.revoke_user_license(_license_id uuid)
+CREATE OR REPLACE FUNCTION app_api.revoke_user_license(_license_id uuid)
   RETURNS boolean
   LANGUAGE plpgsql
   VOLATILE
@@ -592,177 +592,177 @@ CREATE OR REPLACE FUNCTION app_fn.revoke_user_license(_license_id uuid)
 
     delete from app.license where id = _license_id;
 
-    -- raise exception '%', _license.app_user_tenancy_id;
-    perform app_fn.configure_user_metadata(app_user_id) from app.app_user_tenancy where id = _license.app_user_tenancy_id;
+    -- raise exception '%', _license.resident_id;
+    perform app_fn.configure_user_metadata(profile_id) from app.resident where id = _license.resident_id;
 
     return true;
   end;
   $function$
   ;
 
------------------------------------ block_app_user_tenancy
-CREATE OR REPLACE FUNCTION app_fn_api.block_app_user_tenancy(_app_user_tenancy_id uuid)
-  RETURNS app.app_user_tenancy
+----------------------------------- block_resident
+CREATE OR REPLACE FUNCTION app_api.block_resident(_resident_id uuid)
+  RETURNS app.resident
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_user_tenancy app.app_user_tenancy;
+    _resident app.resident;
   BEGIN
     if auth_ext.has_permission('p:app-admin') != true then raise exception '30000: NOT AUTHORIZED'; end if;
 
-    _app_user_tenancy := app_fn.block_app_user_tenancy(_app_user_tenancy_id);
-    return _app_user_tenancy;
+    _resident := app_fn.block_resident(_resident_id);
+    return _resident;
   end;
   $function$
   ;
 
-CREATE OR REPLACE FUNCTION app_fn.block_app_user_tenancy(_app_user_tenancy_id uuid)
-  RETURNS app.app_user_tenancy
+CREATE OR REPLACE FUNCTION app_fn.block_resident(_resident_id uuid)
+  RETURNS app.resident
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_user_tenancy app.app_user_tenancy;
+    _resident app.resident;
   BEGIN
-    update app.app_user_tenancy set status = 'blocked_individual' where id = _app_user_tenancy_id returning * into _app_user_tenancy;
+    update app.resident set status = 'blocked_individual' where id = _resident_id returning * into _resident;
 
-    perform app_fn.configure_user_metadata(_app_user_tenancy.app_user_id);
+    perform app_fn.configure_user_metadata(_resident.profile_id);
 
-    return _app_user_tenancy;
+    return _resident;
   end;
   $function$
   ;
 
------------------------------------ unblock_app_user_tenancy
-CREATE OR REPLACE FUNCTION app_fn_api.unblock_app_user_tenancy(_app_user_tenancy_id uuid)
-  RETURNS app.app_user_tenancy
+----------------------------------- unblock_resident
+CREATE OR REPLACE FUNCTION app_api.unblock_resident(_resident_id uuid)
+  RETURNS app.resident
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_user_tenancy app.app_user_tenancy;
+    _resident app.resident;
   BEGIN
     if auth_ext.has_permission('p:app-admin') != true then raise exception '30000: NOT AUTHORIZED'; end if;
 
-    _app_user_tenancy := app_fn.unblock_app_user_tenancy(_app_user_tenancy_id);
-    return _app_user_tenancy;
+    _resident := app_fn.unblock_resident(_resident_id);
+    return _resident;
   end;
   $function$
   ;
 
-CREATE OR REPLACE FUNCTION app_fn.unblock_app_user_tenancy(_app_user_tenancy_id uuid)
-  RETURNS app.app_user_tenancy
+CREATE OR REPLACE FUNCTION app_fn.unblock_resident(_resident_id uuid)
+  RETURNS app.resident
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_user_tenancy app.app_user_tenancy;
+    _resident app.resident;
   BEGIN
-    update app.app_user_tenancy set status = 'invited' where id = _app_user_tenancy_id returning * into _app_user_tenancy;
+    update app.resident set status = 'invited' where id = _resident_id returning * into _resident;
 
     if (
       select count(id) 
-      from app.app_user_tenancy 
-      where email = _app_user_tenancy.email 
-      and id != _app_user_tenancy.id 
+      from app.resident 
+      where email = _resident.email 
+      and id != _resident.id 
       and status = 'active'
-    ) = 0 and _app_user_tenancy.app_user_id is not null then
-      update app.app_user_tenancy set status = 'active' where id = _app_user_tenancy_id returning * into _app_user_tenancy;
-      perform app_fn.configure_user_metadata(_app_user_tenancy.app_user_id);
+    ) = 0 and _resident.profile_id is not null then
+      update app.resident set status = 'active' where id = _resident_id returning * into _resident;
+      perform app_fn.configure_user_metadata(_resident.profile_id);
     end if;
 
-    return _app_user_tenancy;
+    return _resident;
   end;
   $function$
   ;
------------------------------------ deactivate_app_tenant
-CREATE OR REPLACE FUNCTION app_fn_api.deactivate_app_tenant(_app_tenant_id uuid)
-  RETURNS app.app_tenant
+----------------------------------- deactivate_tenant
+CREATE OR REPLACE FUNCTION app_api.deactivate_tenant(_tenant_id uuid)
+  RETURNS app.tenant
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_tenant app.app_tenant;
+    _tenant app.tenant;
   BEGIN
     if auth_ext.has_permission('p:app-admin-super') != true then raise exception '30000: NOT AUTHORIZED'; end if;
 
-    _app_tenant := app_fn.deactivate_app_tenant(_app_tenant_id);
-    return _app_tenant;
+    _tenant := app_fn.deactivate_tenant(_tenant_id);
+    return _tenant;
   end;
   $function$
   ;
 
-CREATE OR REPLACE FUNCTION app_fn.deactivate_app_tenant(_app_tenant_id uuid)
-  RETURNS app.app_tenant
+CREATE OR REPLACE FUNCTION app_fn.deactivate_tenant(_tenant_id uuid)
+  RETURNS app.tenant
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_tenant app.app_tenant;
-    _active_user_tenancy_ids uuid[];
+    _tenant app.tenant;
+    _active_resident_ids uuid[];
   BEGIN
-    select array_agg(aut.id) into _active_user_tenancy_ids from app.app_user_tenancy aut where app_tenant_id = _app_tenant_id and status = 'active';
+    select array_agg(aut.id) into _active_resident_ids from app.resident aut where tenant_id = _tenant_id and status = 'active';
 
-    update app.app_tenant set status = 'inactive' where id = _app_tenant_id;
-    update app.app_user_tenancy set status = 'blocked_tenant' where app_tenant_id = _app_tenant_id and status in ('invited', 'active', 'inactive');
+    update app.tenant set status = 'inactive' where id = _tenant_id;
+    update app.resident set status = 'blocked_tenant' where tenant_id = _tenant_id and status in ('invited', 'active', 'inactive');
 
-    perform app_fn.configure_user_metadata(aut.id) from app.app_user_tenancy aut where id = any(_active_user_tenancy_ids);
+    perform app_fn.configure_user_metadata(aut.id) from app.resident aut where id = any(_active_resident_ids);
 
-    return _app_tenant;
+    return _tenant;
   end;
   $function$
   ;
 
------------------------------------ activate_app_tenant
-CREATE OR REPLACE FUNCTION app_fn_api.activate_app_tenant(_app_tenant_id uuid)
-  RETURNS app.app_tenant
+----------------------------------- activate_tenant
+CREATE OR REPLACE FUNCTION app_api.activate_tenant(_tenant_id uuid)
+  RETURNS app.tenant
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_tenant app.app_tenant;
+    _tenant app.tenant;
   BEGIN
     if auth_ext.has_permission('p:app-admin-super') != true then raise exception '30000: NOT AUTHORIZED'; end if;
 
-    _app_tenant := app_fn.activate_app_tenant(_app_tenant_id);
-    return _app_tenant;
+    _tenant := app_fn.activate_tenant(_tenant_id);
+    return _tenant;
   end;
   $function$
   ;
 
-CREATE OR REPLACE FUNCTION app_fn.activate_app_tenant(_app_tenant_id uuid)
-  RETURNS app.app_tenant
+CREATE OR REPLACE FUNCTION app_fn.activate_tenant(_tenant_id uuid)
+  RETURNS app.tenant
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $function$
   DECLARE
-    _app_tenant app.app_tenant;
+    _tenant app.tenant;
   BEGIN
-    update app.app_tenant set status = 'active' where id = _app_tenant_id;
-    update app.app_user_tenancy 
+    update app.tenant set status = 'active' where id = _tenant_id;
+    update app.resident 
       set status = 'inactive' 
-    where app_tenant_id = _app_tenant_id 
+    where tenant_id = _tenant_id 
     and status in ('blocked_tenant')
-    and app_user_id is not null
+    and profile_id is not null
     ;
 
-    update app.app_user_tenancy 
+    update app.resident 
       set status = 'invited' 
-    where app_tenant_id = _app_tenant_id 
+    where tenant_id = _tenant_id 
     and status in ('blocked_tenant')
-    and app_user_id is null
+    and profile_id is null
     ;
 
-    return _app_tenant;
+    return _tenant;
   end;
   $function$
   ;
@@ -770,9 +770,9 @@ CREATE OR REPLACE FUNCTION app_fn.activate_app_tenant(_app_tenant_id uuid)
 
 ---------------------------------------------------------------------- queries
 
------------------------------------ my_app_user_tenancies
-CREATE OR REPLACE FUNCTION app_fn_api.my_app_user_tenancies()
-  RETURNS setof app.app_user_tenancy
+----------------------------------- my_profile_residencies
+CREATE OR REPLACE FUNCTION app_api.my_profile_residencies()
+  RETURNS setof app.resident
   LANGUAGE plpgsql
   STABLE
   SECURITY INVOKER
@@ -780,13 +780,13 @@ CREATE OR REPLACE FUNCTION app_fn_api.my_app_user_tenancies()
   DECLARE
     
   BEGIN
-    return query select * from app_fn.my_app_user_tenancies(auth_ext.email());
+    return query select * from app_fn.my_profile_residencies(auth_ext.email());
   end;
   $function$
   ;
 
-CREATE OR REPLACE FUNCTION app_fn.my_app_user_tenancies(_email text)
-  RETURNS setof app.app_user_tenancy
+CREATE OR REPLACE FUNCTION app_fn.my_profile_residencies(_email text)
+  RETURNS setof app.resident
   LANGUAGE plpgsql
   STABLE
   SECURITY INVOKER
@@ -796,16 +796,16 @@ CREATE OR REPLACE FUNCTION app_fn.my_app_user_tenancies(_email text)
   BEGIN
     return query
     select aut.*
-    from app.app_user_tenancy aut
+    from app.resident aut
     where email = _email
     ;
   end;
   $function$
   ;
 
------------------------------------ app_tenant_app_user_tenancies
-CREATE OR REPLACE FUNCTION app_fn_api.app_tenant_app_user_tenancies()
-  RETURNS setof app.app_user_tenancy
+----------------------------------- tenant_profile_residencies
+CREATE OR REPLACE FUNCTION app_api.tenant_profile_residencies()
+  RETURNS setof app.resident
   LANGUAGE plpgsql
   STABLE
   SECURITY INVOKER
@@ -813,14 +813,14 @@ CREATE OR REPLACE FUNCTION app_fn_api.app_tenant_app_user_tenancies()
   DECLARE
     
   BEGIN
-    -- raise exception 'blah %', auth_ext.app_tenant_id();
-    return query select * from app_fn.app_tenant_app_user_tenancies(auth_ext.app_tenant_id());
+    -- raise exception 'blah %', auth_ext.tenant_id();
+    return query select * from app_fn.tenant_profile_residencies(auth_ext.tenant_id());
   end;
   $function$
   ;
 
-CREATE OR REPLACE FUNCTION app_fn.app_tenant_app_user_tenancies(_app_tenant_id uuid)
-  RETURNS setof app.app_user_tenancy
+CREATE OR REPLACE FUNCTION app_fn.tenant_profile_residencies(_tenant_id uuid)
+  RETURNS setof app.resident
   LANGUAGE plpgsql
   STABLE
   SECURITY INVOKER
@@ -830,18 +830,18 @@ CREATE OR REPLACE FUNCTION app_fn.app_tenant_app_user_tenancies(_app_tenant_id u
   BEGIN
     return query
     select distinct aut.*
-    from app.app_user_tenancy aut
-    where aut.app_tenant_id = _app_tenant_id
+    from app.resident aut
+    where aut.tenant_id = _tenant_id
     and not exists(
-      select l.id from app.license l where app_user_tenancy_id = aut.id and l.license_type_key = 'app-admin-support'
+      select l.id from app.license l where resident_id = aut.id and l.license_type_key = 'app-admin-support'
     )
     ;
   end;
   $function$
   ;
 
------------------------------------ app_tenant_licenses
-CREATE OR REPLACE FUNCTION app_fn_api.app_tenant_licenses()
+----------------------------------- tenant_licenses
+CREATE OR REPLACE FUNCTION app_api.tenant_licenses()
   RETURNS setof app.license
   LANGUAGE plpgsql
   STABLE
@@ -850,12 +850,12 @@ CREATE OR REPLACE FUNCTION app_fn_api.app_tenant_licenses()
   DECLARE
     
   BEGIN
-    return query select * from app_fn.app_tenant_licenses(auth_ext.app_tenant_id());
+    return query select * from app_fn.tenant_licenses(auth_ext.tenant_id());
   end;
   $function$
   ;
 
-CREATE OR REPLACE FUNCTION app_fn.app_tenant_licenses(_app_tenant_id uuid)
+CREATE OR REPLACE FUNCTION app_fn.tenant_licenses(_tenant_id uuid)
   RETURNS setof app.license
   LANGUAGE plpgsql
   STABLE
@@ -868,9 +868,9 @@ CREATE OR REPLACE FUNCTION app_fn.app_tenant_licenses(_app_tenant_id uuid)
     select l.*
     from app.license l
     where l.license_Type_key != 'app-admin-support'
-    and app_tenant_id = _app_tenant_id
+    and tenant_id = _tenant_id
     and not exists (
-      select id from app.license where app_user_tenancy_id = l.app_user_tenancy_id and license_type_key = 'app-admin-support'
+      select id from app.license where resident_id = l.resident_id and license_type_key = 'app-admin-support'
     )
     ;
   end;
@@ -878,46 +878,46 @@ CREATE OR REPLACE FUNCTION app_fn.app_tenant_licenses(_app_tenant_id uuid)
   ;
 
 ----------------------------------------------------------------- join_address_book
-CREATE OR REPLACE FUNCTION app_fn_api.join_address_book()
-  RETURNS app.app_user
+CREATE OR REPLACE FUNCTION app_api.join_address_book()
+  RETURNS app.profile
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $$
   DECLARE
-    _app_user app.app_user;
+    _profile app.profile;
   BEGIN
-    _app_user := app_fn.join_address_book(auth.uid());
-    return _app_user;
+    _profile := app_fn.join_address_book(auth.uid());
+    return _profile;
   end;
   $$;  
 
-CREATE OR REPLACE FUNCTION app_fn.join_address_book(_app_user_id uuid)
-  RETURNS app.app_user
+CREATE OR REPLACE FUNCTION app_fn.join_address_book(_profile_id uuid)
+  RETURNS app.profile
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $$
   DECLARE
-    _app_user app.app_user;
+    _profile app.profile;
   BEGIN
-    -- raise notice '_app_user_id: %', _app_user_id;
-    -- raise notice 'email: %', (select email from app.app_user where id = _app_user_id);
+    -- raise notice '_profile_id: %', _profile_id;
+    -- raise notice 'email: %', (select email from app.profile where id = _profile_id);
     
-    update app.app_user set
+    update app.profile set
       is_public = true
-    where id = _app_user_id
+    where id = _profile_id
     returning *
-    into _app_user
+    into _profile
     ;
 
-    -- raise notice '_app_user: %', _app_user;
+    -- raise notice '_profile: %', _profile;
 
-    return _app_user;
+    return _profile;
   end;
   $$;  
 ----------------------------------------------------------------- get_ab_listings
-CREATE OR REPLACE FUNCTION app_fn_api.get_ab_listings(_app_user_id uuid)
+CREATE OR REPLACE FUNCTION app_api.get_ab_listings(_profile_id uuid)
   RETURNS SETOF app_fn.ab_listing
   LANGUAGE plpgsql
   STABLE
@@ -925,11 +925,11 @@ CREATE OR REPLACE FUNCTION app_fn_api.get_ab_listings(_app_user_id uuid)
   AS $$
   DECLARE
   BEGIN
-    return query select * from app_fn.get_ab_listings(auth.uid(), auth_ext.app_tenant_id());
+    return query select * from app_fn.get_ab_listings(auth.uid(), auth_ext.tenant_id());
   end;
   $$;  
 ----------------------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION app_fn.get_ab_listings(_app_user_id uuid, _user_app_tenant_id uuid)
+CREATE OR REPLACE FUNCTION app_fn.get_ab_listings(_profile_id uuid, _user_tenant_id uuid)
   RETURNS SETOF app_fn.ab_listing
   LANGUAGE plpgsql
   STABLE
@@ -942,67 +942,67 @@ CREATE OR REPLACE FUNCTION app_fn.get_ab_listings(_app_user_id uuid, _user_app_t
 
     return query
       select 
-        u.id as app_user_id
+        u.id as profile_id
         ,u.email
         ,u.phone
         ,u.full_name
         ,u.display_name
         ,(
           select _can_invite 
-          and (u.id != _app_user_id)
-          and not exists (select id from app.app_user_tenancy where app_tenant_id = _user_app_tenant_id and app_user_id = u.id)
+          and (u.id != _profile_id)
+          and not exists (select id from app.resident where tenant_id = _user_tenant_id and profile_id = u.id)
         ) as _can_invite
-      from app.app_user u
+      from app.profile u
       where is_public = true
-      and exists(select id from app.app_user where id = _app_user_id and is_public = true)
+      and exists(select id from app.profile where id = _profile_id and is_public = true)
       ;
   end;
   $$;  
 ----------------------------------------------------------------- leave_address_book
-CREATE OR REPLACE FUNCTION app_fn_api.leave_address_book()
-  RETURNS app.app_user
+CREATE OR REPLACE FUNCTION app_api.leave_address_book()
+  RETURNS app.profile
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $$
   DECLARE
-    _app_user app.app_user;
+    _profile app.profile;
   BEGIN
-    _app_user := app_fn.leave_address_book(auth.uid());
-    return _app_user;
+    _profile := app_fn.leave_address_book(auth.uid());
+    return _profile;
   end;
   $$;  
 
-CREATE OR REPLACE FUNCTION app_fn.leave_address_book(_app_user_id uuid)
-  RETURNS app.app_user
+CREATE OR REPLACE FUNCTION app_fn.leave_address_book(_profile_id uuid)
+  RETURNS app.profile
   LANGUAGE plpgsql
   VOLATILE
   SECURITY INVOKER
   AS $$
   DECLARE
-    _app_user app.app_user;
+    _profile app.profile;
   BEGIN
-    update app.app_user set
+    update app.profile set
       is_public = false
-    where id = _app_user_id
+    where id = _profile_id
     returning *
-    into _app_user
+    into _profile
     ;
 
-    return _app_user;
+    return _profile;
   end;
   $$;  
 ----------------------------------------------------------------- get_myself ---  API ONLY
-CREATE OR REPLACE FUNCTION app_fn_api.get_myself()
-  RETURNS app.app_user
+CREATE OR REPLACE FUNCTION app_api.get_myself()
+  RETURNS app.profile
   LANGUAGE plpgsql
   STABLE
   SECURITY INVOKER
   AS $$
   DECLARE
-    _app_user app.app_user;
+    _profile app.profile;
   BEGIN
-    select * into _app_user from app.app_user where id = auth.uid();
-    return _app_user;
+    select * into _profile from app.profile where id = auth.uid();
+    return _profile;
   end;
   $$;  

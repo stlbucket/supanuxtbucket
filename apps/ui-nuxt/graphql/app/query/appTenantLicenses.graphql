@@ -1,9 +1,9 @@
-query AppTenantLicenses{
-  appTenantLicenses {
+query TenantLicenses{
+  tenantLicenses {
     nodes {
       id
       licenseTypeKey
-      appUserTenancy: appUserTenancyByAppUserTenancyId {
+      resident: residentByResidentId {
         id
         email
         status
