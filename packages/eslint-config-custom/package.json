@@ -1,0 +1,17 @@
+{
+  "name": "@myturborepo/eslint-config-custom",
+  "version": "0.0.0",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "@antfu/eslint-config": "^0.39.3",
+    "eslint": "^8.41.0",
+    "eslint-config-turbo": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

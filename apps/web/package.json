@@ -1,0 +1,19 @@
+{
+  "name": "@myturborepo/web",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  },
+  "devDependencies": {
+    "nuxt": "3.5.1",
+    "@myturborepo/tsconfig": "workspace:*",
+    "@myturborepo/ui": "workspace:*"
+  }
+}
