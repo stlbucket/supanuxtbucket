@@ -58,12 +58,12 @@ alter table msg.topic enable row level security;
       WITH CHECK (auth_ext.has_permission('p:discussions', tenant_id))
       ;
 
-alter table msg.subscription enable row level security;
-    CREATE POLICY view_all_for_tenant ON msg.subscription
+alter table msg.subscriber enable row level security;
+    CREATE POLICY view_all_for_tenant ON msg.subscriber
       FOR SELECT
       USING (auth_ext.has_permission('p:discussions', tenant_id))
       ;
-    CREATE POLICY create_for_tenant ON msg.subscription
+    CREATE POLICY create_for_tenant ON msg.subscriber
       FOR INSERT
       WITH CHECK (auth_ext.has_permission('p:discussions', tenant_id))
       ;

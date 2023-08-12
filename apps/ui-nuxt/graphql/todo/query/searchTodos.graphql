@@ -18,20 +18,16 @@ query SearchTodos(
       type
       createdAt
       updatedAt
-      owner: todoUserByResidentId {
+      resident {
         residentId
         displayName
       }
-      parentTodo: todoByParentTodoId {
+      parentTodo {
         id
         name
         description
       }
-      todoUser: todoUserByResidentId {
-        residentId
-        displayName
-      }
-      todoTenant: todoTenantByTenantId {
+      tenant {
         tenantId
         name
       }

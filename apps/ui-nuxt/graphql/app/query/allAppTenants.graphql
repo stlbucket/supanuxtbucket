@@ -1,5 +1,5 @@
 query AllTenants {
-	allTenants(orderBy: NAME_ASC) {
+	tenants(orderBy: NAME_ASC) {
     nodes {
       id
       name
@@ -7,14 +7,14 @@ query AllTenants {
       identifier
       status
       type
-      licenses: licensesByTenantId {
+      licenses {
         totalCount
       }
-      tenantSubscriptions: tenantSubscriptionsByTenantIdList(orderBy: LICENSE_PACK_KEY_ASC) {
+      tenantSubscriptionsList(orderBy: LICENSE_PACK_KEY_ASC) {
         id
         licensePackKey
         createdAt
-        licensePack: licensePackByLicensePackKey {
+        licensePack {
           key
           displayName
           licenseTypes: licensePackLicenseTypesByLicensePackKeyList(orderBy: LICENSE_TYPE_KEY_ASC) {

@@ -1,5 +1,5 @@
 query DemoResidents {
-  residents: appApiDemoProfileResidencies {
+  demoProfileResidencies {
     nodes {
       id
       email

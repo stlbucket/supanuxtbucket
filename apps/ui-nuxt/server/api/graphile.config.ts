@@ -1,14 +1,20 @@
 // Only needed for TypeScript types support
 import "postgraphile";
+// Use the 'pg' module to connect to the database
 import { PgSimplifyInflectionPreset } from "@graphile/simplify-inflection";
 import { PostGraphileAmberPreset as amber} from "postgraphile/presets/amber";
 // Use the 'pg' module to connect to the database
 import { makePgService } from "postgraphile/adaptors/pg";
+import { makeV4Preset } from "postgraphile/presets/v4";
 
 const preset: GraphileConfig.Preset = {
   extends: [
     amber,
-    PgSimplifyInflectionPreset
+    PgSimplifyInflectionPreset,
+    makeV4Preset({
+      simpleCollections: "both",
+      disableDefaultMutations: true
+    })
     /* Add more presets here */
   ],
 
@@ -42,16 +48,16 @@ const preset: GraphileConfig.Preset = {
     /* options for Grafast, including setting GraphQL context*/
     context: (requestContext, args) => {
       // this is where user session data set in /server/middleware/auth is used to pass into the query context
-      const additionalSettings = {} // requestContext.nuxtv3?.event.context.
-
-      // const pgSettings = {
-      //   role: claims.aud || 'anon',
-      //   'request.jwt.claim.sub': claims.sub,
-      //   'request.jwt.claim.aud': claims.aud,
-      //   'request.jwt.claim.exp': claims.exp,
-      //   'request.jwt.claim.email': claims.email,
-      //   'request.jwt.claim': JSON.stringify(claims)
-      // }
+      const claims = requestContext.h3v1?.event.context.user
+      console.log('claims', claims)
+      const additionalSettings = {
+        role: claims.aud || 'anon',
+        'request.jwt.claim.sub': claims.sub,
+        'request.jwt.claim.aud': claims.aud,
+        'request.jwt.claim.exp': claims.exp,
+        'request.jwt.claim.email': claims.email,
+        'request.jwt.claim': JSON.stringify(claims)
+      }
   
       return {
         pgSettings: {

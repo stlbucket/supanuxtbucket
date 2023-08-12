@@ -1,7 +1,7 @@
 query TodoById(
   $id: UUID!
 ) {
-  todoById(id: $id) {
+  todo(id: $id) {
     id
     name
     description
@@ -10,11 +10,11 @@ query TodoById(
     createdAt
     updatedAt
     parentTodoId
-    owner: todoUserByResidentId {
+    owner: resident {
       residentId
       displayName
     }
-    parent: todoByParentTodoId {
+    parentTodo {
       id
       name
       description
@@ -23,11 +23,11 @@ query TodoById(
       createdAt
       updatedAt
       parentTodoId
-      owner: todoUserByResidentId {
+      owner: resident {
         residentId
         displayName
       }
-      parent: todoByParentTodoId {
+      parentTodo {
         id
         name
         description
@@ -36,7 +36,7 @@ query TodoById(
         createdAt
         updatedAt
         parentTodoId
-        owner: todoUserByResidentId {
+        owner: resident {
           residentId
           displayName
         }
@@ -49,7 +49,7 @@ query TodoById(
           createdAt
           updatedAt
           parentTodoId
-          owner: todoUserByResidentId {
+          owner: resident {
             residentId
             displayName
           }
@@ -58,7 +58,7 @@ query TodoById(
             name
             type
             status
-            owner: todoUserByResidentId {
+            owner: resident {
               residentId
               displayName
             }
@@ -74,7 +74,7 @@ query TodoById(
         createdAt
         updatedAt
         parentTodoId
-        owner: todoUserByResidentId {
+        owner: resident {
           residentId
           displayName
 				}
@@ -83,7 +83,7 @@ query TodoById(
           name
           type
           status
-          owner: todoUserByResidentId {
+          owner: resident {
          		residentId
           	displayName
         	}
@@ -99,7 +99,7 @@ query TodoById(
       createdAt
       updatedAt
       parentTodoId
-      owner: todoUserByResidentId {
+      owner: resident {
           residentId
           displayName
       }
@@ -108,7 +108,7 @@ query TodoById(
         name
         type
         status
-        owner: todoUserByResidentId {
+        owner: resident {
           residentId
           displayName
         }

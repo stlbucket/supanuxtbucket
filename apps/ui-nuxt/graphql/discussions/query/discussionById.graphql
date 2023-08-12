@@ -1,26 +1,26 @@
 query DiscussionById(
   $topicId: UUID!
 ) {
-  topicById(id: $topicId) {
+  topic(id: $topicId) {
     id
     name
     identifier
     status
-    subscriptions: subscriptionsByTopicIdList {
+    subscribers: subscribersList {
       id
       status
       lastRead
-      msgUser: msgUserBySubscriberMsgUserId {
+      msgResident {
         id
         displayName
       }
     }
-    messages: messagesByTopicIdList {
+    messages: messagesList {
       id
       createdAt
       status
       content
-      postedBy: msgUserByPostedByMsgUserId {
+      postedBy: postedByMsgResident {
         id
         displayName
       }

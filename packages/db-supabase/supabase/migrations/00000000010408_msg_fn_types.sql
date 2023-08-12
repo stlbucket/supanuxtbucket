@@ -1,9 +1,9 @@
 create schema if not exists msg_api;
 create schema if not exists msg_fn;
 
-create type msg_fn.subscription_info as (
+create type msg_fn.subscriber_info as (
   topic_id uuid
-  ,subscriber_msg_resident_id uuid
+  ,msg_resident_id uuid
 );
 
 create type msg_fn.message_info as (

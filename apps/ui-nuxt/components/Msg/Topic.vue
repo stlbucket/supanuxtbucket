@@ -32,9 +32,7 @@
         </div>
       </div>
     </div>
-  </UCard>  
-  <!-- <div class="flex grow bg-red-400">
-  </div> -->
+  </UCard>
 </template>
 
 <script lang="ts" setup>
@@ -50,7 +48,7 @@
     const result = await GqlDiscussionById({
       topicId: props.topicId
     })
-    topic.value = result.topicById
+    topic.value = result.topic
   }
   loadData()
 

@@ -26,13 +26,14 @@
     const { error } = await supabase.auth.signInWithOtp({
       email: email.value,
       options: {
-        emailRedirectTo: 'http://localhost:3025/my-profile'
+        emailRedirectTo: 'http://localhost:3025/my-profile',
       }
     })
     if (error) {
       alert(error.message)
+    } else {
+      alert('Check your email inbox for the magic link!')
     }
-    alert('Check your email inbox for the magic link!')
   }
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut()

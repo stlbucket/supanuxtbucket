@@ -1,18 +1,18 @@
 query AllDiscussions {
-  allTopics {
+  topics {
     nodes {
       id
       name
       status
-      subscriptions: subscriptionsByTopicIdList {
+      subscribers: subscribersList {
         id
         status
-        msgUser: msgUserBySubscriberMsgUserId {
+        msgResident {
           id
           displayName
         }
       }
-      messages: messagesByTopicId {
+      messages {
         totalCount
       }
     }

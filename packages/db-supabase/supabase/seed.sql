@@ -116,7 +116,7 @@
   )
   from app.resident aut;
 
-  select msg_fn.upsert_subscription(
+  select msg_fn.upsert_subscriber(
     row(
       t.id
       ,mu.id

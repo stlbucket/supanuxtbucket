@@ -24,7 +24,7 @@ SELECT * FROM no_plan();
   --     _tenant_id => (select id from app.tenant where name = :'_tenant_name'::citext)
   --     ,_license_pack_key => :'_license_pack_key'::citext
   --   ))
-  --   ,'app.tenant_subscription'
+  --   ,'app.tenant_subscriber'
   --   ,'should subscribe tenant to license pack'
   -- );
   select isa_ok(

@@ -2,7 +2,15 @@
 // import defaultTheme from 'tailwindcss/defaultTheme'
 export default defineNuxtConfig({
   supabase: {
-    redirect: false
+    redirect: false,
+    clientOptions: {
+      auth: {
+        flowType: 'implicit',
+        detectSessionInUrl: true,
+        persistSession: true,
+        autoRefreshToken: true
+      },
+    }
   },
   imports: {
     dirs: [

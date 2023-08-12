@@ -272,7 +272,6 @@ SELECT function_returns(
 \set _superadmin_email 'app-admin-super@example.com'
 \set _email 'test-user@example.com'
 \set _role 'authenticated'
--- \set _email 'wtf'
 ------------------------------------
 select isa_ok(
   test_helpers.create_supabase_user(

@@ -13,7 +13,7 @@ create type msg.message_status as enum (
   'deleted'
 );
 
-create type msg.subscription_status as enum (
+create type msg.subscriber_status as enum (
   'active',
   'inactive',
   'blocked'
@@ -59,18 +59,18 @@ ALTER TABLE ONLY msg.message
 create index idx_message_tenant_id on msg.message(tenant_id);
 create index idx_message_posted_by_msg_resident_id on msg.message(posted_by_msg_resident_id);
 
-create table msg.subscription (
+create table msg.subscriber (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   tenant_id uuid not null references msg.msg_tenant(tenant_id),
   created_at timestamptz not null default current_timestamp,
-  status msg.subscription_status not null default 'active',
+  status msg.subscriber_status not null default 'active',
   topic_id uuid not null references msg.topic(id),
-  subscriber_msg_resident_id uuid not null references msg.msg_resident(id),
+  msg_resident_id uuid not null references msg.msg_resident(id),
   last_read timestamptz not null default current_timestamp
 );
-ALTER TABLE ONLY msg.subscription
-    ADD CONSTRAINT pk_subscription PRIMARY KEY (id);
-ALTER TABLE ONLY msg.subscription
-    ADD CONSTRAINT uq_subscription unique (topic_id, subscriber_msg_resident_id);
-create index idx_subscription_tenant_id on msg.subscription(tenant_id);
-create index idx_subscription_subscriber_msg_resident_id on msg.subscription(subscriber_msg_resident_id);
+ALTER TABLE ONLY msg.subscriber
+    ADD CONSTRAINT pk_subscriber PRIMARY KEY (id);
+ALTER TABLE ONLY msg.subscriber
+    ADD CONSTRAINT uq_subscriber unique (topic_id, msg_resident_id);
+create index idx_subscriber_tenant_id on msg.subscriber(tenant_id);
+create index idx_subscriber_msg_resident_id on msg.subscriber(msg_resident_id);

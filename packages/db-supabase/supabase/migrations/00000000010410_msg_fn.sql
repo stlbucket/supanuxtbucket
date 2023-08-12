@@ -185,107 +185,107 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_message(
     return _message;
   end;
   $$;
--------------------------------------- upsert_subscription
-CREATE OR REPLACE FUNCTION msg_api.upsert_subscription(
-    _subscription_info msg_fn.subscription_info
-  ) RETURNS msg.subscription
+-------------------------------------- upsert_subscriber
+CREATE OR REPLACE FUNCTION msg_api.upsert_subscriber(
+    _subscriber_info msg_fn.subscriber_info
+  ) RETURNS msg.subscriber
     LANGUAGE plpgsql VOLATILE
     AS $$
   DECLARE
-    _subscription msg.subscription;
+    _subscriber msg.subscriber;
   BEGIN
     perform auth_ext.enforce_permission('p:discussions');
 
-    _subscription := msg_fn.upsert_subscription(
-      _subscription_info
+    _subscriber := msg_fn.upsert_subscriber(
+      _subscriber_info
     );
-    return _subscription;
+    return _subscriber;
   end;
   $$;
 
-CREATE OR REPLACE FUNCTION msg_fn.upsert_subscription(
-    _subscription_info msg_fn.subscription_info
-  ) RETURNS msg.subscription
+CREATE OR REPLACE FUNCTION msg_fn.upsert_subscriber(
+    _subscriber_info msg_fn.subscriber_info
+  ) RETURNS msg.subscriber
     LANGUAGE plpgsql VOLATILE
     AS $$
   DECLARE
     _topic msg.topic;
-    _subscription msg.subscription;
+    _subscriber msg.subscriber;
     _msg_resident msg.msg_resident;
   BEGIN
-    _msg_resident := msg_fn.ensure_msg_resident(_subscription_info.subscriber_msg_resident_id);
+    _msg_resident := msg_fn.ensure_msg_resident(_subscriber_info.msg_resident_id);
 
     select *
     into _topic
     from msg.topic
-    where id = _subscription_info.topic_id
+    where id = _subscriber_info.topic_id
     ;
     if _topic.id is null then
-      raise exception 'no topic for id: %', _subscription_info.topic_id;
+      raise exception 'no topic for id: %', _subscriber_info.topic_id;
     end if;
 
-    select * into _subscription
-    from msg.subscription
-    where topic_id = _subscription_info.topic_id
-    and subscriber_msg_resident_id = _subscription_info.subscriber_msg_resident_id
+    select * into _subscriber
+    from msg.subscriber
+    where topic_id = _subscriber_info.topic_id
+    and msg_resident_id = _subscriber_info.msg_resident_id
     ;
 
-    if _subscription.id is not null then
-      update msg.subscription set
+    if _subscriber.id is not null then
+      update msg.subscriber set
         status = 'active'
-      where id = _subscription.id
+      where id = _subscriber.id
       ;
     else
-      insert into msg.subscription(
+      insert into msg.subscriber(
         tenant_id
         ,topic_id
-        ,subscriber_msg_resident_id
+        ,msg_resident_id
       )
       select
         _topic.tenant_id
         ,_topic.id
-        ,_subscription_info.subscriber_msg_resident_id
+        ,_subscriber_info.msg_resident_id
       returning *
-      into _subscription
+      into _subscriber
       ;
     end if;
 
-    return _subscription;
+    return _subscriber;
   end;
   $$;
--------------------------------------- upsert_subscription
-CREATE OR REPLACE FUNCTION msg_api.deactivate_subscription(
-    _subscription_id uuid
-  ) RETURNS msg.subscription
+-------------------------------------- upsert_subscriber
+CREATE OR REPLACE FUNCTION msg_api.deactivate_subscriber(
+    _subscriber_id uuid
+  ) RETURNS msg.subscriber
     LANGUAGE plpgsql VOLATILE
     AS $$
   DECLARE
-    _subscription msg.subscription;
+    _subscriber msg.subscriber;
   BEGIN
     perform auth_ext.enforce_permission('p:discussions');
 
-    _subscription := msg_fn.deactivate_subscription(
-      _subscription_id
+    _subscriber := msg_fn.deactivate_subscriber(
+      _subscriber_id
     );
-    return _subscription;
+    return _subscriber;
   end;
   $$;
 
-CREATE OR REPLACE FUNCTION msg_fn.deactivate_subscription(
-    _subscription_id uuid
-  ) RETURNS msg.subscription
+CREATE OR REPLACE FUNCTION msg_fn.deactivate_subscriber(
+    _subscriber_id uuid
+  ) RETURNS msg.subscriber
     LANGUAGE plpgsql VOLATILE
     AS $$
   DECLARE
-    _subscription msg.subscription;
+    _subscriber msg.subscriber;
   BEGIN
-    update msg.subscription set
+    update msg.subscriber set
       status = 'inactive'
-    where id = _subscription_id
+    where id = _subscriber_id
     returning *
-    into _subscription
+    into _subscriber
     ;
 
-    return _subscription;
+    return _subscriber;
   end;
   $$;

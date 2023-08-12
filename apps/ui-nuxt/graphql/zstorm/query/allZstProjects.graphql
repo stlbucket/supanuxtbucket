@@ -1,9 +1,0 @@
-query AllZstProjects {
-  allZstProjects {
-    nodes {
-      id
-      name
-      createdAt
-    }
-  }
-}

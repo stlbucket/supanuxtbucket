@@ -28,21 +28,21 @@
   const residents = ref([])
   const loadResidents = async () => {
     const result = await GqlDemoResidents()
-    residents.value = result.residents.nodes || []
+    residents.value = result.demoProfileResidencies.nodes || []
   }
   loadResidents()
 
-  // const handleLogin = async (resident: Resident) => {
-  //   const { error } = await supabase.auth.signInWithOtp({
-  //     email: resident.email,
-  //     options: {
-  //       emailRedirectTo: 'http://localhost:3025'
-  //     }
-  //   })
-  //   if (error) {
-  //     alert(error.message)
-  //   }
-  //   alert('Check your email inbox for the magic link!')
-  //   navigateTo('http://localhost:54324/monitor', {external: true})
-  // }
+  const handleLogin = async (resident: any) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      email: resident.email,
+      options: {
+        emailRedirectTo: 'http://localhost:3025'
+      }
+    })
+    if (error) {
+      alert(error.message)
+    }
+    alert('Check your email inbox for the magic link!')
+    navigateTo('http://localhost:54324/monitor', {external: true})
+  }
 </script>
