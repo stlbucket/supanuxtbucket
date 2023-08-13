@@ -10,12 +10,12 @@ import { makeV4Preset } from "postgraphile/presets/v4";
 const preset: GraphileConfig.Preset = {
   extends: [
     amber,
-    PgSimplifyInflectionPreset,
     makeV4Preset({
       simpleCollections: "both",
       disableDefaultMutations: true,
       dynamicJson: true
-    })
+    }),
+    PgSimplifyInflectionPreset,
     /* Add more presets here */
   ],
 
@@ -52,11 +52,11 @@ const preset: GraphileConfig.Preset = {
       const claims = requestContext.h3v1?.event.context.user
       console.log('claims', claims)
       const additionalSettings = {
-        role: claims.aud || 'anon',
-        'request.jwt.claim.sub': claims.sub,
-        'request.jwt.claim.aud': claims.aud,
-        'request.jwt.claim.exp': claims.exp,
-        'request.jwt.claim.email': claims.email,
+        role: claims?.aud || 'anon',
+        'request.jwt.claim.sub': claims?.sub,
+        'request.jwt.claim.aud': claims?.aud,
+        'request.jwt.claim.exp': claims?.exp,
+        'request.jwt.claim.email': claims?.email,
         'request.jwt.claim': JSON.stringify(claims)
       }
   

@@ -5,10 +5,42 @@
         <div class="flex gap-1">
           <div class="flex flex-col gap-1 w-30 p-1">
             <div class="flex justify-around gap-1">
-              <UButton v-if="todoTree.status?.toUpperCase() === 'COMPLETE'" icon="i-heroicons-check" size="sm" color="green" square variant="solid" title="Reopen" @click="handleReopen" :disabled="!todoTree.canEdit"/>
-              <UButton v-if="todoTree.status?.toUpperCase() === 'INCOMPLETE'" icon="none" size="sm" color="yellow" square variant="outline" title="Close" @click="handleClose" :disabled="!todoTree.canEdit"/>
+              <UButton 
+                v-if="todoTree.status?.toUpperCase() === 'COMPLETE'" 
+                icon="i-heroicons-check"
+                size="sm"
+                color="green"
+                square
+                variant="solid"
+                title="Reopen"
+                @click="onReopened"
+                :disabled="todoTree.type !== 'TASK'"
+              />
+              <UButton
+                v-if="todoTree.status?.toUpperCase() === 'INCOMPLETE'"
+                icon="none"
+                size="sm"
+                color="yellow"
+                square variant="outline"
+                title="Close"
+                @click="onClosed"
+                :disabled="todoTree.type !== 'TASK'"
+              />
+              <TodoModal @updated="handleAddSubtask" :parent-todo="todoTree"/>
             </div>
-          </div>
+            <div class="flex gap-1">
+              <TodoModal :todo="todoTree" @updated="handleUpdated"/>
+              <UButton 
+                icon="i-heroicons-minus-circle" 
+                size="sm" 
+                color="red" 
+                square 
+                variant="solid" 
+                title="Delete" 
+                @click="handleDelete"
+              />
+            </div>
+            </div>
         </div>
       </div>
       <div class="flex flex-1 flex-col m-2 flex-grow-2 gap-1">
@@ -21,57 +53,137 @@
         </div>
       </div>
     </div>
+    <div v-if="todoTree.children.hidden > 0" class="flex justify-start min-w-max grow ml-10">
+      {{ todoTree.children }} children...
+    </div>
     <div v-if="todoTree.children?.length > 0" class="ml-3">
       <TodoTree 
         v-for="c in todoTree.children" 
-        :todo-tree="c" 
+        :todo-id="c.id"
+        :sub-tree="c" 
         :tree-level="(treeLevel + 1)"
         @selected="handleSelectTodo"
-        @updated="onUpdated"
+        @updated="handleChildUpdated"
       />
     </div>
   </div>
-  <!-- <pre>{{ todoTree }}</pre> -->
 </template>
 
 <script lang="ts" setup>
-  const props = defineProps<{
-    todoTree: any
-    treeLevel: number
-  }>()
+  const props = withDefaults(defineProps<{
+    todoId: string,
+    subTree?: any,
+    treeLevel?: number
+  }>(), {
+    treeLevel: 0
+  })
 
   const emit = defineEmits<{
-    (e: 'updated', todoId: string): void
+    (e: 'updated', todo: any): void
+    (e: 'subtaskAdded', todo: any, subTask: any): void    
+    (e: 'assigned', todo: any): void
+    (e: 'deleted'): void
     (e: 'selected', todoId: string): void
   }>()
 
-  const handleClose = async () => {
+  const todoTree = ref()
+
+  const shallowMerge = (todo: any) => {
+    todoTree.value = {
+      ...todoTree.value,
+      ...{
+        name: todo.name,
+        status: todo.status,
+        owner: todo.owner
+      }
+    }
+  }
+
+  const shallowRefresh = async () => {
+    const priorStatus = todoTree.value.status
+    const result = await GqlTodoById({
+      id: props.todoId,
+    })
+
+    shallowMerge(result.todo)
+ 
+    if (todoTree.value !== priorStatus) {
+      emit('updated', todoTree)
+    }
+  }
+
+  const loadData = async () => {
+    // console.log('heyo')
+    const result = await GqlTodoById({
+      id: props.todoId,
+    })
+    todoTree.value = result.todo
+  }
+
+  const initializeData = async () => {
+    // console.log(JSON.stringify(props,null,2))
+    if (props.treeLevel === 0) {
+      await loadData()
+    } else {
+      todoTree.value = props.subTree
+    }
+  }
+  initializeData()
+
+  // this only happens for tasks, which never have children
+  const onClosed = async () => {
     const result = await GqlUpdateTodoStatus({
-      todoId: props.todoTree.id,
+      todoId: props.todoId,
       status: 'COMPLETE'
     })
-    emit('updated', props.todoTree.id)
+    todoTree.value.status = result.updateTodoStatus.todo.status
+    emit('updated', result.updateTodoStatus.todo)
   }
-  const handleReopen = async () => {
+  // this only happens for tasks, which never have children
+  const onReopened = async () => {
     const result = await GqlUpdateTodoStatus({
-      todoId: props.todoTree.id,
+      todoId: props.todoId,
       status: 'INCOMPLETE'
     })
-    emit('updated', props.todoTree.id)
+    todoTree.value.status = result.updateTodoStatus.todo.status
+    emit('updated', result.updateTodoStatus.todo)
   }
+
+  // this only happens for milestones, which always have children
+  const handleChildUpdated = async () => {
+    await shallowRefresh()
+  }
+
+  // updated is for changes that do not affect task status - name, description, tags...
+  const handleUpdated = async (todo: any) => {
+    await shallowMerge(todo)
+  }
+  // add the child optimistically, if current state is complete, then we will need to refresh and bubble
+  const handleAddSubtask = async (todo: any) => {
+    todoTree.value.children = [...todoTree.value.children, todo]
+    await shallowRefresh()
+  }
+  const handleAssigned = async (todo: any) => {
+    await shallowMerge(todo)
+  }
+  const handleDelete = async (todo: any) => {
+    await shallowMerge(todo)
+  }
+  // this handler may go away - or perhaps we nav to a detail page, but that loses context
   const handleSelectTodo = async (todoId: string) => {
-    emit('selected', todoId)
+    alert('not implemented')
+    // await shallowRefresh()
   }
-  const onUpdated = async (todoId: string) => {
-    emit('updated', todoId)
-  }
+
+
+
   const primaryButtonColor = computed(()=>{
-    switch (props.todoTree.type?.toUpperCase()) {
+    switch (todoTree.value.type) {
       case 'MILESTONE':
         return 'fuchsia'
       case 'TASK':
         return 'teal'
     }
-    return `fuchsia`
+    return `teal`
   })
 </script>

@@ -46,7 +46,6 @@
   })
 
   const emit = defineEmits<{
-    (e: 'new', todo: Todo): void
     (e: 'updated', todo: Todo): void
   }>()
 

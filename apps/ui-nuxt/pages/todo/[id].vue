@@ -1,6 +1,11 @@
 <template>
-  <!-- <TodoTaskManager :todoId="todoId" /> -->
-  <TodoTree :todoTree="todoTree" :treeLevel="0"/>
+  <UCard>
+    <TodoTree 
+      :todoId="todoId" 
+      :treeLevel="0"
+    />
+  </UCard>
+  <pre>{{ JSON.stringify(todoTree, null, 2) }}</pre>
 </template>
 
 <script lang="ts" setup>
@@ -9,13 +14,4 @@
   const todoId = computed((): string => {
     return route.params.id as string
   })
-  const loadData = async () => {
-    const result = await GqlTodoById({
-      id: route.params.id,
-    })
-    todoTree.value = result.getFullTodoTree
-  }
-  loadData()
-
-
 </script>

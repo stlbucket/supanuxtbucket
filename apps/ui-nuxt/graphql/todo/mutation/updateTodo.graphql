@@ -12,10 +12,11 @@ mutation UpdateTodo(
       id
       name
       description
-      status
       type
+      status
       createdAt
       updatedAt
+      parentTodoId
     }
   }
 }

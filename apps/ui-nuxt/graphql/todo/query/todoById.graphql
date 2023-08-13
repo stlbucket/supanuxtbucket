@@ -14,7 +14,7 @@ query TodoById(
       residentId
       displayName
     }
-    parent: parentTodo {
+    children: todosByParentTodoIdList {
       id
       name
       description
@@ -24,10 +24,10 @@ query TodoById(
       updatedAt
       parentTodoId
       owner: resident {
-        residentId
-        displayName
+          residentId
+          displayName
       }
-      parent: parentTodo {
+      children: todosByParentTodoIdList {
         id
         name
         description
@@ -53,64 +53,9 @@ query TodoById(
             residentId
             displayName
           }
-          children: todosByParentTodoIdList {
-            id
-            name
-            type
-            status
-            owner: resident {
-              residentId
-              displayName
-            }
+          children: todosByParentTodoId {
+            hidden: totalCount
           }
-        }
-      }
-      children: todosByParentTodoIdList {
-        id
-        name
-        description
-        type
-        status
-        createdAt
-        updatedAt
-        parentTodoId
-        owner: resident {
-          residentId
-          displayName
-				}
-        children: todosByParentTodoIdList {
-          id
-          name
-          type
-          status
-          owner: resident {
-         		residentId
-          	displayName
-        	}
-        }
-      }
-    }
-    children: todosByParentTodoIdList {
-      id
-      name
-      description
-      type
-      status
-      createdAt
-      updatedAt
-      parentTodoId
-      owner: resident {
-          residentId
-          displayName
-      }
-      children: todosByParentTodoIdList {
-        id
-        name
-        type
-        status
-        owner: resident {
-          residentId
-          displayName
         }
       }
     }

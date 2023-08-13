@@ -17,8 +17,10 @@
   const supUser = ref()
 
   const loadUser = async () => {
-    const { data, error } = await supabase.auth.getUser()
+    const { data, error } = await supabase.auth.refreshSession()
+    // const { data, error } = await supabase.auth.getUser()
     supUser.value = data.user
+    await useGqlHeaders(useRequestHeaders(['cookie']))
   }
   loadUser()
 </script>

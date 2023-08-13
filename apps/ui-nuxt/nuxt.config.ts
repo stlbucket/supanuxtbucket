@@ -3,6 +3,16 @@
 export default defineNuxtConfig({
   supabase: {
     redirect: false,
+    // redirectOptions: {
+    //   login: '/login',
+    //   callback: '/confirm',
+    //   exclude: [],
+    // },
+    cookieOptions: {
+      maxAge: 60 * 60 * 8,
+      sameSite: 'lax',
+      secure: true
+    },
     clientOptions: {
       auth: {
         flowType: 'implicit',
@@ -53,16 +63,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {      
       'graphql-client': {
-        codegen: false,
-        // tokenStorage: {
-        //   mode: 'cookie',
-        //   cookieOptions: {
-        //     path: '/',
-        //     secure: false, // defaults to `process.env.NODE_ENV === 'production'`
-        //     httpOnly: false, // Only accessible via HTTP(S)
-        //     maxAge: 60 * 60 * 24 * 5 // 5 days
-        //   }
-        // }
+        codegen: false
       },
       GQL_HOST: 'http://localhost:3025/api/graphql', // overwritten by process.env.GQL_HOST
     }  

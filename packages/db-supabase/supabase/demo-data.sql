@@ -1,3 +1,5 @@
+\x on
+\pset pager off
 ------------------------------------- DEMO AND INITIAL TENANTS -------------------------------------------------
 --
 -- These tenants and users are to support local development as they are currently configured. They are
@@ -108,31 +110,88 @@
 ------------------------------- TODO DEMO DATA
     select todo_fn.create_todo(
       _resident_id => id::uuid
-      ,_name => (display_name||' todo list')::citext
+      ,_name => ('TODO: '||display_name)::citext
       ,_options => row(
-        'a list just for demos'::citext
+        'a todo just for demos'::citext
         ,null
       )::todo_fn.create_todo_options
     ) from app.resident
     ;
 
-    select todo_fn.create_todo(
-      _resident_id => resident_id::uuid
-      ,_name => 'This is a subtask'::citext
-      ,_options => row(
-        'it''s a tree, really....'::citext
-        ,id::uuid
-      )::todo_fn.create_todo_options
-    ) from todo.todo
-    ;
+      select todo_fn.create_todo(
+        _resident_id => resident_id::uuid
+        ,_name => 'This is a subtask'::citext
+        ,_options => row(
+          'it''s a tree, really....'::citext
+          ,id::uuid
+        )::todo_fn.create_todo_options
+      ) from todo.todo
+      where description = 'a todo just for demos'::citext
+      ;
 
-  select todo_fn.create_todo(
-    _resident_id => resident_id::uuid
-    ,_name => 'This is a subtask'::citext
-    ,_options => row(
-      'it''s a tree, really....'::citext
-      ,id::uuid
-    )::todo_fn.create_todo_options
-  ) from todo.todo
-  ;
+      select todo_fn.create_todo(
+        _resident_id => resident_id::uuid
+        ,_name => 'Subtask milestone'::citext
+        ,_options => row(
+          'treeeeeedom,  treeedom!!!!'::citext
+          ,id::uuid
+        )::todo_fn.create_todo_options
+      ) from todo.todo
+      where description = 'a todo just for demos'::citext
+      ;
+
+        select todo_fn.create_todo(
+          _resident_id => resident_id::uuid
+          ,_name => 'Subtask milestone submilestask'::citext
+          ,_options => row(
+            'the tree tops hear...'::citext
+            ,id::uuid
+          )::todo_fn.create_todo_options
+        ) from todo.todo
+        where description = 'treeeeeedom,  treeedom!!!!'::citext
+        ;
+
+        select todo_fn.create_todo(
+          _resident_id => resident_id::uuid
+          ,_name => 'Subtask milestone submilestone'::citext
+          ,_options => row(
+            'treeeeeeeeally....'::citext
+            ,id::uuid
+          )::todo_fn.create_todo_options
+        ) from todo.todo
+        where description = 'treeeeeedom,  treeedom!!!!'::citext
+        ;
+
+          select todo_fn.create_todo(
+            _resident_id => resident_id::uuid
+            ,_name => 'getting deep'::citext
+            ,_options => row(
+              'whoa....'::citext
+              ,id::uuid
+            )::todo_fn.create_todo_options
+          ) from todo.todo
+          where description = 'treeeeeeeeally....'::citext
+        ;
+
+        --   select todo_fn.create_todo(
+        --     _resident_id => resident_id::uuid
+        --     ,_name => 'deep milestone'::citext
+        --     ,_options => row(
+        --       'always more stuff'::citext
+        --       ,id::uuid
+        --     )::todo_fn.create_todo_options
+        --   ) from todo.todo
+        --   where description = 'treeeeeeeeally....'::citext
+        -- ;
+
+        --   select todo_fn.create_todo(
+        --     _resident_id => resident_id::uuid
+        --     ,_name => 'deep task gotta expand for it'::citext
+        --     ,_options => row(
+        --       'turtles all the way down'::citext
+        --       ,id::uuid
+        --     )::todo_fn.create_todo_options
+        --   ) from todo.todo
+        --   where description = 'always more stuff'::citext
+        --   ;
 
