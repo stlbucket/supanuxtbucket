@@ -867,7 +867,7 @@ CREATE OR REPLACE FUNCTION app_fn.tenant_licenses(_tenant_id uuid)
     return query
     select l.*
     from app.license l
-    where l.license_Type_key != 'app-admin-support'
+    where l.license_type_key != 'app-admin-support'
     and tenant_id = _tenant_id
     and not exists (
       select id from app.license where resident_id = l.resident_id and license_type_key = 'app-admin-support'

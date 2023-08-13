@@ -45,9 +45,9 @@ select test_helpers.login_as_user(
   _email => :'_tenant_admin_email_1'::citext
 );
 -- ------------------------------------------------------------------------
--- ------------------------------------------------------------------------ assume_resident
+-- ------------------------------------------------------------------------ assume_residency
 select isa_ok(
-  app_fn.assume_resident(
+  app_fn.assume_residency(
     _resident_id => (select id from app.resident where email = :'_tenant_admin_email_1'::citext)
     ,_email => :'_tenant_admin_email_1'
   )
@@ -107,9 +107,9 @@ select test_helpers.login_as_user(
   _email => :'_tenant_admin_email_2'::citext
 );
 ------------------------------------------------------------------------
------------------------------------------------------------------------- assume_resident
+------------------------------------------------------------------------ assume_residency
 select isa_ok(
-  app_fn.assume_resident(
+  app_fn.assume_residency(
     _resident_id => (select id from app.resident where email = :'_tenant_admin_email_2'::citext)
     ,_email => :'_tenant_admin_email_2'::citext
   )
@@ -203,7 +203,7 @@ select test_helpers.login_as_user(
 );
 ------------------------------------------------------------------------
 select isa_ok(
-  app_fn.assume_resident(
+  app_fn.assume_residency(
     _resident_id => (
       select id from app.resident where email = :'_tenant_admin_email_1'::citext
       and tenant_id != (
@@ -259,7 +259,7 @@ select test_helpers.login_as_user(
     );
 ------------------------------------------------------------------------ assume tenant 1 resident
 select isa_ok(
-  app_fn.assume_resident(
+  app_fn.assume_residency(
     _resident_id => (
       select id from app.resident where email = :'_tenant_admin_email_1'::citext
       and tenant_id != (

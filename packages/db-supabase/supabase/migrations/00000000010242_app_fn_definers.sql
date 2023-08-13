@@ -53,8 +53,8 @@ create or replace function app_fn.handle_new_user()
 create or replace trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure app_fn.handle_new_user();
------------------------------------ assume_resident
-CREATE OR REPLACE FUNCTION app_api.assume_resident(_resident_id uuid)
+----------------------------------- assume_residency
+CREATE OR REPLACE FUNCTION app_api.assume_residency(_resident_id uuid)
   RETURNS app.resident
   LANGUAGE plpgsql
   VOLATILE
@@ -63,13 +63,13 @@ CREATE OR REPLACE FUNCTION app_api.assume_resident(_resident_id uuid)
   DECLARE
     _resident app.resident;
   BEGIN
-    _resident := app_fn.assume_resident(_resident_id, auth_ext.email());
+    _resident := app_fn.assume_residency(_resident_id, auth_ext.email());
     return _resident;
   end;
   $function$
   ;
 
-CREATE OR REPLACE FUNCTION app_fn.assume_resident(_resident_id uuid, _email citext)
+CREATE OR REPLACE FUNCTION app_fn.assume_residency(_resident_id uuid, _email citext)
   RETURNS app.resident
   LANGUAGE plpgsql
   VOLATILE
@@ -229,6 +229,7 @@ CREATE OR REPLACE FUNCTION app_fn.invite_user(
     select * into _tenant from app.tenant where id = _tenant_id;
 
     if _resident.id is null then
+      --create a new resident
       insert into app.resident(
         tenant_id
         ,tenant_name
@@ -409,7 +410,7 @@ CREATE OR REPLACE FUNCTION app_fn.become_support(_tenant_id uuid, _profile_id uu
       and not exists (
         select id from app.license
         where resident_id = _resident.id
-        and license_type_key = lplt.license_Type_key
+        and license_type_key = lplt.license_type_key
       )
       on conflict (resident_id, license_type_key) DO NOTHING
       ;
@@ -448,7 +449,7 @@ CREATE OR REPLACE FUNCTION app_fn.exit_support_mode(_support_resident_id uuid, _
     _resident app.resident;
   BEGIN
     update app.resident set status = 'inactive' where id = _support_resident_id;
-    _resident := (select app_fn.assume_resident(id::uuid, email::citext) from app.resident where id = _actual_resident);
+    _resident := (select app_fn.assume_residency(id::uuid, email::citext) from app.resident where id = _actual_resident);
 
     return _resident;
   end;

@@ -22,7 +22,7 @@
       </div>
     </div>
     <div v-if="todoTree.children?.length > 0" class="ml-3">
-      <IncidentTodoTree 
+      <TodoTree 
         v-for="c in todoTree.children" 
         :todo-tree="c" 
         :tree-level="(treeLevel + 1)"

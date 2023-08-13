@@ -40,7 +40,7 @@ SELECT * FROM no_plan();
     _email => :'_tenant_admin_email'::citext
   );
   select isa_ok(
-    app_fn.assume_resident(
+    app_fn.assume_residency(
       _resident_id => (select id from app.resident where email = :'_tenant_admin_email'::citext)
       ,_email => :'_tenant_admin_email'::citext
     )

@@ -1,13 +1,13 @@
 mutation AssumeResident(
   $residentId: UUID!
 ) {
-  assumeResident(input: {
+  assumeResidency(input: {
     _residentId: $residentId
   }) {
     resident {
       id
       tenantId
-      appProfileId
+      profileId
       tenantName
       createdAt
       email

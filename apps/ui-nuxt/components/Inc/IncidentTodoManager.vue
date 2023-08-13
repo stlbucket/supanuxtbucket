@@ -1,5 +1,13 @@
 <template>
-  <UTabs
+    <TodoTree
+    :key="componentKey"
+    :todo-tree="fullTodoTree" 
+    :tree-level="0"
+    @updated="onUpdated"
+    @selected="handleSelectTree"
+  />
+
+  <!-- <UTabs
     v-if="incident"
     :items="tabItems"
     class="flex flex-col grow"
@@ -52,15 +60,15 @@
       </div>
     </template>
     <template #tree="{item}">
-      <IncidentTodoTree
+      <TodoTree
         :key="componentKey"
         :todo-tree="fullTodoTree" 
         :tree-level="0"
         @updated="onUpdated"
-        @selected="onTodoSelected"
+        @selected="handleSelectTree"
       />
     </template>
-  </UTabs>
+  </UTabs> -->
 </template>
 
 <script lang="ts" setup>
@@ -99,6 +107,9 @@
     focusTodoId.value = todoId
     await loadData()
     selectedTab.value = 1
+  }
+  const handleSelectTree = async (todoId: string) => {
+    await loadData()
   }
 
   const tabItems = [

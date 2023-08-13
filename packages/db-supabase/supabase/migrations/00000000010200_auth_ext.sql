@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION auth_ext.has_permission(_permission_key citext, _tena
     _retval boolean;
     _permissions citext[];
   BEGIN
+    -- raise notice 'perms: %', auth_ext.permissions();
     _retval := (
       SELECT _permission_key = any(auth_ext.permissions())
     );

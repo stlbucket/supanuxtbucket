@@ -44,7 +44,7 @@ create or replace function test_helpers.assume_super_admin (_superadmin_email ci
 declare
   _resident app.resident;
 begin
-  _resident = (select app_fn.assume_resident(
+  _resident = (select app_fn.assume_residency(
     _resident_id => (select id from app.resident where email = _superadmin_email)
     ,_email => _superadmin_email
   ));
@@ -69,7 +69,7 @@ $$;
 --   perform test_helpers.login_as_user(
 --     _email => _email
 --   );
---   _resident := (select app_fn.assume_resident(
+--   _resident := (select app_fn.assume_residency(
 --     _resident_id => (select id from app.resident where email = _email)
 --   ));
 --   return _resident;
@@ -153,9 +153,9 @@ create or replace function test_helpers.setup_test_tenant (
     ,_password => 'badpassword'
   );
   ------------------------------------------------------------------------
-  ------------------------------------------------------------------------ assume_resident
+  ------------------------------------------------------------------------ assume_residency
   select * into _resident from app.resident where id = _tenant.id and email = _admin_email;
-  perform app_fn.assume_resident(
+  perform app_fn.assume_residency(
     _resident_id => _resident.id
     ,_email => _admin_email
   );

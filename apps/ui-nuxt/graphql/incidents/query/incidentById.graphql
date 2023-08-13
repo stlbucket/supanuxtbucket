@@ -1,18 +1,18 @@
 query IncidentById(
   $incidentId: UUID!
 ) {
-  incidentById(id: $incidentId) {
+  incident(id: $incidentId) {
     id
     name
     description
     status
     identifier
-    todo: todoByTodoId {
+    todo {
       id
       name
       description
     }
-		topic: topicByTopicId {
+		topic {
       id
       name
     }    

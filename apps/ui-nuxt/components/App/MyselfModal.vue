@@ -6,7 +6,7 @@
       <template #header>
         Edit Profile
       </template>
-      <UFormGroup name="appProfile" label="Profile">
+      <UFormGroup name="profile" label="Profile">
         <div class="flex flex-col gap-3">
           <UInput placeholder="display name" v-model="formData.displayName" type="text" class="flex"/>
           <UInput placeholder="first name" v-model="formData.firstName" type="text" class="flex"/>
@@ -26,7 +26,7 @@
 
 <script lang="ts" setup>
   const props = defineProps<{
-    appProfile: AppProfile
+    profile: AppProfile
   }>()
 
   const showModal = ref(false)
@@ -41,11 +41,11 @@
 
   onMounted(() => {
     formData.value = {
-    firstName: props.appProfile.firstName || '',
-    lastName: props.appProfile.lastName || '',
-    // email: props.appProfile.email || '',
-    phone: props.appProfile.phone || '',
-    displayName: props.appProfile.displayName || '',
+    firstName: props.profile.firstName || '',
+    lastName: props.profile.lastName || '',
+    // email: props.profile.email || '',
+    phone: props.profile.phone || '',
+    displayName: props.profile.displayName || '',
   }
   })
 
@@ -57,7 +57,7 @@
   const handleSave = async () => {
     showModal.value = false
     emit('updated', {
-      ...props.appProfile,
+      ...props.profile,
       ...formData.value
     })
   }

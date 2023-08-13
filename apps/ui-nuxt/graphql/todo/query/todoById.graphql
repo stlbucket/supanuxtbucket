@@ -14,7 +14,7 @@ query TodoById(
       residentId
       displayName
     }
-    parentTodo {
+    parent: parentTodo {
       id
       name
       description
@@ -27,7 +27,7 @@ query TodoById(
         residentId
         displayName
       }
-      parentTodo {
+      parent: parentTodo {
         id
         name
         description

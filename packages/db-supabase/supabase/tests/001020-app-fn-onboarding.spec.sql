@@ -41,9 +41,9 @@ select isa_ok(
     );
     ------------------------------------
     select is(
-      (select count(*) from app.tenant_subscription where tenant_id = (select id from app.tenant where identifier = :'_identifier'::citext))::integer
-      ,2::integer
-      ,'should be 2 tenant_subscriptions'
+      (select count(*) from app.tenant_subscription where license_pack_key = 'app' and tenant_id = (select id from app.tenant where identifier = :'_identifier'::citext))::integer
+      ,1::integer
+      ,'should be 1 app tenant_subscriptions'
     );
     ------------------------------------
     -- select is(
@@ -118,9 +118,9 @@ select test_helpers.login_as_user(
   _email => :'_tenant_admin_email'::citext
 );
 ------------------------------------------------------------------------
------------------------------------------------------------------------- assume_resident
+------------------------------------------------------------------------ assume_residency
 select isa_ok(
-  app_fn.assume_resident(
+  app_fn.assume_residency(
     _resident_id => (select id from app.resident where email = :'_tenant_admin_email'::citext)
     ,_email => :'_tenant_admin_email'
   )

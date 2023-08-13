@@ -42,7 +42,7 @@
     const result = await GqlIncidentById({
       incidentId: route.params.id,
     })
-    incident.value = result.incidentById
+    incident.value = result.incident
   }
   loadData()  
   </script>

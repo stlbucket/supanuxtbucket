@@ -13,7 +13,8 @@ const preset: GraphileConfig.Preset = {
     PgSimplifyInflectionPreset,
     makeV4Preset({
       simpleCollections: "both",
-      disableDefaultMutations: true
+      disableDefaultMutations: true,
+      dynamicJson: true
     })
     /* Add more presets here */
   ],

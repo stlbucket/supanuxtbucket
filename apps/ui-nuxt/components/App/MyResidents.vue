@@ -3,7 +3,7 @@
     title="MY APP USER TENANCIES" 
     :residents="residents"
     rowActionName="Assume"
-    @rowAction="assumeResident"
+    @rowAction="assumeResidency"
   >
   </Residents>
 </template>
@@ -17,7 +17,7 @@
   }
   loadData()
 
-  const assumeResident = async (row: any) => {
+  const assumeResidency = async (row: any) => {
     const { data, error } = await GqlAssumeResident({
       residentId: row.id
     })

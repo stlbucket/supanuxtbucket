@@ -8,7 +8,7 @@ query TenantById(
     status
     type
     createdAt
-    appProfileResidents: appProfileResidentsByTenantId {
+    profileResidents: profileResidentsByTenantId {
       totalCount
     }
     tenantSubscriptions: tenantSubscriptionsByTenantIdList {

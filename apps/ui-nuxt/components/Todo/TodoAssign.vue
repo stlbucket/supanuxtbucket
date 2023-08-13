@@ -7,7 +7,7 @@
       </template>
       <div class="flex flex-col gap-3">
         <UFormGroup name="assignedTo" label="Assigned to">
-          <USelect v-model="assignedResidentId" :options="appProfileResidents" option-attribute="name" />    
+          <USelect v-model="assignedResidentId" :options="profileResidents" option-attribute="name" />    
         </UFormGroup>
       </div>
       <template #footer>
@@ -29,7 +29,7 @@
 
   const assignedResidentId = ref()
 
-  const appProfileResidents = ref()
+  const profileResidents = ref()
 
   const defaultFormData = {
     name: '',
@@ -50,7 +50,7 @@
 
   const handleBeginAssign = async () => {
     const result = await GqlTenantResidents()
-    appProfileResidents.value = result.tenantResidents.nodes.map(n => {
+    profileResidents.value = result.tenantResidents.nodes.map(n => {
       return {
         name: n.displayName,
         value: n.id

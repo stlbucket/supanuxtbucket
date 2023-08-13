@@ -22,7 +22,7 @@
 
   const loadData = async () => {
     const result = await GqlAllIncidents()
-    incidents.value = result.allIncidents.nodes
+    incidents.value = result.incidents.nodes
   }
   loadData()
 </script>

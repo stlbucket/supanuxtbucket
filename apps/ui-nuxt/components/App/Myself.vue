@@ -4,7 +4,7 @@
     <template #header>
       <div class="flex justify-between">
         MY PROFILE
-        <MyselfModal :appProfile="appProfile" v-if="appProfile" @updated="onUpdate"/>
+        <MyselfModal :profile="profile" v-if="profile" @updated="onUpdate"/>
       </div>
     </template>
     <div class="flex flex-col gap-3">
@@ -18,10 +18,10 @@
 </template>
 
 <script lang="ts" setup>
-  const appProfile = ref()
+  const profile = ref()
   const loadData = async () => {
     const result = await GqlGetMyself()
-    appProfile.value = result.getMyself
+    profile.value = result.getMyself
   }
   loadData()
 
@@ -33,38 +33,38 @@
     return [
     {
         label: 'Email',
-        value: appProfile.value?.email,
+        value: profile.value?.email,
         class: ''
       },
       {
         label: 'Display Name',
-        value: appProfile.value?.displayName,
+        value: profile.value?.displayName,
         class: ''
       },
       {
         label: 'First Name',
-        value: appProfile.value?.firstName || 'not specified',
-        class: appProfile.value?.firstName ? '' : 'italic'
+        value: profile.value?.firstName || 'not specified',
+        class: profile.value?.firstName ? '' : 'italic'
       },
       {
         label: 'Last Name',
-        value: appProfile.value?.lastName || 'not specified',
-        class: appProfile.value?.lastName ? '' : 'italic'
+        value: profile.value?.lastName || 'not specified',
+        class: profile.value?.lastName ? '' : 'italic'
       },
       {
         label: 'Phone',
-        value: appProfile.value?.phone || 'not specified',
-        class: appProfile.value?.phone ? '' : 'italic'
+        value: profile.value?.phone || 'not specified',
+        class: profile.value?.phone ? '' : 'italic'
       },
     ]
   })
 
-  const onUpdate = async (appProfile: AppProfile) => {
+  const onUpdate = async (profile: AppProfile) => {
     const result = await GqlUpdateProfile({
-      displayName: appProfile.displayName,
-      firstName: appProfile.firstName,
-      lastName: appProfile.lastName,
-      phone: appProfile.phone
+      displayName: profile.displayName,
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      phone: profile.phone
     })
     await loadData()
   }

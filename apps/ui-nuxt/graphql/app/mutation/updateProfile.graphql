@@ -10,7 +10,7 @@ mutation UpdateProfile(
     _lastName: $lastName
     _phone: $phone
   }) {
-    appProfile {
+    profile {
       id
       email
       displayName

@@ -38,7 +38,7 @@ select test_helpers.login_as_user(
 );
 ------------------------------------ on first login, user will confirm resident (can be automatic), which sets resident to active
 select isa_ok(
-  app_api.assume_resident(
+  app_api.assume_residency(
     _resident_id => (select id from app.resident where email = :'_superadmin_email'::citext)
   )
   ,'app.resident'

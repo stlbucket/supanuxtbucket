@@ -8,18 +8,6 @@ BEGIN;
 
 -- SELECT plan(12);
 SELECT * FROM no_plan();
-------------------------------------
-select is(
-  (
-    select count(*)
-    from app.resident aut
-    join app.tenant t on t.id = aut.tenant_id
-    where t.type = 'demo'::app.tenant_type
-  )::integer
-  ,6::integer
-  ,'demo user count'
-);
-
 -- Examples: https://pgtap.org/documentation.html
 ------------------------------------
 select is(
@@ -27,40 +15,6 @@ select is(
   ,1::integer
   ,'should be an anchor app tenant'
 );
-------------------------------------
--- select is(
---   (select count(*) from app.resident where tenant_id = (select id from app.tenant where type = 'anchor'))::integer
---   ,3::integer
---   ,'should be an resident'
--- );
-------------------------------------
--- select is(
---   (select count(*) from app.tenant_subscription where  tenant_id = (select id from app.tenant where type = 'anchor'))::integer
---   ,3::integer
---   ,'should be 3 tenant_subscription'
--- );
--- ------------------------------------
---     select is(
---       (select to_jsonb(array_agg(jsonb_build_object(
---         'license_type_key' ,l.license_type_key
---         ,'email' ,aut.email
---         ,'tenant' ,t.name
---       )))
---         from app.license l
---         join app.resident aut on l.resident_id = aut.id
---         join app.tenant t on t.id = aut.tenant_id
---       )::jsonb
---       ,'{}'::jsonb
---       ,'licenses'
---     );
--- select is(
---   (select count(*) from app.license where resident_id in (
---     select id from app.resident 
---     where tenant_id = (select id from app.tenant where type = 'anchor'))
---   )::integer
---   ,6::integer
---   ,'should be 6 licenses'
--- );
 ------------------------------------
 select is(
   (select count(*) from app.profile where email = :'_superadmin_email'::citext)::integer
@@ -144,6 +98,20 @@ select is(
 ------------------------------------ logout so we can evaluate data as postgres user
 select test_helpers.logout();
 select isa_ok(
+  app_fn.invite_user(
+    _tenant_id => (select id from app.tenant where identifier = 'anchor')::uuid
+    ,_email => :'_user_email'::citext
+    ,_assignment_scope => 'admin'::app.license_type_assignment_scope
+  )
+  ,'app.resident'
+  ,'invited user should be a resident'
+);
+select isa_ok(
+  (select id from app.license where license_type_key = 'app-admin' and resident_id = (select id from app.resident where email = :'_user_email'::citext))
+  ,'uuid'
+  ,'_user_email should have app-admin license'
+);
+select isa_ok(
   test_helpers.create_supabase_user(
     _email => :'_user_email'::citext
     ,_user_metadata => '{"test": "meta"}'::jsonb
@@ -155,7 +123,18 @@ select isa_ok(
 select test_helpers.login_as_user(
   _email => :'_user_email'::citext
 );
+select app_fn.assume_residency(
+  _resident_id => (select id from app.resident where email = :'_user_email'::citext)
+  ,_email => :'_user_email'::citext
+);
+select test_helpers.logout();
+select test_helpers.login_as_user(
+  _email => :'_user_email'::citext
+);
 ------------------------------------ test permissions
+-- select is(
+--   (select license_type_key)
+-- );
 select is(
   (select auth_ext.has_permission('p:app-admin-super'))
   ,false
@@ -163,13 +142,13 @@ select is(
 );
 select is(
   (select auth_ext.has_permission('p:app-admin'))
-  ,false
+  ,true
   ,'user should not have p:app-admin permission'
 );
 select is(
   (select auth_ext.has_permission('p:app-user'))
-  ,true
-  ,'user should have p:app-user permission'
+  ,false
+  ,'user should not have p:app-user permission'
 );
 select is(
   (select auth_ext.has_permission('p:discussions'))
