@@ -1,17 +1,18 @@
 <template>
-  <Residents 
+  <ResidentsList 
     title="MY APP USER TENANCIES" 
     :residents="residents"
     rowActionName="Assume"
     @rowAction="assumeResidency"
   >
-  </Residents>
+  </ResidentsList>
 </template>
 
 <script lang="ts" setup>
   const supabase = useSupabaseClient()
   const residents = ref([])
   const loadData = async () => {
+    // useGqlHeaders(useRequestHeaders(['cookie']))
     const result = await GqlMyResidents()
     residents.value = result.myResidentsList || []
   }

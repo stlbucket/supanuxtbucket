@@ -36,7 +36,7 @@
     const { error } = await supabase.auth.signInWithOtp({
       email: resident.email,
       options: {
-        emailRedirectTo: 'http://localhost:3025'
+        emailRedirectTo: 'http://localhost:3025/my-profile'
       }
     })
     if (error) {

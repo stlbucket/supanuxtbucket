@@ -2,17 +2,15 @@
 import { serverSupabaseClient } from '#supabase/server'
 export default defineEventHandler(async (event) => {
   try {
+    console.log('HEADERS', event.node.req.headers)
     const client = await serverSupabaseClient(event)
-    const session = await client.auth.refreshSession()
+    const session = (await client.auth.getSession()).data.session
+    console.log('SESH', session)
 
-    // console.log('SESH', session.data.session)
-    // console.log('USER', session.data.user)
-
-    event.context.user = session.data.user
+    event.context.session = session
   } catch(e: any) {
-    if (e.toString().indexOf('invalid claim') > -1) {
-      event.context.user = {}
-    }
-  }
+    console.log('AUTH ERROR', e)
+    throw e
+  }  
 })
 

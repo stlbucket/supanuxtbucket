@@ -23,6 +23,6 @@
     const result = await GqlInviteUser({
       email: email
     })
-    navigateTo(`/admin/app-tenant-user-tenancies/${result.inviteUser.residency.id}`)
+    navigateTo(`/admin/app-tenant-residencies/${result.inviteUser.residency.id}`)
   }
 </script>

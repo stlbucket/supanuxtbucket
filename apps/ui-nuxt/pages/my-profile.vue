@@ -1,7 +1,7 @@
 <template>
     <div class="flex">
       <div>
-        <MyAppUserTenancies />
+        <MyResidents/>
       </div>
       <div>
         <Myself />
@@ -17,10 +17,12 @@
   const supUser = ref()
 
   const loadUser = async () => {
-    const { data, error } = await supabase.auth.refreshSession()
-    // const { data, error } = await supabase.auth.getUser()
-    supUser.value = data.user
-    await useGqlHeaders(useRequestHeaders(['cookie']))
+    try{
+      const { data, error } = await supabase.auth.getSession()
+      supUser.value = data.session?.user
+    } catch (e) {
+      console.log('ERROR', e)
+    }
   }
   loadUser()
 </script>

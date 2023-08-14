@@ -41,6 +41,7 @@
     const result = await GqlBecomeSupport({
       tenantId: tenant.id
     })
+    // console.log(result)
     await supabase.auth.refreshSession()
     reloadNuxtApp({path: '/todo'})
   }

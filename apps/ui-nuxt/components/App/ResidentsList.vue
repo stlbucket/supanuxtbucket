@@ -10,7 +10,7 @@
     :sort="{ column: 'tenantName', direction: 'asc' }"
   >
     <template #email-data="{ row }">
-      <NuxtLink :to="`/admin/app-tenant-user-residents/${row.id}`">{{ row.email }}</NuxtLink>
+      <NuxtLink :to="`/admin/app-tenant-residencies/${row.id}`">{{ row.email }}</NuxtLink>
     </template>
     <template #actions-data="{ row }">
       <UButton v-if="rowActionName" @click="handleRowAction(row)">{{rowActionName}}</UButton>

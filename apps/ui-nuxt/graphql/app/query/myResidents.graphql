@@ -1,5 +1,5 @@
 query MyResidents {
-  myResidentsList {
+  myResidentsList: residentsList {
     id
     tenantName
     email

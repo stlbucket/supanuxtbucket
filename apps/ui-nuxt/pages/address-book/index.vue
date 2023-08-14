@@ -51,6 +51,6 @@
     const result = await GqlInviteUser({
       email: row.email
     })
-    navigateTo('/admin/app-tenant-user-tenancies')
+    navigateTo('/admin/app-tenant-residencies')
   }
 </script>
