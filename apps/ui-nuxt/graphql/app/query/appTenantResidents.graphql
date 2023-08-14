@@ -1,5 +1,5 @@
 query TenantResidents {
-  tenantResidents {
+  residents {
     nodes {
       id
       tenantName

@@ -53,8 +53,8 @@ query TodoById(
             residentId
             displayName
           }
-          children: todosByParentTodoId {
-            hidden: totalCount
+          hiddenChildren: todosByParentTodoId {
+            totalCount
           }
         }
       }

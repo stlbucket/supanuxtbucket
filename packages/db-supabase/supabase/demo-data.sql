@@ -126,7 +126,7 @@
           ,id::uuid
         )::todo_fn.create_todo_options
       ) from todo.todo
-      where description = 'a todo just for demos'::citext
+      -- where description = 'a todo just for demos'::citext
       ;
 
       select todo_fn.create_todo(
@@ -137,7 +137,7 @@
           ,id::uuid
         )::todo_fn.create_todo_options
       ) from todo.todo
-      where description = 'a todo just for demos'::citext
+      -- where description = 'a todo just for demos'::citext
       ;
 
         select todo_fn.create_todo(

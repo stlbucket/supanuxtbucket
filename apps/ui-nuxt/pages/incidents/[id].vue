@@ -26,7 +26,11 @@
           <template #header>
             <div class="text-2xl">Tasks for this Incident</div>
           </template>
-          <IncidentTodoManager :incident="incident" />
+          <TodoTree 
+            :todoId="incident.todo.id" 
+            :treeLevel="0"
+          />
+          <!-- <IncidentTodoManager :incident="incident" /> -->
         </UCard>
       </div>
     </div>

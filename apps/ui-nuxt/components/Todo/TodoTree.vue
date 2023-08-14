@@ -26,9 +26,13 @@
                 @click="onClosed"
                 :disabled="todoTree.type !== 'TASK'"
               />
-              <TodoModal @updated="handleAddSubtask" :parent-todo="todoTree"/>
+              <TodoModal 
+                v-if="detailed"
+                @updated="onAddSubtask" 
+                :parent-todo="todoTree"
+              />
             </div>
-            <div class="flex gap-1">
+            <div v-if="detailed" class="flex gap-1">
               <TodoModal :todo="todoTree" @updated="handleUpdated"/>
               <UButton 
                 icon="i-heroicons-minus-circle" 
@@ -51,10 +55,14 @@
             :color="primaryButtonColor"
           >{{ todoTree.type?.split('').at(0) }}: {{ todoTree.name }}</UButton>
         </div>
+        <div class="flex flex-1 gap-2 grow-0" v-if="detailed">
+          <TodoAssign :todo="todoTree" @assigned="handleAssigned" />
+          <div>{{ todoTree.owner?.displayName }}</div>
+        </div>
       </div>
     </div>
-    <div v-if="todoTree.children.hidden > 0" class="flex justify-start min-w-max grow ml-10">
-      {{ todoTree.children }} children...
+    <div v-if="todoTree.hiddenChildren?.totalCount > 0" class="flex justify-start min-w-max grow ml-10 hover:cursor-pointer" @click="onLoadSubtree">
+      Load {{ todoTree.hiddenChildren.totalCount }} children...
     </div>
     <div v-if="todoTree.children?.length > 0" class="ml-3">
       <TodoTree 
@@ -64,6 +72,7 @@
         :tree-level="(treeLevel + 1)"
         @selected="handleSelectTodo"
         @updated="handleChildUpdated"
+        @subtask-added="handleAddSubtask"
       />
     </div>
   </div>
@@ -80,13 +89,14 @@
 
   const emit = defineEmits<{
     (e: 'updated', todo: any): void
-    (e: 'subtaskAdded', todo: any, subTask: any): void    
+    (e: 'subtaskAdded', subTask: any): void    
     (e: 'assigned', todo: any): void
     (e: 'deleted'): void
     (e: 'selected', todoId: string): void
   }>()
 
   const todoTree = ref()
+  const detailed = ref(false)
 
   const shallowMerge = (todo: any) => {
     todoTree.value = {
@@ -113,7 +123,6 @@
   }
 
   const loadData = async () => {
-    // console.log('heyo')
     const result = await GqlTodoById({
       id: props.todoId,
     })
@@ -148,35 +157,47 @@
     todoTree.value.status = result.updateTodoStatus.todo.status
     emit('updated', result.updateTodoStatus.todo)
   }
+  const onAddSubtask = async (todo: any) => {
+    const result = await GqlCreateTodo({
+      name: todo.name,
+      description: todo.description,
+      parentTodoId: todo.parentTodoId
+    })
+    const children = [
+      ...(todoTree.value.children || []),
+      result.createTodo.todo
+    ]
+    todoTree.value.children = children
+    emit('subtaskAdded', todoTree)
+  }
+  const onLoadSubtree = async () => {
+    await loadData()
+  }
 
   // this only happens for milestones, which always have children
   const handleChildUpdated = async () => {
     await shallowRefresh()
   }
-
   // updated is for changes that do not affect task status - name, description, tags...
   const handleUpdated = async (todo: any) => {
     await shallowMerge(todo)
   }
   // add the child optimistically, if current state is complete, then we will need to refresh and bubble
   const handleAddSubtask = async (todo: any) => {
-    todoTree.value.children = [...todoTree.value.children, todo]
     await shallowRefresh()
   }
-  const handleAssigned = async (todo: any) => {
-    await shallowMerge(todo)
+  const handleAssigned = async (residentId: string) => {
+    const result = await GqlAssignTodo({
+      todoId: todoTree.value.id,
+      residentId: residentId
+    })
   }
   const handleDelete = async (todo: any) => {
     await shallowMerge(todo)
   }
-  // this handler may go away - or perhaps we nav to a detail page, but that loses context
-  const handleSelectTodo = async (todoId: string) => {
-    alert('not implemented')
-    // await shallowRefresh()
+  const handleSelectTodo = async () => {
+    detailed.value = !detailed.value
   }
-
-
-
   const primaryButtonColor = computed(()=>{
     switch (todoTree.value.type) {
       case 'MILESTONE':

@@ -50,13 +50,13 @@
 
   const handleBeginAssign = async () => {
     const result = await GqlTenantResidents()
-    profileResidents.value = result.tenantResidents.nodes.map(n => {
+    profileResidents.value = result.residents.nodes.map(n => {
       return {
         name: n.displayName,
         value: n.id
       }
     })
-    assignedResidentId.value = props.todo.owner.id
+    assignedResidentId.value = props.todo.owner.residentId
     showModal.value = true
   }
 
