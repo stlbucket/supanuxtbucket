@@ -56,7 +56,7 @@
         value: n.id
       }
     })
-    assignedResidentId.value = props.todo.owner.residentId
+    assignedResidentId.value = props.todo?.owner?.residentId
     showModal.value = true
   }
 

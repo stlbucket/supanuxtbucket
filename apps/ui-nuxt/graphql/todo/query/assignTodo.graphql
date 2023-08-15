@@ -11,6 +11,11 @@ mutation AssignTodo(
       name
       description
       residentId
+      status
+      owner: resident {
+        residentId
+        displayName
+      }
     }
   }
 }

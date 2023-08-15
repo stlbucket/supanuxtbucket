@@ -1,5 +1,5 @@
 query AllLicensePacks {
-  allLicensePacks {
+  licensePacks {
     nodes {
       key
       displayName
@@ -10,7 +10,7 @@ query AllLicensePacks {
         expirationIntervalType
         expirationIntervalMultiplier
         issuedCount
-        licenseType: licenseTypeByLicenseTypeKey {
+        licenseType {
           key
           displayName
           assignmentScope

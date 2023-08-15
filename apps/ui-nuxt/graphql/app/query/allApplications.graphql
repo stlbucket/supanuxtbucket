@@ -1,5 +1,5 @@
 query AllApplications {
-  allApplications {
+  applications {
     nodes {
       key
       name

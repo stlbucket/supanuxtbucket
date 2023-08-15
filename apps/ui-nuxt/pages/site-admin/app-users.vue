@@ -18,7 +18,7 @@
       :sort="{ column: 'name', direction: 'asc' }"
     >
       <template #licenses-data="{ row }">
-        {{ `${row.tenancies.length} Tenanc${row.tenancies.length > 1 ? 'ies' : 'y'}` }}
+        {{ `${row.residents.length} Residenc${row.residents.length > 1 ? 'ies' : 'y'}` }}
       </template>
     </UTable>
   </UCard>  
@@ -27,8 +27,8 @@
 <script lang="ts" setup>
   const profiles = ref([])
   const loadData = async () => {
-    const result = await GqlAllAppUsers()
-    profiles.value = result.allAppUsers.nodes
+    const result = await GqlAllAppProfiles()
+    profiles.value = result.profiles.nodes
   }
   loadData()
 </script>

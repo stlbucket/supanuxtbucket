@@ -6,17 +6,17 @@
           <div class="flex text-xs">Invitees may not yet be actual users</div>
         </div>
       </template>
-      <AppUserTenancies :tenancies="tenancies"/>
+      <ResidentsList :residents="residents"/>
     </UCard>
 </template>
 
 <script lang="ts" setup>
-  const tenancies = ref([])
-  const loadTenancies = async () => {
-    const result = await GqlAllAppUserTenancies()
-    tenancies.value = result.allAppUserTenancies.nodes || []
+  const residents = ref([])
+  const loadResidents = async () => {
+    const result = await GqlAllResidents()
+    residents.value = result.residents.nodes || []
   }
-  loadTenancies()
+  loadResidents()
 
   const onNew = async () => {
     alert('not implemented')

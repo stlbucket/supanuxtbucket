@@ -14,7 +14,7 @@
 
   const loadData = async () => {
     const result = await GqlAllApplications()
-    applications.value = result.allApplications.nodes
+    applications.value = result.applications.nodes
   }
   loadData()
 

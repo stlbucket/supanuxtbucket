@@ -35,11 +35,19 @@
       <LicenseAssignment 
         v-for="s in subscriptions"
         :license-pack="s.licensePack" 
-        :app-user-tenancy="residency"
+        :resident="residency"
         @revoke-license="onRevokeLicense"
         @grant-license="onGrantLicense"
       />
     </div>
+    <!-- <div class="flex">
+      <div class="flex">
+        <pre>{{ JSON.stringify(residency,null,2) }}</pre>
+      </div>
+      <div class="flex">
+        <pre>{{ JSON.stringify(subscriptions,null,2) }}</pre>
+      </div>
+    </div> -->
   </UCard>
 </template>
 
@@ -50,11 +58,15 @@
   const subscriptions: Ref<any[]> = ref([])
 
   const loadData = async () => {
-    const result = await GqlResidencyById({
-      residencyId: route.params.id,
+    const result = await GqlResidentById({
+      residentId: route.params.id,
     })
-    residency.value = result.residencyById
-    subscriptions.value = result.tenantSubscriptions.nodes
+    residency.value = result.resident
+
+    const subscriptionsResult = await GqlTenantSubscriptions({
+      tenantId: residency.value.tenantId
+    })
+    subscriptions.value = subscriptionsResult.tenantSubscriptions.nodes
   }
   loadData()
 
@@ -68,22 +80,22 @@
   const onGrantLicense = async (licenseTypeKey: string) => {
     const result = await GqlGrantUserLicense({
       licenseTypeKey: licenseTypeKey,
-      residencyId: residency.value.id
+      residentId: residency.value.id
     })
     await loadData()
     componentKey.value += 1
   }
 
   const onBlockResidency = async () => {
-    const result = await GqlBlockResidency({
-      residencyId: residency.value.id
+    const result = await GqlBlockResident({
+      residentId: residency.value.id
     })
     await loadData()
   }
 
   const onUnblockResidency = async () => {
-    const result = await GqlUnblockResidency({
-      residencyId: residency.value.id
+    const result = await GqlUnblockResident({
+      residentId: residency.value.id
     })
     await loadData()
   }

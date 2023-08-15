@@ -19,8 +19,8 @@
         <div class="flex">{{ tenant.type }}</div>
       </div>
       <div class="flex flex-col gap-1 bg-cyan-700 p-3">
-        <div class="flex text-xs"># User Tenancies</div>
-        <div class="flex">{{ tenant.tenancies.totalCount }}</div>
+        <div class="flex text-xs"># Residents</div>
+        <div class="flex">{{ tenant.residents.totalCount }}</div>
       </div>
     </div>
     <UCard>
@@ -50,7 +50,7 @@
     const result = await GqlTenantById({
       tenantId: route.params.id,
     })
-    tenant.value = result.tenantById
+    tenant.value = result.tenant
   }
   loadData()
 

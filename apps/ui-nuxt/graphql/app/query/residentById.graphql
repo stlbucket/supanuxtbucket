@@ -1,39 +1,18 @@
 query ResidentById(
   $residentId: UUID!
 ) {
-  residentById(id: $residentId) {
+  resident(id: $residentId) {
     id
     email
     tenantName
     displayName
     status
-    licenses: licensesByResidentIdList {
+    tenantId
+    licenses: licensesList {
       id
       licenseTypeKey
       createdAt
       expiresAt
-    }
-  }
-  
-  tenantSubscriptions: allTenantSubscriptions {
-    nodes {
-      id
-      licensePackKey
-      licensePack: licensePackByLicensePackKey {
-        key
-        displayName
-        licenseTypes: licensePackLicenseTypesByLicensePackKeyList {
-          licensePackKey
-          licenseTypeKey
-          numberOfLicenses
-          expirationIntervalType
-          expirationIntervalMultiplier
-          licenseType: licenseTypeByLicenseTypeKey {
-            key
-	          assignmentScope
-          }
-        }
-      }
     }
   }
 }

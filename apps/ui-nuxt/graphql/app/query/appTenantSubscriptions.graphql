@@ -1,21 +1,21 @@
 query TenantSubscriptions(
   $tenantId: UUID!
 )  {
-  allTenantSubscriptions(condition: {
+  tenantSubscriptions(condition: {
     tenantId: $tenantId
   }) {
     nodes {
       id
       licensePackKey
-      tenant: tenantByTenantId {
+      tenant {
         id
         name
         type
       }
-      licenses: licensesByTenantSubscriptionId {
+      licenses {
         totalCount
       }
-      licensePack: licensePackByLicensePackKey {
+      licensePack {
         key
         displayName
         licensePackLicenseTypes: licensePackLicenseTypesByLicensePackKeyList {
@@ -25,7 +25,7 @@ query TenantSubscriptions(
           expirationIntervalType
           expirationIntervalMultiplier
           issuedCount
-          licenseType: licenseTypeByLicenseTypeKey {
+          licenseType {
             key
             displayName
             assignmentScope

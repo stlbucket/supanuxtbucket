@@ -483,7 +483,11 @@ CREATE OR REPLACE FUNCTION app_api.grant_user_license(_resident_id uuid, _licens
   DECLARE
     _license app.license;
   BEGIN
-    if auth_ext.has_permission('p:app-admin') != true then raise exception '30000: NOT AUTHORIZED'; end if;
+        if 
+      auth_ext.has_permission('p:app-admin') != true 
+      and
+      auth_ext.has_permission('p:app-admin-super') != true
+    then raise exception '30000: NOT AUTHORIZED'; end if;
 
     _license := app_fn.grant_user_license(_resident_id, _license_type_key, auth_ext.resident_id());
     return _license;
@@ -572,7 +576,11 @@ CREATE OR REPLACE FUNCTION app_api.revoke_user_license(_license_id uuid)
   DECLARE
     _retval boolean;
   BEGIN
-    if auth_ext.has_permission('p:app-admin') != true then raise exception '30000: NOT AUTHORIZED'; end if;
+    if 
+      auth_ext.has_permission('p:app-admin') != true 
+      and
+      auth_ext.has_permission('p:app-admin-super') != true
+    then raise exception '30000: NOT AUTHORIZED'; end if;
 
     _retval := app_fn.revoke_user_license(_license_id);
     return _retval;
@@ -611,7 +619,11 @@ CREATE OR REPLACE FUNCTION app_api.block_resident(_resident_id uuid)
   DECLARE
     _resident app.resident;
   BEGIN
-    if auth_ext.has_permission('p:app-admin') != true then raise exception '30000: NOT AUTHORIZED'; end if;
+        if 
+      auth_ext.has_permission('p:app-admin') != true 
+      and
+      auth_ext.has_permission('p:app-admin-super') != true
+    then raise exception '30000: NOT AUTHORIZED'; end if;
 
     _resident := app_fn.block_resident(_resident_id);
     return _resident;
@@ -647,7 +659,11 @@ CREATE OR REPLACE FUNCTION app_api.unblock_resident(_resident_id uuid)
   DECLARE
     _resident app.resident;
   BEGIN
-    if auth_ext.has_permission('p:app-admin') != true then raise exception '30000: NOT AUTHORIZED'; end if;
+        if 
+      auth_ext.has_permission('p:app-admin') != true 
+      and
+      auth_ext.has_permission('p:app-admin-super') != true
+    then raise exception '30000: NOT AUTHORIZED'; end if;
 
     _resident := app_fn.unblock_resident(_resident_id);
     return _resident;

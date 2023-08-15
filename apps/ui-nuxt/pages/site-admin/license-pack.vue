@@ -16,7 +16,7 @@
   const licensePacks = ref([])
   const loadData = async () => {
     const result = await GqlAllLicensePacks()
-    licensePacks.value = result.allLicensePacks.nodes
+    licensePacks.value = result.licensePacks.nodes
   }
   loadData()
 

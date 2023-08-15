@@ -5,27 +5,50 @@
         <div class="flex gap-1">
           <div class="flex flex-col gap-1 w-30 p-1">
             <div class="flex justify-around gap-1">
-              <UButton 
-                v-if="todoTree.status?.toUpperCase() === 'COMPLETE'" 
-                icon="i-heroicons-check"
-                size="sm"
-                color="green"
-                square
-                variant="solid"
-                title="Reopen"
-                @click="onReopened"
-                :disabled="todoTree.type !== 'TASK'"
-              />
-              <UButton
-                v-if="todoTree.status?.toUpperCase() === 'INCOMPLETE'"
-                icon="none"
-                size="sm"
-                color="yellow"
-                square variant="outline"
-                title="Close"
-                @click="onClosed"
-                :disabled="todoTree.type !== 'TASK'"
-              />
+              <div v-if="todoTree.type === 'TASK'" class="flex">
+                <UButton 
+                  v-if="todoTree.status?.toUpperCase() === 'COMPLETE'" 
+                  icon="i-heroicons-check"
+                  size="sm"
+                  color="green"
+                  square
+                  variant="solid"
+                  title="Reopen"
+                  @click="onReopened"
+                />
+                <UButton
+                  v-if="todoTree.status?.toUpperCase() === 'INCOMPLETE'"
+                  icon="none"
+                  size="sm"
+                  color="yellow"
+                  square variant="outline"
+                  title="Close"
+                  @click="onClosed"
+                />
+              </div>
+              <div v-else class="flex">
+                <UButton 
+                  v-if="todoTree.status?.toUpperCase() === 'COMPLETE'" 
+                  icon="i-heroicons-check"
+                  size="sm"
+                  color="green"
+                  square
+                  variant="solid"
+                  title="Reopen"
+                  @click="onReopened"
+                  disabled
+                />
+                <UButton
+                  v-if="todoTree.status?.toUpperCase() === 'INCOMPLETE'"
+                  size="sm"
+                  color="yellow"
+                  square 
+                  variant="outline"
+                  title="Close"
+                  @click="onClosed"
+                  disabled
+                >{{ completionRatio }}</UButton>
+              </div>
               <TodoModal 
                 v-if="detailed"
                 @updated="onAddSubtask" 
@@ -41,7 +64,7 @@
                 square 
                 variant="solid" 
                 title="Delete" 
-                @click="handleDelete"
+                @click="onDelete"
               />
             </div>
             </div>
@@ -51,7 +74,7 @@
         <div class="text-xl flex bg-cyan-950">
           <UButton
             class="flex grow"
-            @click="handleSelectTodo(todoTree.id)"
+            @click="handleSelectTodo"
             :color="primaryButtonColor"
           >{{ todoTree.type?.split('').at(0) }}: {{ todoTree.name }}</UButton>
         </div>
@@ -73,6 +96,7 @@
         @selected="handleSelectTodo"
         @updated="handleChildUpdated"
         @subtask-added="handleAddSubtask"
+        @deleted="handleDelete"
       />
     </div>
   </div>
@@ -91,7 +115,7 @@
     (e: 'updated', todo: any): void
     (e: 'subtaskAdded', subTask: any): void    
     (e: 'assigned', todo: any): void
-    (e: 'deleted'): void
+    (e: 'deleted', todoId: string): void
     (e: 'selected', todoId: string): void
   }>()
 
@@ -110,16 +134,11 @@
   }
 
   const shallowRefresh = async () => {
-    const priorStatus = todoTree.value.status
     const result = await GqlTodoById({
       id: props.todoId,
     })
-
-    shallowMerge(result.todo)
- 
-    if (todoTree.value !== priorStatus) {
-      emit('updated', todoTree)
-    }
+    shallowMerge(result.todo) 
+    emit('updated', todoTree)
   }
 
   const loadData = async () => {
@@ -170,12 +189,18 @@
     todoTree.value.children = children
     emit('subtaskAdded', todoTree)
   }
+  const onDelete = async () => {
+    const result = await GqlDeleteTodo({
+      todoId: props.todoId
+    })
+    emit('deleted', props.todoId)
+  }
   const onLoadSubtree = async () => {
     await loadData()
   }
 
   // this only happens for milestones, which always have children
-  const handleChildUpdated = async () => {
+  const handleChildUpdated = async (todo: any) => {
     await shallowRefresh()
   }
   // updated is for changes that do not affect task status - name, description, tags...
@@ -191,9 +216,14 @@
       todoId: todoTree.value.id,
       residentId: residentId
     })
+    await shallowMerge(result.assignTodo.todo)
   }
-  const handleDelete = async (todo: any) => {
-    await shallowMerge(todo)
+  const handleDelete = async (todoId: string) => {
+    await loadData()
+    // emit('updated', todoTree)
+    // alert(todoId)
+    // todoTree.value.children = todoTree.value.children.filter((t:any) => t.id !== todoId)
+    // await shallowRefresh()
   }
   const handleSelectTodo = async () => {
     detailed.value = !detailed.value
@@ -206,5 +236,11 @@
         return 'teal'
     }
     return `teal`
+  })
+
+  const completionRatio = computed(() => {
+    const complete = (todoTree.value.children || []).filter((t:any) => t.status === 'COMPLETE').length
+    const totalCount = (todoTree.value.children || []).length
+    return `${complete}/${totalCount}`
   })
 </script>

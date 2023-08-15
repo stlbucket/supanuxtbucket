@@ -45,6 +45,22 @@
         </div>
       </UCard>
     </div>
+    <!-- <div class="flex">
+      <div class="flex">
+        <pre>{{ JSON.stringify(scopedChoices,null,2) }}</pre>
+      </div>
+      <div class="flex">
+        <pre>{{ JSON.stringify(unscopedChoices,null,2) }}</pre>
+      </div>
+    </div>
+    <div class="flex">
+      <div class="flex">
+        <pre>{{ JSON.stringify(resident,null,2) }}</pre>
+      </div>
+      <div class="flex">
+        <pre>{{ JSON.stringify(licensePack,null,2) }}</pre>
+      </div>
+    </div> -->
   </UCard>
 </template>
 
@@ -76,7 +92,7 @@
   }[]> = ref([])
 
   const prepareChoices = () => {
-    scopedChoices.value = props.licensePack.licenseTypes
+    scopedChoices.value = props.licensePack.licensePackLicenseTypes
       .filter((lt: any) => ['ALL', 'NONE'].indexOf(lt.licenseType.assignmentScope) === -1)
       .map((lt: any) => {
         return {
@@ -88,7 +104,7 @@
     const scopedLicenseTypeKeys = scopedChoices.value.map(sc => sc.value)
     selectedScoped.value = props.resident.licenses.find((l: any) => scopedLicenseTypeKeys.indexOf(l.licenseTypeKey) > -1)?.licenseTypeKey
 
-    unscopedChoices.value = props.licensePack.licenseTypes
+    unscopedChoices.value = props.licensePack.licensePackLicenseTypes
       .filter((lt: any) => ['ALL', 'NONE'].indexOf(lt.licenseType.assignmentScope) > -1)
       .map((lt: any) => {
         return {
