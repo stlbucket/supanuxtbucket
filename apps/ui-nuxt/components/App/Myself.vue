@@ -20,7 +20,6 @@
 <script lang="ts" setup>
   const profile = ref()
   const loadData = async () => {
-    // useGqlHeaders(useRequestHeaders(['cookie']))
     const result = await GqlGetMyself()
     profile.value = result.getMyself
   }

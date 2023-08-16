@@ -1,0 +1,15 @@
+query SearchTenants(
+  $searchTerm: String
+) {
+  searchTenants(_options: {
+    searchTerm: $searchTerm
+  }) {
+   nodes {
+      id
+      name
+      identifier
+      type
+      status
+    }    
+  }
+}

@@ -12,7 +12,6 @@
   const supabase = useSupabaseClient()
   const residents = ref([])
   const loadData = async () => {
-    // useGqlHeaders(useRequestHeaders(['cookie']))
     const result = await GqlMyResidents()
     residents.value = result.myResidentsList || []
   }

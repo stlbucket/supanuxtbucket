@@ -131,13 +131,13 @@ CREATE OR REPLACE FUNCTION app_fn.install_anchor_application()
           ,row(
             'app-admin-super'::citext
             ,'App Super Admin'::citext
-            ,'{"p:app-admin-super","p:app-admin-support"}'::citext[]
+            ,'{"p:app-admin-super","p:app-admin","p:app-admin-support","p:incidents","p:incidents-admin"}'::citext[]
             ,'superadmin'::app.license_type_assignment_scope
           )::app_fn.license_type_info
           ,row(
             'app-admin-support'::citext
             ,'App Support Admin'::citext
-            ,'{"p:app-admin-support","p:app-admin"}'::citext[]
+            ,'{"p:app-admin-support"}'::citext[]
             ,'support'::app.license_type_assignment_scope
           )::app_fn.license_type_info
           ,row(
@@ -251,6 +251,7 @@ CREATE OR REPLACE FUNCTION app_fn.create_anchor_tenant(_name citext, _email cite
 
       perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'anchor');
       perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'app');
+      perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'inc');
 
       perform app_fn.invite_user(_tenant.id, _email, 'superadmin');
     end if;
@@ -396,6 +397,7 @@ CREATE OR REPLACE FUNCTION app_fn.create_tenant(_name citext, _identifier citext
     ;
 
     perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'app');
+    perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'inc');
     perform app_fn.invite_user(_tenant.id, _email, 'admin');
 
     return _tenant;
@@ -483,7 +485,7 @@ CREATE OR REPLACE FUNCTION app_api.grant_user_license(_resident_id uuid, _licens
   DECLARE
     _license app.license;
   BEGIN
-        if 
+    if 
       auth_ext.has_permission('p:app-admin') != true 
       and
       auth_ext.has_permission('p:app-admin-super') != true
@@ -697,96 +699,7 @@ CREATE OR REPLACE FUNCTION app_fn.unblock_resident(_resident_id uuid)
   end;
   $function$
   ;
------------------------------------ deactivate_tenant
-CREATE OR REPLACE FUNCTION app_api.deactivate_tenant(_tenant_id uuid)
-  RETURNS app.tenant
-  LANGUAGE plpgsql
-  VOLATILE
-  SECURITY INVOKER
-  AS $function$
-  DECLARE
-    _tenant app.tenant;
-  BEGIN
-    if auth_ext.has_permission('p:app-admin-super') != true then raise exception '30000: NOT AUTHORIZED'; end if;
-
-    _tenant := app_fn.deactivate_tenant(_tenant_id);
-    return _tenant;
-  end;
-  $function$
-  ;
-
-CREATE OR REPLACE FUNCTION app_fn.deactivate_tenant(_tenant_id uuid)
-  RETURNS app.tenant
-  LANGUAGE plpgsql
-  VOLATILE
-  SECURITY INVOKER
-  AS $function$
-  DECLARE
-    _tenant app.tenant;
-    _active_resident_ids uuid[];
-  BEGIN
-    select array_agg(aut.id) into _active_resident_ids from app.resident aut where tenant_id = _tenant_id and status = 'active';
-
-    update app.tenant set status = 'inactive' where id = _tenant_id;
-    update app.resident set status = 'blocked_tenant' where tenant_id = _tenant_id and status in ('invited', 'active', 'inactive');
-
-    perform app_fn.configure_user_metadata(aut.id) from app.resident aut where id = any(_active_resident_ids);
-
-    return _tenant;
-  end;
-  $function$
-  ;
-
------------------------------------ activate_tenant
-CREATE OR REPLACE FUNCTION app_api.activate_tenant(_tenant_id uuid)
-  RETURNS app.tenant
-  LANGUAGE plpgsql
-  VOLATILE
-  SECURITY INVOKER
-  AS $function$
-  DECLARE
-    _tenant app.tenant;
-  BEGIN
-    if auth_ext.has_permission('p:app-admin-super') != true then raise exception '30000: NOT AUTHORIZED'; end if;
-
-    _tenant := app_fn.activate_tenant(_tenant_id);
-    return _tenant;
-  end;
-  $function$
-  ;
-
-CREATE OR REPLACE FUNCTION app_fn.activate_tenant(_tenant_id uuid)
-  RETURNS app.tenant
-  LANGUAGE plpgsql
-  VOLATILE
-  SECURITY INVOKER
-  AS $function$
-  DECLARE
-    _tenant app.tenant;
-  BEGIN
-    update app.tenant set status = 'active' where id = _tenant_id;
-    update app.resident 
-      set status = 'inactive' 
-    where tenant_id = _tenant_id 
-    and status in ('blocked_tenant')
-    and profile_id is not null
-    ;
-
-    update app.resident 
-      set status = 'invited' 
-    where tenant_id = _tenant_id 
-    and status in ('blocked_tenant')
-    and profile_id is null
-    ;
-
-    return _tenant;
-  end;
-  $function$
-  ;
-
-
 ---------------------------------------------------------------------- queries
-
 ----------------------------------- my_profile_residencies
 CREATE OR REPLACE FUNCTION app_api.my_profile_residencies()
   RETURNS setof app.resident
@@ -950,7 +863,7 @@ CREATE OR REPLACE FUNCTION app_fn.get_ab_listings(_profile_id uuid, _user_tenant
   RETURNS SETOF app_fn.ab_listing
   LANGUAGE plpgsql
   STABLE
-  SECURITY INVOKER
+  SECURITY DEFINER
   AS $$
   DECLARE
     _can_invite boolean;

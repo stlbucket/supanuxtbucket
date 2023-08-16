@@ -55,9 +55,3 @@ alter table todo.todo enable row level security;
       USING (auth_ext.tenant_id()::uuid = tenant_id)
       WITH CHECK (auth_ext.tenant_id()::uuid = tenant_id)
       ;
-
-    -- CREATE POLICY manage_all_super_admin ON todo.todo
-    --   FOR ALL
-    --   USING (auth_ext.has_permission('p:app-admin-super'))
-    --   WITH CHECK (auth_ext.has_permission('p:app-admin-super'))
-    --   ;

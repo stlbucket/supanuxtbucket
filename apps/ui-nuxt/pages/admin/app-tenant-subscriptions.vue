@@ -12,9 +12,9 @@
   const loadData = async () => {
     const user = await useSupabaseClient().auth.getUser()
     const result = await GqlTenantSubscriptions({
-      tenantId: user.data.user?.user_metadata.app_tenant_id
+      tenantId: user.data.user?.user_metadata.tenant_id
     })
-    tenantSubscriptions.value = result.allTenantSubscriptions.nodes.map((ats:any) => {
+    tenantSubscriptions.value = result.tenantSubscriptions.nodes.map((ats:any) => {
       return {
         ...ats,
         tenantName: ats.tenant.name

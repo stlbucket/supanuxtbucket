@@ -8,11 +8,66 @@ create type inc_fn.incident_info as (
   ,tags citext[]
   ,is_template boolean
 );
+----------------------------------- install_anchor_application ---  NO API
+CREATE OR REPLACE FUNCTION inc_fn.install_incidents_application()
+  RETURNS app.application
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $function$
+  DECLARE
+    _application app.application;
+  BEGIN
+    _application := app_fn.install_application(
+      _application_info => row(
+        'inc'::citext
+        ,'Incidents'::citext
+        ,array[
+          row(
+            'incidents-user'::citext
+            ,'Incidents User'::citext
+            ,'{"p:incidents"}'::citext[]
+            ,'user'::app.license_type_assignment_scope
+          )::app_fn.license_type_info
+          ,row(
+            'incidents-admin'::citext
+            ,'Incidents Admin'::citext
+            ,'{"p:incidents","p:incidents-admin"}'::citext[]
+            ,'admin'::app.license_type_assignment_scope
+          )::app_fn.license_type_info
+        ]::app_fn.license_type_info[]
+        ,array[
+          row(
+            'inc'::citext
+            ,'Incidents'::citext
+            ,array[
+              row(
+                'incidents-user'::citext
+                ,0::integer
+                ,'none'::app.expiration_interval_type
+                ,0::integer
+              )::app_fn.license_pack_license_type_info
+              ,row(
+                'incidents-admin'::citext
+                ,0::integer
+                ,'none'::app.expiration_interval_type
+                ,0::integer
+              )::app_fn.license_pack_license_type_info
+            ]::app_fn.license_pack_license_type_info[]
+          )::app_fn.license_pack_info
+        ]::app_fn.license_pack_info[]
+      )::app_fn.application_info
+    );
+
+    return _application;
+  end;
+  $function$
+  ;
 -------------------------------------- ensure_inc_resident
 CREATE OR REPLACE FUNCTION inc_fn.ensure_inc_resident(
     _resident_id uuid
   ) RETURNS inc.inc_resident
-    LANGUAGE plpgsql VOLATILE
+    LANGUAGE plpgsql VOLATILE SECURITY DEFINER
     AS $$
   DECLARE
     _inc_tenant inc.inc_tenant;

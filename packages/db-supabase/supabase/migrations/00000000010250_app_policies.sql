@@ -35,27 +35,27 @@ alter table app.profile enable row level security;
       USING (auth.uid() = id)
       WITH CHECK (auth.uid() = id)
       ;
-    CREATE POLICY manage_all_super_admin ON app.profile
-      FOR ALL
-      USING (auth_ext.has_permission('p:app-admin-super'));
+    -- CREATE POLICY manage_all_super_admin ON app.profile
+    --   FOR ALL
+    --   USING (auth_ext.has_permission('p:app-admin-super'));
 ------------------------------------------------------------------------ resident
 alter table app.resident enable row level security;
-    CREATE POLICY view_ownresident_email ON app.resident
+    CREATE POLICY view_own_resident_email ON app.resident
       FOR SELECT
       USING (auth.jwt()->>'email' = email);
-    CREATE POLICY view_ownresident_user_id ON app.resident
+    CREATE POLICY view_own_resident ON app.resident
       FOR SELECT
-      USING (auth.uid() = profile_id);
-    CREATE POLICY update_ownresident ON app.resident
+      USING (auth.uid() = profile_id and type != 'support');
+    CREATE POLICY update_own_resident ON app.resident
       FOR UPDATE
       USING (auth.uid() = profile_id)
       WITH CHECK (auth.uid() = profile_id);
-    CREATE POLICY manage_resident ON app.resident
-      FOR ALL
-      USING (auth_ext.has_permission('p:app-admin-super'));
     CREATE POLICY manage_own_tenant_residencies ON app.resident
       FOR ALL
-      USING (auth_ext.has_permission('p:app-admin', tenant_id));
+      USING (auth_ext.has_permission('p:app-admin', tenant_id) and type != 'support');
+    -- CREATE POLICY manage_resident ON app.resident
+    --   FOR ALL
+    --   USING (auth_ext.has_permission('p:app-admin-super'));
 ------------------------------------------------------------------------ tenant
 alter table app.tenant enable row level security;
     CREATE POLICY view_own_tenant_user ON app.tenant
@@ -69,20 +69,20 @@ alter table app.tenant enable row level security;
       USING (auth_ext.has_permission('p:app-admin-super'));
 ------------------------------------------------------------------------ tenant_subscription
 alter table app.tenant_subscription enable row level security;
-    CREATE POLICY manage_tenant_subscription ON app.tenant_subscription
-      FOR ALL
-      USING (auth_ext.has_permission('p:app-admin-super'));
     CREATE POLICY view_own_tenant_subscriptions ON app.tenant_subscription
       FOR ALL
       USING (auth_ext.has_permission('p:app-admin', tenant_id));
+    -- CREATE POLICY manage_tenant_subscription ON app.tenant_subscription
+    --   FOR ALL
+    --   USING (auth_ext.has_permission('p:app-admin-super'));
 ------------------------------------------------------------------------ license
 alter table app.license enable row level security;
-    CREATE POLICY manage_license ON app.license
-      FOR ALL
-      USING (auth_ext.has_permission('p:app-admin-super'));
     CREATE POLICY view_own_tenant_licenses ON app.license
       FOR ALL
       USING (auth_ext.has_permission('p:app-admin', tenant_id));
+    -- CREATE POLICY manage_license ON app.license
+    --   FOR ALL
+    --   USING (auth_ext.has_permission('p:app-admin-super'));
 ------------------------------------------------------------------------ application
 alter table app.application enable row level security;
     CREATE POLICY view_all_users ON app.application

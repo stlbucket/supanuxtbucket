@@ -18,6 +18,12 @@ create type app.tenant_status as enum (
     ,'paused'
   );
 ----------------------------------------------------------------------------------------------
+create type app.resident_type as enum (
+  'home'  -- only one of these per user
+  ,'guest'
+  ,'support'
+);
+----------------------------------------------------------------------------------------------
 create type app.profile_status as enum (
     'active'
     ,'inactive'
@@ -154,6 +160,7 @@ create table if not exists app.resident (
     ,created_at timestamptz not null default current_timestamp
     ,updated_at timestamptz not null default current_timestamp
     ,status app.resident_status not null default 'invited'
+    ,type app.resident_type not null
   );
 ----------------------------------------------------------------------------------------------
 CREATE TABLE app.license (
@@ -244,9 +251,10 @@ create index idx_app_tenant_subscription_tenant_id on app.tenant_subscription(te
 ------------------------------------------------- resident
 create index idx_resident_profile on app.resident(profile_id);
 create index idx_resident_tenant on app.resident(tenant_id);
-create unique index idx_uq_resident on app.resident(profile_id) where status = 'active';
 create index idx_app_resident_invited_by_profile_id on app.resident(invited_by_profile_id);
 alter table only app.resident add constraint uq_resident unique(tenant_id, profile_id);
+create unique index idx_uq_resident on app.resident(profile_id) where status = 'active';
+create unique index idx_uq_home_resident on app.resident(profile_id) where type = 'home';
 
 ----------------------------------------------------------------------------------------------
 
@@ -257,8 +265,6 @@ create unique index idx_uq_lplt_admin_super on app.license_pack_license_type(lic
 create unique index idx_uq_lplt_admin_support on app.license_pack_license_type(license_pack_key) where license_type_key = 'app-admin-support';
 -- there can only ever be one subscriber to the anchor license pack, the anchor tenant
 create unique index idx_uq_anchor_subscription on app.tenant_subscription(id) where license_pack_key = 'anchor';
--- these two are just for extra strictness to doubly enforce there can only be one of each of these.  it will be in the anchor license pack.
-
 --------------- indexes to enforce uniqueness of scoped license types in an application
 create unique index idx_uq_app_license_type_scope_superadmin on app.license_type(key, application_key) where assignment_scope = 'superadmin';
 create unique index idx_uq_app_license_type_scope_admin on app.license_type(key, application_key) where assignment_scope = 'admin';

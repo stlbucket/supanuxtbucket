@@ -12,13 +12,13 @@
   const links = computed(() => {
     return [
       {
-        label: 'Tenants',
+        label: 'Tenant Support',
         icon: 'i-heroicons-home',
         to: '/site-admin/app-tenant',
         title: 'Tenants',
       },
       {
-        label: 'User Residents',
+        label: 'Tenant Users',
         icon: 'i-heroicons-building-office',
         to: '/site-admin/app-user-residents',
         title: 'User Residents',

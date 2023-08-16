@@ -1,3 +1,5 @@
+  select inc_fn.install_incidents_application();
+
 ------------------------ CREATE ANCHOR TENANT AND SUPER ADMIN USER ---------------------------------------------
 --- change parameters as appropriate
   select app_fn.create_anchor_tenant(
@@ -10,11 +12,13 @@
 
 ------------------------ INSTALL APPLICATIONS AND SUBSCRIBE ANCHOR TENANT TO EACH ------------------------------
 
-  -- select todo_fn.install_todo_application();
+  
   -- select app_fn.subscribe_tenant_to_license_pack(
   --   _tenant_id => (select id from app.tenant where identifier = 'anchor')::uuid
-  --   ,_license_pack_key => 'todo'
+  --   ,_license_pack_key => 'inc'
   -- );
+
+
       -- select your_app_fn.install_your_application();
       -- select app_fn.subscribe_tenant_to_license_pack(
       --   _tenant_id => (select id from app.tenant where identifier = 'anchor')::uuid

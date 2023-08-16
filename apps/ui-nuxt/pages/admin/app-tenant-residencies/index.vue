@@ -2,27 +2,27 @@
   <UCard>
     <template #header>
       <div class="flex justify-between">
-        <div class="flex text-2xl">TENANT USERS</div>
+        <div class="flex text-2xl">APP USERS</div>
         <div class="flex text-xs">Invitees may not yet be app users</div>
       </div>
-      <ResidencyModal @new-app-user-tenancy="onNewResidency"/>
+      <ResidentModal @new-resident="onNewResident"/>
     </template>
-    <AppUserTenancies :tenancies="tenancies"/>
+    <ResidentsList :residents="residents"/>
   </UCard>
 </template>
 
 <script lang="ts" setup>
-  const tenancies = ref([])
+  const residents = ref([])
   const loadData = async () => {
-    const result = await GqlTenantAppUserTenancies()
-    tenancies.value = result.tenantAppUserTenancies.nodes || []
+    const result = await GqlAllResidents()
+    residents.value = result.residents.nodes || []
   }
   loadData()
 
-  const onNewResidency = async (email: string) => {
+  const onNewResident = async (email: string) => {
     const result = await GqlInviteUser({
       email: email
     })
-    navigateTo(`/admin/app-tenant-residencies/${result.inviteUser.residency.id}`)
+    navigateTo(`/admin/app-tenant-residencies/${result.inviteUser.resident.id}`)
   }
 </script>

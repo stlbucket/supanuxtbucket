@@ -2,7 +2,7 @@
 CREATE OR REPLACE FUNCTION msg_fn.ensure_msg_resident(
     _resident_id uuid
   ) RETURNS msg.msg_resident
-    LANGUAGE plpgsql VOLATILE
+    LANGUAGE plpgsql VOLATILE SECURITY DEFINER
     AS $$
   DECLARE
     _msg_tenant msg.msg_tenant;
@@ -22,9 +22,12 @@ CREATE OR REPLACE FUNCTION msg_fn.ensure_msg_resident(
         where id = _resident_id
       returning * into _msg_tenant;
     end if;
+-- raise exception '_msg_tenant: %', _msg_tenant;
 
     select * into _msg_resident from msg.msg_resident where id = _resident_id;
     if _msg_resident.id is null then
+-- raise exception '_msg_resident: %', _msg_resident;
+
       insert into msg.msg_resident(id, display_name, tenant_id)
         select id, display_name, tenant_id
         from app.resident 
@@ -112,7 +115,6 @@ CREATE OR REPLACE FUNCTION msg_api.upsert_message(
     _message msg.message;
   BEGIN
     perform auth_ext.enforce_permission('p:discussions');
-
     _message := msg_fn.upsert_message(
       _message_info
       ,auth_ext.resident_id()

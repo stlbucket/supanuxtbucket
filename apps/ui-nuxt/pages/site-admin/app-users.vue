@@ -6,6 +6,9 @@
         <div class="flex text-xs">Users who have actually joined the system - not including invitees</div>
       </div>
     </template>
+    <div>
+      <UInput v-model="searchTerm" />
+    </div>
     <UTable
       :rows="profiles"
       :columns="[
@@ -13,22 +16,22 @@
         {key: 'firstName', label: 'First Name', sortable: true},
         {key: 'lastName', label: 'Last Name', sortable: true},
         {key: 'status', label: 'Status', sortable: true},
-        {key: 'licenses', sortable: true}
       ]"
       :sort="{ column: 'name', direction: 'asc' }"
     >
-      <template #licenses-data="{ row }">
-        {{ `${row.residents.length} Residenc${row.residents.length > 1 ? 'ies' : 'y'}` }}
-      </template>
     </UTable>
   </UCard>  
 </template>
 
 <script lang="ts" setup>
   const profiles = ref([])
+  const searchTerm = ref()
   const loadData = async () => {
-    const result = await GqlAllAppProfiles()
-    profiles.value = result.profiles.nodes
+    const result = await GqlSearchProfiles({
+      searchTerm: searchTerm.value
+    })
+    profiles.value = result.searchProfiles.nodes
   }
   loadData()
+  watch(()=>searchTerm.value, loadData)
 </script>

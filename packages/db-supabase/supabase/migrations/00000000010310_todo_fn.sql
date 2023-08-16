@@ -10,7 +10,7 @@ create schema if not exists todo_fn;
 CREATE OR REPLACE FUNCTION todo_fn.ensure_todo_resident(
     _resident_id uuid
   ) RETURNS todo.todo_resident
-    LANGUAGE plpgsql VOLATILE
+    LANGUAGE plpgsql VOLATILE SECURITY DEFINER
     AS $$
   DECLARE
     _todo_tenant todo.todo_tenant;

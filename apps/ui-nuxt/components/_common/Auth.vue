@@ -36,15 +36,16 @@
     }
   }
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) {
-      alert(error.message)
-    }
-    supUser.value = null
-    reloadNuxtApp({
-      path: '/',
-      force: true
-    })
+    navigateTo('/logout')
+    // const { error } = await supabase.auth.signOut()
+    // if (error) {
+    //   alert(error.message)
+    // }
+    // supUser.value = null
+    // reloadNuxtApp({
+    //   path: '/',
+    //   force: true
+    // })
   }
   const showExitSupportMode = computed(() => {
     return !(!supUser.value?.user_metadata.actual_resident_id)

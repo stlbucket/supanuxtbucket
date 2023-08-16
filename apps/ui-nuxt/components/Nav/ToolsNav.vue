@@ -31,13 +31,6 @@
         to: '/discussions',
         title: 'Discussions',
         permissionKey: ['p:discussions']
-      },
-      {
-        label: 'Incidents',
-        icon: 'i-heroicons-arrows-pointing-in',
-        to: '/incidents',
-        title: 'Incidents',
-        // permissionKey: ['p:incidents']
       }
     ]
       .map((l: any) => {

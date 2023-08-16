@@ -2,10 +2,13 @@
   <UCard>
     <template #header>
       <div class="flex justify-between">
-        <div>APP TENANTS</div>
+        <div>APP TENANT SUPPORT</div>
         <TenantModal @updated="onNewTenant"/>
       </div>
     </template>
+    <div>
+      <UInput v-model="searchTerm" />
+    </div>
     <UTable
       :rows="tenants"
       :columns="[
@@ -14,13 +17,9 @@
         {key: 'status', label: 'Status', sortable: true},
         {key: 'type', label: 'Type', sortable: true},
         {key: 'identifier', label: 'Identifier', sortable: true},
-        // {key: 'subscriptions', label: 'Subscriptions', sortable: true},
       ]"
       :sort="{ column: 'name', direction: 'asc' }"
     >
-      <template #name-data="{ row }">
-        <NuxtLink :to="`/site-admin/app-tenant/${row.id}`">{{ row.name }}</NuxtLink>
-      </template>
       <template #action-data="{ row }">
         <UButton @click="onSupport(row)">Support</UButton>
       </template>
@@ -31,11 +30,15 @@
 <script lang="ts" setup>
   const supabase = useSupabaseClient()
   const tenants = ref([])
+  const searchTerm = ref()
   const loadData = async () => {
-    const result = await GqlAllTenants()
-    tenants.value = result.tenants.nodes
+    const result = await GqlSearchTenants({
+      searchTerm: searchTerm.value
+    })
+    tenants.value = result.searchTenants.nodes
   }
   loadData()
+  watch(()=>searchTerm.value, loadData)
 
   const onSupport = async (tenant: Tenant) => {
     const result = await GqlBecomeSupport({

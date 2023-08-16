@@ -85,8 +85,8 @@ importers:
   packages/db-supabase:
     dependencies:
       supabase:
-        specifier: ^1.84.1
-        version: 1.84.1
+        specifier: ^1.86.1
+        version: 1.86.1
 
   packages/eslint-config-custom:
     dependencies:
@@ -13449,8 +13449,8 @@ packages:
       ts-interface-checker: 0.1.13
     dev: true
 
-  /supabase@1.84.1:
-    resolution: {integrity: sha512-kIMcAV3Pm5u8hSHargigJUo2uhKD6vB8z+NF39CVidKCI0/9by1GUOCWA0FadTbc+96Tk/OcztA/ayot6dSnng==}
+  /supabase@1.86.1:
+    resolution: {integrity: sha512-avP/rttCgltapxZ5fLkZDXpjhlgh/jynoFNOkVDrtKwtY36tWZCdCawAtYUc+k+ylimIR6tOjFNWV7cKRurUGg==}
     engines: {npm: '>=8'}
     hasBin: true
     requiresBuild: true

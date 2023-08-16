@@ -56,10 +56,22 @@ create type app_fn.paging_options as (
   ,item_limit integer
 );
 -----------------------------------------------
-create type app_fn.search_profile_residencies_options as (
+create type app_fn.search_residents_options as (
   search_term citext
   ,status app.resident_status
-  ,roots_only boolean
+  ,paging_options app_fn.paging_options
+);
+-----------------------------------------------
+create type app_fn.search_profiles_options as (
+  search_term citext
+  ,status app.profile_status
+  ,paging_options app_fn.paging_options
+);
+-----------------------------------------------
+create type app_fn.search_tenants_options as (
+  search_term citext
+  ,status app.tenant_status
+  ,type app.tenant_type
   ,paging_options app_fn.paging_options
 );
 ----------------------------------------------------------------------------------------------

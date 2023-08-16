@@ -2,23 +2,27 @@
     <UCard>
       <template #header>
         <div class="flex justify-between">
-          <div class="flex text-2xl">APP USER TENANCIES</div>
+          <div class="flex text-2xl">TENANT USERS</div>
           <div class="flex text-xs">Invitees may not yet be actual users</div>
         </div>
       </template>
-      <ResidentsList :residents="residents"/>
+      <div>
+        <UInput v-model="searchTerm" />
+      </div>
+      <ResidentsList :residents="residents" show-support-action/>
     </UCard>
 </template>
 
 <script lang="ts" setup>
   const residents = ref([])
-  const loadResidents = async () => {
-    const result = await GqlAllResidents()
-    residents.value = result.residents.nodes || []
+  const searchTerm = ref()
+  const loadData = async () => {
+    const result = await GqlSearchResidents({
+      searchTerm: searchTerm.value
+    })
+    residents.value = result.searchResidents.nodes || []
   }
-  loadResidents()
+  loadData()
+  watch(()=>searchTerm.value, loadData)
 
-  const onNew = async () => {
-    alert('not implemented')
-  }
 </script>

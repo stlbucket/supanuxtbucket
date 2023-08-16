@@ -235,11 +235,16 @@ CREATE OR REPLACE FUNCTION app_fn.invite_user(
         ,tenant_name
         ,email
         ,display_name
+        ,type
       ) values (
         _tenant.id
         ,_tenant.name
         ,_email
         ,coalesce(_profile.display_name, split_part(_email,'@',1))
+        ,case
+          when (select count(*) from app.resident where email = _email) > 0 then 'guest'::app.resident_type
+          else 'home'::app.resident_type
+        end
       ) 
       returning * into _resident;
 
@@ -313,147 +318,6 @@ CREATE OR REPLACE FUNCTION app_fn.demo_profile_residencies()
   end;
   $function$
   ;
------------------------------------------------------------------ become_support
-CREATE OR REPLACE FUNCTION app_api.become_support(_tenant_id uuid)
-  RETURNS app.resident
-  LANGUAGE plpgsql
-  VOLATILE
-  SECURITY DEFINER
-  AS $$
-  DECLARE
-    _resident app.resident;
-  BEGIN
-    if auth_ext.has_permission('p:app-admin-support') = false then
-      raise exception '30000: PERMISSION DENIED';
-    end if;
-
-    _resident := (select app_fn.become_support(_tenant_id, auth.uid()));
-    return _resident;
-  end;
-  $$;  
-
-CREATE OR REPLACE FUNCTION app_fn.become_support(_tenant_id uuid, _profile_id uuid)
-  RETURNS app.resident
-  LANGUAGE plpgsql
-  VOLATILE
-  SECURITY DEFINER
-  AS $$
-  DECLARE
-    _tenant app.tenant;
-    _resident app.resident;
-    _actual_resident app.resident;
-    _support_email citext;
-    _support_display_name citext;
-  BEGIN
-      select * into _tenant from app.tenant where id = _tenant_id;
-
-      update app.resident set status = 'supporting' 
-      where profile_id = _profile_id and status = 'active'
-      returning * into _actual_resident;
-
-      select coalesce(value, 'support@example.com') into _support_email from app.app_settings where key = 'support-email' and application_key = 'app';
-      select coalesce(value, 'Site Support') into _support_display_name from app.app_settings where key = 'support-display-name' and application_key = 'app';
-
-      insert into app.resident(
-        tenant_id
-        ,profile_id
-        ,tenant_name
-        ,email
-        ,display_name
-        ,status
-      ) values (
-        _tenant.id
-        ,_profile_id
-        ,_tenant.name
-        ,_support_email
-        ,_support_display_name
-        ,'active'
-      )
-      on conflict(tenant_id, profile_id) do update
-        set status = 'active'
-      returning * into _resident
-      ;
-
-      insert into app.license(
-        tenant_id
-        ,resident_id
-        ,tenant_subscription_id
-        ,license_type_key
-      )
-      values (
-        _resident.tenant_id
-        ,_resident.id
-        ,(select id from app.tenant_subscription where tenant_id = _resident.tenant_id limit 1)
-        ,'app-admin-support'
-      )
-      on conflict (resident_id, license_type_key) DO NOTHING
-      -- on conflict (resident_id, license_type_key) DO UPDATE SET updated_at = current_timestamp
-      ;
-
-      insert into app.license(
-        tenant_id
-        ,resident_id
-        ,tenant_subscription_id
-        ,license_type_key
-      )
-      select
-        _resident.tenant_id
-        ,_resident.id
-        ,ats.id
-        ,lplt.license_type_key
-      from app.tenant_subscription ats
-      join app.license_pack lp on lp.key = ats.license_pack_key
-      join app.license_pack_license_type lplt on lplt.license_pack_key = lp.key
-      join app.license_type lt on lt.key = lplt.license_type_key
-      where ats.tenant_id = _resident.tenant_id
-      and lt.assignment_scope in ('admin', 'all', 'none') -- this is a super special rule only for support users
-      and not exists (
-        select id from app.license
-        where resident_id = _resident.id
-        and license_type_key = lplt.license_type_key
-      )
-      on conflict (resident_id, license_type_key) DO NOTHING
-      ;
-
-      perform app_fn.configure_user_metadata(_resident.profile_id, _actual_resident.id);
-
-    return _resident;
-  end;
-  $$;  
------------------------------------------------------------------ exit_support_mode
-CREATE OR REPLACE FUNCTION app_api.exit_support_mode()
-  RETURNS app.resident
-  LANGUAGE plpgsql
-  VOLATILE
-  SECURITY DEFINER
-  AS $$
-  DECLARE
-    _resident app.resident;
-  BEGIN
-    if auth_ext.has_permission('p:app-admin-support') = false then
-      raise exception '30000: PERMISSION DENIED';
-    end if;
-
-    _resident := (select app_fn.exit_support_mode(auth_ext.resident_id(), auth_ext.actual_resident_id()));
-    return _resident;
-  end;
-  $$;  
-
-CREATE OR REPLACE FUNCTION app_fn.exit_support_mode(_support_resident_id uuid, _actual_resident uuid)
-  RETURNS app.resident
-  LANGUAGE plpgsql
-  VOLATILE
-  SECURITY DEFINER
-  AS $$
-  DECLARE
-    _resident app.resident;
-  BEGIN
-    update app.resident set status = 'inactive' where id = _support_resident_id;
-    _resident := (select app_fn.assume_residency(id::uuid, email::citext) from app.resident where id = _actual_resident);
-
-    return _resident;
-  end;
-  $$;  
 ----------------------------------------------------------------- get_ab_listings --- API ONLY
 CREATE OR REPLACE FUNCTION app_api.get_ab_listings(_profile_id uuid)
   RETURNS SETOF app_fn.ab_listing
@@ -466,45 +330,3 @@ CREATE OR REPLACE FUNCTION app_api.get_ab_listings(_profile_id uuid)
     return query select * from app_fn.get_ab_listings(auth.uid(), auth_ext.tenant_id());
   end;
   $$;  
-
--- ---------------------------------------------- search_profile_residencies
---   CREATE OR REPLACE FUNCTION app_api.search_profile_residencies(_options app_fn.search_profile_residencies_options)
---     RETURNS setof app.resident
---     LANGUAGE plpgsql
---     stable
---     SECURITY DEFINER
---     AS $$
---     DECLARE
---     BEGIN
---       return query select * from app_fn.search_profile_residencies(_options);
---     end;
---     $$;
-
---   CREATE OR REPLACE FUNCTION app_fn.search_profile_residencies(_options app_fn.search_profile_residencies_options)
---     RETURNS setof app.resident
---     LANGUAGE plpgsql
---     stable
---     SECURITY DEFINER
---     AS $$
---     DECLARE
---       _use_options app_fn.search_profile_residencies_options;
---     BEGIN
---       -- resident: add paging options
-
---       return query
---       select t.* 
---       from app.resident t
---       join app.tenant a on a.id = t.tenant_id
---       where (
---         _options.search_term is null 
---         or t.email like '%'||_options.search_term||'%'
---         or t.tenant_name like '%'||_options.search_term||'%'
---         or a.display_name like '%'||_options.search_term||'%'
---       )
---       and (_options.resident_type is null or t.type = _options.resident_type)
---       and (_options.resident_status is null or t.status = _options.resident_status)
---       and (coalesce(_options.roots_only, false) = false or t.parent_resident_id is null )
---       ;
---     end;
---     $$;
-
