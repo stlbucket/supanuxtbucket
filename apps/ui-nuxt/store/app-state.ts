@@ -1,13 +1,15 @@
 import { defineStore } from 'pinia'
 
 interface AppState {
-  navCollapsed: boolean
+  navCollapsed: boolean,
+  loggedIn: boolean
 }
 
 export const useAppStateStore = defineStore('appState', {
   persist: true,
   state: (): AppState => ({
-    navCollapsed: true
+    navCollapsed: true,
+    loggedIn: false
   }),
   getters: {
     
@@ -15,6 +17,9 @@ export const useAppStateStore = defineStore('appState', {
   actions: {
     setNavCollapsed (navCollapsed: boolean) {
       this.navCollapsed = navCollapsed
+    },
+    setLoggedIn (loggedIn: boolean) {
+      this.loggedIn = loggedIn
     }
   },
 })

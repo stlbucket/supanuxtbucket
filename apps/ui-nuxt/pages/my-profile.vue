@@ -1,15 +1,15 @@
 <template>
     <div class="flex">
-      <div>
+      <!-- <div>
         <MyResidents/>
-      </div>
+      </div> -->
       <div>
         <Myself />
       </div>
       <div>
       </div>
     </div>
-    <pre>{{ JSON.stringify(supUser,null,2) }}</pre>
+    <!-- <pre>{{ JSON.stringify(supUser,null,2) }}</pre> -->
 </template>
 
 <script lang="ts" setup>

@@ -21,12 +21,13 @@
   const supUser = useSupabaseUser()
   const supabase = useSupabaseClient()
   const email = ref('')
+  const appStateStore = useAppStateStore()
 
   const handleLogin = async () => {
     const { error } = await supabase.auth.signInWithOtp({
       email: email.value,
       options: {
-        emailRedirectTo: 'http://localhost:3025/my-profile',
+        emailRedirectTo: 'http://localhost:3025/authenticated',
       }
     })
     if (error) {
@@ -59,4 +60,7 @@
       force: true
     })    
   }
+  const loggedIn = computed(() => {
+    return appStateStore.loggedIn
+  })
 </script>
