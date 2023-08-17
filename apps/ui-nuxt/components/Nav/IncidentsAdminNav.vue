@@ -12,9 +12,9 @@
   const links = computed(() => {
     return [
       {
-        label: 'Incidents Types',
+        label: 'Incident Types',
         icon: 'i-heroicons-arrows-pointing-in',
-        to: '/incidents',
+        to: '/incident-types',
         title: 'Incident Types',
         // permissionKey: ['p:incidents']
       }

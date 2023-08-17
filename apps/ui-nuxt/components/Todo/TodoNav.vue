@@ -7,7 +7,7 @@ const links = [
   {
     label: 'Projects',
     icon: 'i-heroicons-clipboard-document-list',
-    to: '/todo'
+    to: '/tools/todo'
   }
 ]
 </script>

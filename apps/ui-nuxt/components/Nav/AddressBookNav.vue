@@ -14,7 +14,7 @@
       {
         label: 'Address Book',
         icon: 'i-heroicons-book-open',
-        to: '/address-book',
+        to: '/tools/address-book',
         title: 'Address Book',
       }
     ]

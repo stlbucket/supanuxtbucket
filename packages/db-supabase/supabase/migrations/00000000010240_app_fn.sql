@@ -291,7 +291,6 @@ CREATE OR REPLACE FUNCTION app_fn.current_profile_claims(_profile_id uuid)
     select * into _profile from app.profile where id = _profile_id;
     select * into _resident from app.resident where profile_id = _profile_id and status = 'active';
 
-    -- raise exception 'wtf, % -- % -- %', _profile_id, _profile, auth.uid();
     _profile_claims.email = _profile.email;
     _profile_claims.profile_status = (select status from app.profile where id = _profile_id);
     if _resident.id is not null then

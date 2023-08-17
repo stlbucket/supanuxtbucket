@@ -9,7 +9,8 @@ export default defineNuxtConfig({
     //   exclude: [],
     // },
     cookieOptions: {
-      maxAge: 60 * 60 * 8,
+      maxAge: 60 * 5,
+      // maxAge: 60 * 60 * 8,
       sameSite: 'lax',
       secure: true
     },

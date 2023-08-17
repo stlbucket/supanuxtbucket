@@ -13,7 +13,7 @@
       ]"
     >
     <template #name-data="{row}">
-      <NuxtLink :to="`/discussions/${row.id}`">{{ row.name }}</NuxtLink>
+      <NuxtLink :to="`/tools/discussions/${row.id}`">{{ row.name }}</NuxtLink>
     </template>
     <template #messageCount-data="{row}">
       {{ row.messages.totalCount }}

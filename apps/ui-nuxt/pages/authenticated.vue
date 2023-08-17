@@ -8,17 +8,17 @@
   const session = ref()
 
   const loadUser = async () => {
-    try{
-      const { data, error } = await supabase.auth.getSession()
-      session.value = data.session
-      if (data.session) {
-        appStateStore.setLoggedIn(true)
-        navigateTo('/todo')
-      } else {
-        navigateTo('/')
-      }
-    } catch (e) {
-      console.log('ERROR', e)
+  const { data, error } = await supabase.auth.getSession()
+    session.value = data.session
+    if (data.session) {
+      appStateStore.setLoggedIn(true)
+      reloadNuxtApp({
+        path: '/tools/todo'
+      })
+    } else {
+      reloadNuxtApp({
+        path: '/'
+      })
     }
   }
   loadUser()

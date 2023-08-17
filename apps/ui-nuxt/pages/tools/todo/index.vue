@@ -42,6 +42,6 @@
   }
 
   const handleSelected = async (todoId: string) => {
-    navigateTo(`/todo/${todoId}`)
+    navigateTo(`/tools/todo/${todoId}`)
   }
 </script>

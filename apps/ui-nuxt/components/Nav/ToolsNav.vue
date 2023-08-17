@@ -14,21 +14,21 @@
       {
         label: 'Address Book',
         icon: 'i-heroicons-book-open',
-        to: {name: 'address-book'},
+        to: {path: '/tools/address-book'},
         title: 'Address Book',
         permissionKey: ['p:address-book']
       },
       {
         label: 'Todo',
         icon: 'i-heroicons-clipboard-document-list',
-        to: '/todo',
+        to: '/tools/todo',
         title: 'Todo',
         permissionKey: ['p:todo']
       },
       {
         label: 'Discussions',
         icon: 'i-heroicons-user-group',
-        to: '/discussions',
+        to: '/tools/discussions',
         title: 'Discussions',
         permissionKey: ['p:discussions']
       }
