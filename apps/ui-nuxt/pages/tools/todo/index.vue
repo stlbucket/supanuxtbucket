@@ -4,6 +4,7 @@
       <div class="flex justify-between">
         <div class="text-2xl">Projects</div>
         <TodoModal @updated="handleCreate"></TodoModal>
+        {{ loggedIn }}
       </div>
       <div>
         <UInput v-model="searchTerm" />
@@ -44,4 +45,9 @@
   const handleSelected = async (todoId: string) => {
     navigateTo(`/tools/todo/${todoId}`)
   }
+
+  const appStore = useAppStateStore()
+  const loggedIn = computed(()=>{
+    return appStore.loggedIn
+  })
 </script>

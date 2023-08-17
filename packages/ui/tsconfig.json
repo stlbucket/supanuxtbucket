@@ -1,8 +1,0 @@
-{
-  "extends": "@supanuxtbucket/tsconfig/histoire.json",
-  "include": [
-    "env.d.ts",
-    "./**/*",
-    "./**/*.vue"
-  ]
-}

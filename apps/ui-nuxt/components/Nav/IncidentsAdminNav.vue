@@ -14,7 +14,7 @@
       {
         label: 'Incident Types',
         icon: 'i-heroicons-arrows-pointing-in',
-        to: '/incident-types',
+        to: '/incident-type',
         title: 'Incident Types',
         // permissionKey: ['p:incidents']
       }

@@ -2,7 +2,7 @@
   <UCard>
     <template #header>
       <div class="flex justify-between">
-        <div class="flex text-2xl">AUTH USERS</div>
+        <div class="flex text-2xl">APP USERS</div>
         <div class="flex text-xs">Users who have actually joined the system - not including invitees</div>
       </div>
     </template>

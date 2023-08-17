@@ -18,7 +18,7 @@ export const useAppStateStore = defineStore('appState', {
     setNavCollapsed (navCollapsed: boolean) {
       this.navCollapsed = navCollapsed
     },
-    setLoggedIn (loggedIn: boolean) {
+    async setLoggedIn (loggedIn: boolean) {
       this.loggedIn = loggedIn
     }
   },

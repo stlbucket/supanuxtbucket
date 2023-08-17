@@ -14,14 +14,14 @@
       {
         label: 'Tenant Support',
         icon: 'i-heroicons-home',
-        to: '/site-admin/app-tenant',
+        to: '/site-admin/tenant',
         title: 'Tenants',
       },
       {
-        label: 'Tenant Users',
+        label: 'Tenant Residents',
         icon: 'i-heroicons-building-office',
-        to: '/site-admin/app-user-residents',
-        title: 'User Residents',
+        to: '/site-admin/tenant-residents',
+        title: 'Tenant Residents',
       },
       {
         label: 'Auth Users',

@@ -1,4 +1,5 @@
 <template>
+  <div class="text-4xl">LOGGING IN</div>
   <pre>{{ JSON.stringify(session,null,2) }}</pre>
 </template>
 
@@ -11,10 +12,13 @@
   const { data, error } = await supabase.auth.getSession()
     session.value = data.session
     if (data.session) {
-      appStateStore.setLoggedIn(true)
-      reloadNuxtApp({
-        path: '/tools/todo'
-      })
+      await appStateStore.setLoggedIn(true)
+
+      setTimeout(()=>{
+        reloadNuxtApp({
+          path: '/tools/todo'
+        })
+      }, 1000)
     } else {
       reloadNuxtApp({
         path: '/'

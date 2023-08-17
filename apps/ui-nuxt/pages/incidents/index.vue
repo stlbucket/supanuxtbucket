@@ -1,7 +1,10 @@
 <template>
   <UCard>
     <template #header>
-      INCIDENTS 
+      <div class="flex justify-between">
+        <div class="text-3xl">INCIDENTS</div>
+        <UButton>New Incident</UButton>
+      </div>
     </template>
     <UTable
       :rows="incidents"
