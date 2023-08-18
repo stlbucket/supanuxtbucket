@@ -11,6 +11,7 @@ export default {
     sidebar: [
       {
         items: [
+          { text: 'Overview', link: '/overview' },
           { text: 'Getting started', link: '/getting-started' },
           { text: 'Demo Data', link: '/demo-tenants' },
           { text: 'Postraphile v5', link: '/postgraphile' },
