@@ -24,5 +24,3 @@ In original terminal:
 pnpm run dev
 ```
 Then navigate to http://localhost:3025
-
-This documentation should be available at http://localhost:5173

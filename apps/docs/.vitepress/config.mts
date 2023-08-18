@@ -1,12 +1,12 @@
 export default {
-  title: 'VitePress',
-  description: 'Just playing around with turborepo',
+  title: 'SupaNuxtPhile',
+  description: 'Build your idea quickly, query it (gra)fast!',
   ignoreDeadLinks: true,
   themeConfig: {
-    siteTitle: 'SupaNuxtGraphile',
+    siteTitle: 'SupaNuxtPhile',
     nav: [
       { text: 'Getting started', link: '/getting-started' },
-      { text: 'Github', link: 'https://github.com/stlbucket/supanuxtbucket' },
+      { text: 'Github', link: 'https://github.com/stlbucket/supanuxtphile' },
     ],
     sidebar: [
       {

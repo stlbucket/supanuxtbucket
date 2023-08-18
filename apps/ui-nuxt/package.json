@@ -1,5 +1,5 @@
 {
-  "name": "@supanuxtbucket/ui-nuxt",
+  "name": "@supanuxtphile/ui-nuxt",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -16,7 +16,7 @@
     "@nuxthq/ui": "^2.7.0",
     "@nuxtjs/supabase": "^1.0.2",
     "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
-    "@supanuxtbucket/tsconfig": "workspace:*",
+    "@supanuxtphile/tsconfig": "workspace:*",
     "@types/node": "^18",
     "nuxt": "^3.6.5",
     "sass": "^1.63.6"
