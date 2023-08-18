@@ -6,9 +6,9 @@ Core Techs:
 - [Nuxt UI Labs](https://ui.nuxtlabs.com/getting-started)
 
 ## Goals
-This starter repo is intended to provide a quick-start scenario for building MVPs that that can be quickly deployed to Supabase and the related ecosystem.
+This repo is intended to provide a quick-start scenario for building MVPs that that can be easily deployed to Supabase and the related ecosystem.
 
-Minimal UI styling, with simple straightforward usage of Nuxt UI Labs component library and basic tailwind tweaks.  It should be relatively painless to swap in a different library for this purpose.
+Minimal UI styling, with simple straightforward usage of Nuxt UI Labs component library and basic Tailwind tweaks.  It should be relatively painless to swap in a different library as desired.
 
 A modular approach to database design meant to be scalable in the short term, and ready for refactoring should major services need to be split off in the future.
 
