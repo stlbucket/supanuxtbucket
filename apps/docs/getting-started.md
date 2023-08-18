@@ -1,5 +1,5 @@
 # Getting Started
-Clone the repository at **https://github.com/stlbucket/nuxtsupabucket**
+Clone the repository at **https://github.com/stlbucket/supanuxtbucket**
 ```
 pnpm install
 ```
