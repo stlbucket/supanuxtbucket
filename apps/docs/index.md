@@ -10,9 +10,9 @@ hero:
     - theme: brand
       text: Getting Started
       link: /getting-started
-    # - theme: alt
-    #   text: Guide
-    #   link: /guide
+    - theme: alt
+      text: Overview
+      link: /overview
 
 features:
   - title: Multi-Tenancy
