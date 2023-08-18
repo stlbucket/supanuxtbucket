@@ -64,9 +64,9 @@ CREATE OR REPLACE FUNCTION app_fn.install_application(_application_info app_fn.a
 
     foreach _license_pack_info in array(_application_info.license_pack_infos)
     loop
-      insert into app.license_pack(key, display_name)
+      insert into app.license_pack(key, display_name, auto_subscribe)
         values 
-          (_license_pack_info.key, _license_pack_info.display_name)
+          (_license_pack_info.key, _license_pack_info.display_name, _license_pack_info.auto_subscribe)
         on conflict(key)
         do update set display_name = _license_pack_info.display_name
         returning * into _license_pack
@@ -177,6 +177,7 @@ CREATE OR REPLACE FUNCTION app_fn.install_anchor_application()
                 ,0::integer
               )::app_fn.license_pack_license_type_info
             ]::app_fn.license_pack_license_type_info[]
+            ,false
           )::app_fn.license_pack_info
           ,row(
             'app'::citext
@@ -213,6 +214,7 @@ CREATE OR REPLACE FUNCTION app_fn.install_anchor_application()
                 ,0::integer
               )::app_fn.license_pack_license_type_info
             ]::app_fn.license_pack_license_type_info[]
+            ,true
           )::app_fn.license_pack_info
         ]::app_fn.license_pack_info[]
       )::app_fn.application_info
@@ -250,8 +252,8 @@ CREATE OR REPLACE FUNCTION app_fn.create_anchor_tenant(_name citext, _email cite
       ;
 
       perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'anchor');
-      perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'app');
-      perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'inc');
+      -- perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'app');
+      perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, key) from app.license_pack where auto_subscribe = true;
 
       perform app_fn.invite_user(_tenant.id, _email, 'superadmin');
     end if;
@@ -395,8 +397,8 @@ CREATE OR REPLACE FUNCTION app_fn.create_tenant(_name citext, _identifier citext
     ) returning * into _tenant
     ;
 
-    perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'app');
-    perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'inc');
+    -- perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'app');
+    perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, key) from app.license_pack where auto_subscribe = true;
     perform app_fn.invite_user(_tenant.id, _email, 'admin');
 
     return _tenant;

@@ -8,7 +8,7 @@ create type inc_fn.incident_info as (
   ,tags citext[]
   ,is_template boolean
 );
------------------------------------ install_anchor_application ---  NO API
+----------------------------------- install_incidents_application ---  NO API
 CREATE OR REPLACE FUNCTION inc_fn.install_incidents_application()
   RETURNS app.application
   LANGUAGE plpgsql
@@ -54,6 +54,7 @@ CREATE OR REPLACE FUNCTION inc_fn.install_incidents_application()
                 ,0::integer
               )::app_fn.license_pack_license_type_info
             ]::app_fn.license_pack_license_type_info[]
+            ,true
           )::app_fn.license_pack_info
         ]::app_fn.license_pack_info[]
       )::app_fn.application_info

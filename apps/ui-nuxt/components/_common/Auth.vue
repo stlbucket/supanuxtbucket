@@ -56,7 +56,7 @@
     if (error) alert(error.toString())
     await supabase.auth.refreshSession()
     reloadNuxtApp({
-      path: '/site-admin/app-tenant',
+      path: '/site-admin/tenant',
       force: true
     })    
   }

@@ -55,6 +55,10 @@ CREATE OR REPLACE FUNCTION todo_api.create_todo(
   DECLARE
     _retval todo.todo;
   BEGIN
+    if auth_ext.has_permission('p:todo') = false then
+      raise exception '30000: PERMISSION DENIED';
+    end if;
+
     _retval := todo_fn.create_todo(
       auth_ext.resident_id()::uuid
       ,_name::citext

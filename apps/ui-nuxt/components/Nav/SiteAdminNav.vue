@@ -24,10 +24,10 @@
         title: 'Tenant Residents',
       },
       {
-        label: 'Auth Users',
+        label: 'Site Users',
         icon: 'i-heroicons-users',
         to: '/site-admin/app-users',
-        title: 'Auth Users',
+        title: 'Site Users',
       },
       {
         label: 'License Packs',

@@ -14,6 +14,7 @@ export default {
           { text: 'Demo Data', link: '/demo-tenants' },
           { text: 'Postraphile v5', link: '/postgraphile' },
           { text: 'Credentials Flow', link: '/credentials-flow' },
+          { text: 'Installing an Application', link: 'installing-an-application'},
           {
             text: 'Schemas',
             link: '/schemas/index.schema',
@@ -29,18 +30,24 @@ export default {
             { text: 'SiteAdmin', items: [
               { text: 'Applications', link: '/site-admin/applications' },
               { text: 'License Packs', link: '/site-admin/license-packs' },
-              { text: 'App Users', link: '/site-admin/app-users' },
+              { text: 'Site Users', link: '/site-admin/site-users' },
               { text: 'Tenant Residents', link: '/site-admin/tenant-residents' },
               { text: 'Tenant Support', link: '/site-admin/tenant-support' },
             ]},
             { text: 'Admin', items: [
-              { text: 'App Users', link: '/site-admin/applications' },
-              { text: 'Subscriptions', link: '/site-admin/license-packs' },
+              { text: 'App Users', link: '/admin/app-users' },
+              { text: 'Subscriptions', link: '/admin/subscriptions' },
             ]},
-            { text: 'Tools', items: [
-              { text: 'Todo', link: '/site-admin/applications' },
-              { text: 'Discussions', link: '/site-admin/license-packs' },
-              { text: 'Address Book', link: '/site-admin/license-packs' },
+            { text: 'Tools', 
+              link: '/tools/index',
+              items: [
+                { text: 'Todo', link: '/tools/todo-tool' },
+                { text: 'Discussions', link: '/tools/discussions' },
+                { text: 'Address Book', link: '/tools/address-book' },
+              ]
+            },
+            { text: 'Incidents', items: [
+              { text: 'Incidents', link: '/apps/incidents' },
             ]},
           ]}
         ],

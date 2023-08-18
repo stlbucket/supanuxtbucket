@@ -32,6 +32,7 @@ create type app_fn.license_pack_info as (
   key citext
   ,display_name citext
   ,license_pack_license_type_infos app_fn.license_pack_license_type_info[]
+  ,auto_subscribe boolean
 );
 ----------------------------------------------------------------------------------------------
 create type app_fn.application_info as (

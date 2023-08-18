@@ -95,6 +95,7 @@ CREATE TABLE app.license_pack (
   ,created_at timestamptz not null default current_timestamp
   ,updated_at timestamptz not null default current_timestamp
   ,display_name citext not null
+  ,auto_subscribe boolean not null default false
 );
 --------------------------------------------------------------------------------------------
 CREATE TABLE app.license_pack_license_type (

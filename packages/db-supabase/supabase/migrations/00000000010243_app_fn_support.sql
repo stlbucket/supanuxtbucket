@@ -231,29 +231,8 @@ CREATE OR REPLACE FUNCTION app_fn.activate_tenant(_tenant_id uuid)
   end;
   $function$
   ;
------------------------------------------------------------------ tenants_for_support ---  API ONLY
--- CREATE OR REPLACE FUNCTION app_api.tenants_for_support()
---   RETURNS setof app.tenant
---   LANGUAGE plpgsql
---   STABLE
---   SECURITY DEFINER
---   AS $$
---   DECLARE
---   BEGIN
---     if auth_ext.has_permission('p:app-admin-support') != true then 
---       raise exception '30000: NOT AUTHORIZED'; 
---     end if;
-
---     return query
---     select 
---       *
---     from app.tenant t
---     where type != 'anchor'
---     ;
---   end;
---   $$;
 ---------------------------------------------- search_residents
-  CREATE OR REPLACE FUNCTION app_api.search_residents(_options app_fn.search_residents_options)
+CREATE OR REPLACE FUNCTION app_api.search_residents(_options app_fn.search_residents_options)
     RETURNS setof app.resident
     LANGUAGE plpgsql
     stable
@@ -269,7 +248,7 @@ CREATE OR REPLACE FUNCTION app_fn.activate_tenant(_tenant_id uuid)
     end;
     $$;
 
-  CREATE OR REPLACE FUNCTION app_fn.search_residents(_options app_fn.search_residents_options)
+CREATE OR REPLACE FUNCTION app_fn.search_residents(_options app_fn.search_residents_options)
     RETURNS setof app.resident
     LANGUAGE plpgsql
     stable
@@ -297,7 +276,7 @@ CREATE OR REPLACE FUNCTION app_fn.activate_tenant(_tenant_id uuid)
     end;
     $$;
 ---------------------------------------------- search_profiles
-  CREATE OR REPLACE FUNCTION app_api.search_profiles(_options app_fn.search_profiles_options)
+CREATE OR REPLACE FUNCTION app_api.search_profiles(_options app_fn.search_profiles_options)
     RETURNS setof app.profile
     LANGUAGE plpgsql
     stable
@@ -313,7 +292,7 @@ CREATE OR REPLACE FUNCTION app_fn.activate_tenant(_tenant_id uuid)
     end;
     $$;
 
-  CREATE OR REPLACE FUNCTION app_fn.search_profiles(_options app_fn.search_profiles_options)
+CREATE OR REPLACE FUNCTION app_fn.search_profiles(_options app_fn.search_profiles_options)
     RETURNS setof app.profile
     LANGUAGE plpgsql
     stable
@@ -338,7 +317,7 @@ CREATE OR REPLACE FUNCTION app_fn.activate_tenant(_tenant_id uuid)
 
 
 ---------------------------------------------- search_tenants
-  CREATE OR REPLACE FUNCTION app_api.search_tenants(_options app_fn.search_tenants_options)
+CREATE OR REPLACE FUNCTION app_api.search_tenants(_options app_fn.search_tenants_options)
     RETURNS setof app.tenant
     LANGUAGE plpgsql
     stable
@@ -354,7 +333,7 @@ CREATE OR REPLACE FUNCTION app_fn.activate_tenant(_tenant_id uuid)
     end;
     $$;
 
-  CREATE OR REPLACE FUNCTION app_fn.search_tenants(_options app_fn.search_tenants_options)
+CREATE OR REPLACE FUNCTION app_fn.search_tenants(_options app_fn.search_tenants_options)
     RETURNS setof app.tenant
     LANGUAGE plpgsql
     stable

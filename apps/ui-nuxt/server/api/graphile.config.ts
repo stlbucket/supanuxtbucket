@@ -51,7 +51,7 @@ const preset: GraphileConfig.Preset = {
       // this is where user session data set in 
       // server/middleware/auth is used to pass into the query context
       const session = requestContext.h3v1?.event.context.session
-      if (session === 'SESSION EXPIRED') {
+      if (session === 'INVALID SESSION') {
         throw new Error(session)
       }
       const claims = session?.user
@@ -59,7 +59,6 @@ const preset: GraphileConfig.Preset = {
         role: claims?.aud || 'anon',
         'request.jwt.claim.sub': claims?.id,
         'request.jwt.claim.aud': claims?.aud,
-        'request.jwt.claim.exp': claims?.exp,
         'request.jwt.claim.email': claims?.email,
         'request.jwt.claim': JSON.stringify(claims)
       }  

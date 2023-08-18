@@ -13,7 +13,7 @@ export default defineNuxtPlugin(() => {
       }
       const message = err.gqlErrors[0].message
       alert(message)
-      if (message === 'SESSION EXPIRED') {
+      if (message === 'INVALID SESSION') {
         navigateTo('/logout')
       }
     }

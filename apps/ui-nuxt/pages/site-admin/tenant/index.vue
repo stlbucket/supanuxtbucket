@@ -46,7 +46,7 @@
     })
     // console.log(result)
     await supabase.auth.refreshSession()
-    reloadNuxtApp({path: '/todo'})
+    reloadNuxtApp({path: '/tools/todo'})
   }
 
   const onNewTenant = async (createTenantInput: any) => {
