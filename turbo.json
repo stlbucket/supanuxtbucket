@@ -6,7 +6,6 @@
       "outputs": [
         "dist/**",
         ".output/**",
-        ".histoire/**",
         "**/.vitepress/dist/**"
       ]
     },
