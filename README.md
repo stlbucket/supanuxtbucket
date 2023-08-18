@@ -1,4 +1,4 @@
-# Supa-Nuxt-Phile
+# SupaNuxtPhile
 Core Techs:
 - [Supabase](https://www.supabase.com)
 - [Nuxt](https://nuxtjs.com)

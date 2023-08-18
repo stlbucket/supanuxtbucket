@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "Supa-Nuxt-Phile"
+  name: "SupaNuxtPhile"
   text: "A Supabase-Nuxt3-Postgraphile5 starter"
   tagline: Build your idea quickly, query it (gra)fast!
   actions:
