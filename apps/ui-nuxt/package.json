@@ -17,7 +17,6 @@
     "@nuxtjs/supabase": "^1.0.2",
     "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
     "@supanuxtbucket/tsconfig": "workspace:*",
-    "@supanuxtbucket/ui": "workspace:*",
     "@types/node": "^18",
     "nuxt": "^3.6.5",
     "sass": "^1.63.6"

@@ -131,7 +131,7 @@ CREATE OR REPLACE FUNCTION app_fn.install_anchor_application()
           ,row(
             'app-admin-super'::citext
             ,'App Super Admin'::citext
-            ,'{"p:app-admin-super","p:app-admin","p:app-admin-support","p:incidents","p:incidents-admin"}'::citext[]
+            ,'{"p:app-admin-super","p:app-admin","p:app-admin-support"}'::citext[]
             ,'superadmin'::app.license_type_assignment_scope
           )::app_fn.license_type_info
           ,row(

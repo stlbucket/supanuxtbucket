@@ -1,6 +1,6 @@
 # Authentication and Authorization
 ## Default Setup
-By default, implicit flow with OTP login is enabled.  This will likely soon be updated to PKCE flow for better default security.
+By default, implicit flow with OTP login is enabled.  This will soon be updated to PKCE flow for better default security.
 
 Coupled with the demo data and the DemoAppTenants component, this helps during early stages of development and demonstration.
 
@@ -12,7 +12,7 @@ This is intentional, so as not to be tied to any of the external authentication 
   - [fusionauth](https://fusionauth.io/)
   - ...etc
 
-[supabase auth docs](https://supabase.com/docs/guides/auth)
+[supabase auth docs](https://supabase.com/docs/guides/auth) - learn it.  love it.  live it.
 
 ## Permissions and Licensing
 A core function of the app and app_fn schema is to derive user claims from the licenses they are assigned.
@@ -69,12 +69,11 @@ It is recommended you read the JWT [deep dive](https://supabase.com/docs/learn/a
 
 // Here is where we will get user session info from anywhere:  redis, our current database, useSupabaseUser(), etc...
 // Currently, we use the appState.loggedIn flag in conjunction with supabase session
-//   --  if loggedIn, and there is a supabase we expect a supabase session, setting to 'INVALID SESSION' if it does not exist
+//   --  if loggedIn, and there is a supabase token, we expect a supabase session, setting to 'INVALID SESSION' if it does not exist
 //   --  if !loggedIn, we are anon
 //
 // NOTE: https://github.com/nuxt-modules/supabase/issues/246
-// The logic here may not change
-// But the supabase cookie is present even after logging out
+// This issue may have some relevance
 //
 
 import { serverSupabaseClient } from '#supabase/server'
@@ -86,8 +85,6 @@ export default defineEventHandler(async (event) => {
       loggedIn: false
     }
     if (appState.loggedIn) {
-      // this is not the ideal way to check for session expiration
-      // auth for this repo is not 100% complete  
       const client = await serverSupabaseClient(event)
       const session = (await client.auth.getSession()).data.session
 

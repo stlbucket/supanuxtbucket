@@ -7,6 +7,8 @@ pnpm install
 Create a [Supabase](https://www.supabase.com) account.
 
 Install the [Supabase Cli](https://supabase.com/docs/guides/cli), create a new project and link to it.
+
+Open a second terminal in the **/packages/db-supabase** directory and start your local Supabase dev environment, then deploy the migrations.  You will want to work in this directory to ensure the correct version of Supabase is used with the project
 ```
 npx supabase projects list
 npx supabase link --project-ref YOUR_PROJECT_REF
@@ -16,8 +18,6 @@ After this, you will need to install the demo data - this is in addition to the 
 ```
 psql postgresql://postgres:postgres@localhost:54322/postgres -f ./supabase/demo-data.sql
 ```
-
-Open a second terminal in the **/packages/db-supabase** directory and start your local Supabase dev environment, then deploy the migrations.  You will want to work in this directory to ensure the correct version of Supabase is used with the project
 
 In original terminal:
 ```

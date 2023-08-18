@@ -3,7 +3,9 @@ To add an application to the platform, you call ***app_fn.install_application***
 
 This will handle setting up all the proper records to drive the rest of the app.
 
-CRUD functionality to tweak any of this could be added later.  License-packs would be a prime candidate for this next.
+CRUD functionality to tweak any of this could be added later.
+
+License-packs would be a prime candidate for this treatment.
 ``` sql
 CREATE OR REPLACE FUNCTION inc_fn.install_incidents_application()
   RETURNS app.application

@@ -1,5 +1,5 @@
 // Currently, we use the appState.loggedIn flag in conjunction with supabase session
-//   --  if loggedIn, and there is a supabase we expect a supabase session, setting to 'INVALID SESSION' if it does not exist
+//   --  if loggedIn, and there is a supabase token, we expect a supabase session, setting to 'INVALID SESSION' if it does not exist
 //   --  if !loggedIn, we are anon
 //
 // NOTE: https://github.com/nuxt-modules/supabase/issues/246

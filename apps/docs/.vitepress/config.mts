@@ -1,6 +1,7 @@
 export default {
   title: 'VitePress',
   description: 'Just playing around with turborepo',
+  ignoreDeadLinks: true,
   themeConfig: {
     siteTitle: 'SupaNuxtGraphile',
     nav: [
