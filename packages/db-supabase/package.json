@@ -9,7 +9,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "devDependencies": {
+    "kysely-codegen": "^0.10.1"
+  },
   "dependencies": {
-    "supabase": "^1.86.1"
+    "supabase": "^1.86.1",
+    "kysely": "^0.26.1",
+    "pg": "^8.11.3"
   }
 }

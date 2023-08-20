@@ -18,7 +18,16 @@ After this, you will need to install the demo data - this is in addition to the 
 ```
 psql postgresql://postgres:postgres@localhost:54322/postgres -f ./supabase/demo-data.sql
 ```
+Create your .env file:
+```
+# /apps/ui-nuxt/.env
+SUPABASE_URL=http://localhost:54321
+SUPABASE_KEY=YOUR_SUPABASE_ANON_KEY
+SUPABASE_URI=postgresql://postgres:postgres@localhost:54322/postgres
+SUPABASE_JWT_SECRET=super-secret-jwt-token-with-at-least-32-characters-long
 
+GRAPHQL_SCHEMAS=todo,todo_api,app,app_api,msg,msg_api,inc,inc_api
+```
 In original terminal:
 ```
 pnpm run dev
