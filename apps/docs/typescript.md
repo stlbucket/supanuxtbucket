@@ -38,6 +38,6 @@ declare global {
 }
 ...
 ```
-This process is likely to be refactored.  The Postgraphile v5 server supports a fairly flexible entity naming inflector as well as some other as-yet unexplored features, which might be leveraged to further automate this process.
+This process is likely to be refactored.  The Postgraphile v5 server supports a fairly flexible entity naming inflector as well as some other features which might be leveraged to further automate this process.
 
 Also, it would be nice to add support for function calls, which may be easier with graphql codegen or postgraphile.
