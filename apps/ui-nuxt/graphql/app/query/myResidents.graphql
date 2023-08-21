@@ -1,8 +1,0 @@
-query MyResidents {
-  myResidentsList: residentsList {
-    id
-    tenantName
-    email
-    status
-  }
-}

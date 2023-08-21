@@ -1,19 +1,24 @@
 <template>
-  <ResidentsList 
-    title="MY APP USER TENANCIES" 
-    :residents="residents"
-    rowActionName="Assume"
-    @rowAction="assumeResidency"
-  >
-  </ResidentsList>
+  <UCard>
+    <template #header>
+      MY RESIDENCIES
+    </template>
+    <ResidentsList 
+      title="MY APP USER TENANCIES" 
+      :residents="residents"
+      row-action-name="Assume"
+      @row-action="assumeResidency"
+    >
+    </ResidentsList>
+  </UCard>
 </template>
 
 <script lang="ts" setup>
   const supabase = useSupabaseClient()
   const residents = ref([])
   const loadData = async () => {
-    const result = await GqlMyResidents()
-    residents.value = result.myResidentsList || []
+    const result = await GqlMyProfileResidencies()
+    residents.value = result.myProfileResidenciesList || []
   }
   loadData()
 

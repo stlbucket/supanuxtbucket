@@ -1,10 +1,8 @@
 <template>
     <div class="flex">
-      <!-- <div>
-        <MyResidents/>
-      </div> -->
-      <div class="flex">
+      <div class="flex flex-col">
         <Myself />
+        <MyResidents/>
       </div>
       <div class="flex">
         <pre class="text-xs">{{ JSON.stringify(supUser,null,2) }}</pre>

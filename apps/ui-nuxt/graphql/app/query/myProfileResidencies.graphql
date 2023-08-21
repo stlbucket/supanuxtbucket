@@ -1,0 +1,10 @@
+query MyProfileResidencies {
+  myProfileResidenciesList {
+    id
+    profileId
+    tenantId
+    tenantName
+    status
+    displayName
+  }
+}

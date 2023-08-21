@@ -9,11 +9,12 @@
       <div>
         <UInput v-model="searchTerm" />
       </div>
-      <ResidentsList :residents="residents" show-support-action/>
+      <ResidentsList :residents="residents" @row-action="onRowAction" row-action-name="Support"/>
     </UCard>
 </template>
 
 <script lang="ts" setup>
+  const client = useSupabaseClient()
   const residents = ref([])
   const searchTerm = ref()
   const loadData = async () => {
@@ -25,4 +26,12 @@
   loadData()
   watch(()=>searchTerm.value, loadData)
 
+  const onRowAction = async (resident: Resident) => {
+    const result = await GqlBecomeSupport({
+      tenantId: resident.tenantId
+    })
+    // console.log(result)
+    await client.auth.refreshSession()
+    reloadNuxtApp({path: `/admin/app-tenant-residencies/${resident.id}`})
+  }
 </script>

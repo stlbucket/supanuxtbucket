@@ -11,7 +11,7 @@
         <div>
           <UButton @click="handleLogout">Logout</UButton>
         </div>
-        <div class="text-sm">{{ supUser.user_metadata.app_tenant_name }}</div>
+        <div class="text-sm">{{ supUser.user_metadata.tenant_name }}</div>
       </div>
     </div>
   </UCard>
