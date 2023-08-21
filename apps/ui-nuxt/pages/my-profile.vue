@@ -3,13 +3,13 @@
       <!-- <div>
         <MyResidents/>
       </div> -->
-      <div>
+      <div class="flex">
         <Myself />
       </div>
-      <div>
+      <div class="flex">
+        <pre class="text-xs">{{ JSON.stringify(supUser,null,2) }}</pre>
       </div>
     </div>
-    <!-- <pre>{{ JSON.stringify(supUser,null,2) }}</pre> -->
 </template>
 
 <script lang="ts" setup>
