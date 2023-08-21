@@ -16,7 +16,7 @@ npx kysely-codegen --camel-case --include-pattern 'msg.*' --out-file ./db-types/
 
 npx kysely-codegen --camel-case --include-pattern 'inc.*' --out-file ./db-types/db.inc.d.ts
 ```
-The pull them together explicitly
+Then pull them together explicitly
 ``` ts
 // apps/ui-nuxt/db-types/index.ts
 // TODO
