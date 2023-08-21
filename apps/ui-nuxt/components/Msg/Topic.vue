@@ -62,7 +62,7 @@
         }
       }
     })
-    .sort((a:any,b:any) => a.createdAt > b.createdAt ? -1 : 1)
+    .sort((a:Message,b:Message) => a.createdAt > b.createdAt ? -1 : 1)
   })
 
   const sendDisabled = computed(()=>{

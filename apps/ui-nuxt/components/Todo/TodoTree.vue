@@ -103,7 +103,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { Todo } from 'types';
+  // import { Todo } from 'db-types';
 
   const props = withDefaults(defineProps<{
     todoId: string,

@@ -12,6 +12,6 @@
 
 <script lang="ts" setup>
   defineProps<{
-    licensePack: any
+    licensePack: LicensePack
   }>()
 </script>

@@ -9,6 +9,6 @@
 
 <script lang="ts" setup>
   const props = defineProps<{
-    subscription: any
+    subscription: TenantSubscription
   }>()
 </script>

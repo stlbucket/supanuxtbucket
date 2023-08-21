@@ -8,10 +8,8 @@
         base: 'flex flex-col min-w-[40%]',
         header: {
           base: 'flex grow',
-          // background: ' bg-blue-600',
         },
         body: {
-          // background: 'bg-blue-400'
         }
       }">
         <template #header>
@@ -27,11 +25,9 @@
       <UCard :ui="{
         base: 'flex flex-col min-w-[40%]',
         header: {
-          // background: ' bg-blue-600'
         },
         body: {
           base: 'flex grow',
-          // background: 'bg-blue-400'
         }
       }">
         <template #header>
@@ -45,22 +41,6 @@
         </div>
       </UCard>
     </div>
-    <!-- <div class="flex">
-      <div class="flex">
-        <pre>{{ JSON.stringify(scopedChoices,null,2) }}</pre>
-      </div>
-      <div class="flex">
-        <pre>{{ JSON.stringify(unscopedChoices,null,2) }}</pre>
-      </div>
-    </div>
-    <div class="flex">
-      <div class="flex">
-        <pre>{{ JSON.stringify(resident,null,2) }}</pre>
-      </div>
-      <div class="flex">
-        <pre>{{ JSON.stringify(licensePack,null,2) }}</pre>
-      </div>
-    </div> -->
   </UCard>
 </template>
 
@@ -68,22 +48,22 @@
   const user = useSupabaseUser()
   const emit = defineEmits<{
     (e: 'grantLicense', licenseTypeKey: string): void
-    (e: 'revokeLicense', license: any): void
+    (e: 'revokeLicense', license: License): void
   }>()
 
   const props = defineProps<{
-    licensePack: any,
-    resident: any
+    licensePack: LicensePack,
+    resident: Resident
   }>()
 
-  const selectedScoped = ref()
-  const selectedUnscoped: Ref<any> = ref({})
+  interface BooleanObject {
+    [key: string]: boolean;
+  }
 
-  const scopedChoices: Ref<{
-    name: string
-    value: string
-    label: string
-  }[]> = ref([])
+  const selectedScoped = ref()
+  const selectedUnscoped: Ref<BooleanObject> = ref({})
+
+  const scopedChoices: Ref<USelectOption[]> = ref([])
 
   const unscopedChoices: Ref<{
     name: string
@@ -92,9 +72,9 @@
   }[]> = ref([])
 
   const prepareChoices = () => {
-    scopedChoices.value = props.licensePack.licensePackLicenseTypes
-      .filter((lt: any) => ['ALL', 'NONE'].indexOf(lt.licenseType.assignmentScope) === -1)
-      .map((lt: any) => {
+    scopedChoices.value = (props.licensePack.licensePackLicenseTypes ?? [])
+      .filter((lt: LicensePackLicenseType) => ['ALL', 'NONE'].indexOf(lt.licenseType?.assignmentScope ?? '') === -1)
+      .map((lt: LicensePackLicenseType) => {
         return {
           name: lt.licenseTypeKey,
           value: lt.licenseTypeKey,
@@ -102,11 +82,11 @@
         }
       })
     const scopedLicenseTypeKeys = scopedChoices.value.map(sc => sc.value)
-    selectedScoped.value = props.resident.licenses.find((l: any) => scopedLicenseTypeKeys.indexOf(l.licenseTypeKey) > -1)?.licenseTypeKey
+    selectedScoped.value = props.resident.licenses?.find((l: License) => scopedLicenseTypeKeys.indexOf(l.licenseTypeKey) > -1)?.licenseTypeKey
 
-    unscopedChoices.value = props.licensePack.licensePackLicenseTypes
-      .filter((lt: any) => ['ALL', 'NONE'].indexOf(lt.licenseType.assignmentScope) > -1)
-      .map((lt: any) => {
+    unscopedChoices.value = (props.licensePack?.licensePackLicenseTypes ?? [])
+      .filter((lt: LicensePackLicenseType) => ['ALL', 'NONE'].indexOf(lt.licenseType?.assignmentScope ?? '') > -1)
+      .map((lt: LicensePackLicenseType) => {
         return {
           name: lt.licenseTypeKey,
           value: lt.licenseTypeKey,
@@ -115,7 +95,7 @@
       })
     selectedUnscoped.value = unscopedChoices.value.reduce(
       (a, c) => {
-        const license = props.resident.licenses.find((l: any) => l.licenseTypeKey === c.value)
+        const license = props.resident.licenses?.find((l: License) => l.licenseTypeKey === c.value)
         return {
           ...a,
           [c.value]: !!license
@@ -127,8 +107,8 @@
     prepareChoices()
   })
 
-  const onUnscopedLicenseChange = async (licenseTypeInfo: any) => {
-    const existingLicense = props.resident.licenses.find((l:any) => l.licenseTypeKey === licenseTypeInfo.value)
+  const onUnscopedLicenseChange = async (licenseTypeInfo: LicenseType) => {
+    const existingLicense = props.resident.licenses?.find((l:License) => l.licenseTypeKey === licenseTypeInfo.value)
     if (existingLicense) {
       emit('revokeLicense', existingLicense)
     } else {
@@ -136,7 +116,7 @@
     }
   }
 
-  const onScopedLicenseChange = async (licenseTypeKey: any) => {
+  const onScopedLicenseChange = async (licenseTypeKey: string) => {
     emit('grantLicense', licenseTypeKey)
   }
 

@@ -25,34 +25,29 @@
 
 <script lang="ts" setup>
   const props = defineProps<{
-    tenant?: any
   }>()
 
   const showModal = ref(false)
 
-  const formData = ref({
+  const formData: Ref<NewTenantInfo> = ref({
     name: '',
     email: ''
   })
 
   onMounted(() => {
     formData.value = {
-      name: props.tenant?.name || '',
-      email: props.tenant?.email || ''
+      name: '',
+      email: ''
     }
   })
 
   const emit = defineEmits<{
-    (e: 'new', tenant: Tenant): void
-    (e: 'updated', tenant: Tenant): void
+    (e: 'new', newTenantInfo: NewTenantInfo): void
   }>()
 
   const handleSave = async () => {
     showModal.value = false
-    emit('updated', {
-      ...props.tenant,
-      ...formData.value
-    })
+    emit('new', formData.value)
   }
 
   const saveTenantDisabled = computed(() => {

@@ -26,8 +26,8 @@
 
 <script lang="ts" setup>
   const props = defineProps<{
-    todo?: any
-    parentTodo?: any
+    todo?: Todo
+    parentTodo?: Todo
   }>()
 
   const showModal = ref(false)
@@ -54,8 +54,8 @@
     emit('updated', {
       ...props.todo,
       ...formData.value,
-      parentTodoId: props.parentTodo?.id
-    })
+      parentTodoId: props.parentTodo?.id.toString()
+    } as Todo)
     formData.value = defaultFormData
   }
 

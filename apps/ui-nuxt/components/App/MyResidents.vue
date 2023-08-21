@@ -17,7 +17,7 @@
   }
   loadData()
 
-  const assumeResidency = async (row: any) => {
+  const assumeResidency = async (row: Resident) => {
     const { data, error } = await GqlAssumeResident({
       residentId: row.id
     })

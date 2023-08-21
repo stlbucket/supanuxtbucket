@@ -4,8 +4,8 @@
       <div class="flex gap-1">
         <div class="flex flex-col gap-1 w-30 p-1">
           <div class="flex justify-around gap-1">
-            <UButton v-if="todo.status.toUpperCase() === 'COMPLETE'" icon="i-heroicons-check" size="sm" color="green" square variant="solid" title="Reopen" @click="handleReopen" :disabled="closeDisabled"/>
-            <UButton v-if="todo.status.toUpperCase() === 'INCOMPLETE'" icon="none" size="sm" color="yellow" square variant="outline" title="Close" @click="handleClose" :disabled="closeDisabled"/>
+            <UButton v-if="todo.status.toString().toUpperCase() === 'COMPLETE'" icon="i-heroicons-check" size="sm" color="green" square variant="solid" title="Reopen" @click="handleReopen" :disabled="closeDisabled"/>
+            <UButton v-if="todo.status.toString().toUpperCase() === 'INCOMPLETE'" icon="none" size="sm" color="yellow" square variant="outline" title="Close" @click="handleClose" :disabled="closeDisabled"/>
             <TodoModal @updated="handleAddSubtask" :parent-todo="todo"/>
           </div>
           <div class="flex gap-1">
@@ -19,9 +19,9 @@
       <div class="text-xl flex bg-cyan-950">
         <UButton
           class="flex grow"
-          @click="handleSelectTodo(todo.id)"
+          @click="handleSelectTodo(todo.id.toString())"
           :color="primaryButtonColor"
-        >{{ todo.type.split('').at(0) }}: {{ todo.name }}</UButton>
+        >{{ todo.type.toString().split('').at(0) }}: {{ todo.name }}</UButton>
       </div>
       <div class="flex flex-1 gap-2 grow-0" v-if="showOwner">
         <TodoAssign :todo="todo" @assigned="handleAssigned" />
@@ -66,7 +66,7 @@
 
     emit('deleted')
   }
-  const handleAddSubtask = async (subTask: any) => {
+  const handleAddSubtask = async (subTask: Todo) => {
     const result = await GqlCreateTodo({
       name: subTask.name,
       description: subTask.description,
@@ -103,10 +103,10 @@
     return true
   })
   const closeDisabled = computed(() => {
-    return props.todo?.type.toUpperCase() !== 'TASK'
+    return props.todo?.type.toString().toUpperCase() !== 'TASK'
   })
   const primaryButtonColor = computed(()=>{
-    switch (props.todo.type.toUpperCase()) {
+    switch (props.todo.type.toString().toUpperCase()) {
       case 'MILESTONE':
         return 'fuchsia'
       case 'TASK':

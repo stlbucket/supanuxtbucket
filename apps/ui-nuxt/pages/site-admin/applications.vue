@@ -10,10 +10,8 @@
 </template>
 
 <script lang="ts" setup>
-  // import { Application } from 'types'
 
-  // const applications: Ref<Application[]> = ref([])
-    const applications = ref([])
+  const applications: Ref<Application[]> = ref([])
 
   const loadData = async () => {
     const result = await GqlAllApplications()

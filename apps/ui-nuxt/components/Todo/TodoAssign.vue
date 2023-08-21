@@ -22,7 +22,7 @@
 
 <script lang="ts" setup>
   const props = defineProps<{
-    todo?: any
+    todo?: Todo
   }>()
 
   const showModal = ref(false)

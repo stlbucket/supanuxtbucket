@@ -30,12 +30,10 @@
             :todoId="incident.todo.id" 
             :treeLevel="0"
           />
-          <!-- <IncidentTodoManager :incident="incident" /> -->
         </UCard>
       </div>
     </div>
   </UCard>
-  <!-- <pre>{{ JSON.stringify(incident,null,2) }}</pre> -->
 </template>
 
 <script lang="ts" setup>

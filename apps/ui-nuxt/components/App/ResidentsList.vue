@@ -38,7 +38,7 @@
     emit('rowAction', row)
   }
 
-  const onSupport = async (resident: any) => {
+  const onSupport = async (resident: Resident) => {
     const result = await GqlBecomeSupport({
       tenantId: resident.tenantId
     })

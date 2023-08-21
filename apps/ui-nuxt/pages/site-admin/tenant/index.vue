@@ -3,7 +3,7 @@
     <template #header>
       <div class="flex justify-between">
         <div>APP TENANT SUPPORT</div>
-        <TenantModal @updated="onNewTenant"/>
+        <TenantModal @new="onNewTenant"/>
       </div>
     </template>
     <div>
@@ -49,7 +49,7 @@
     reloadNuxtApp({path: '/tools/todo'})
   }
 
-  const onNewTenant = async (createTenantInput: any) => {
+  const onNewTenant = async (createTenantInput: NewTenantInfo) => {
     const result = await GqlCreateTenant(createTenantInput)
     await loadData()
   }
