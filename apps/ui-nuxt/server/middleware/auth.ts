@@ -2,6 +2,7 @@
 //   --  if loggedIn, and there is a supabase token, we expect a supabase session, setting to 'INVALID SESSION' if it does not exist
 //   --  if !loggedIn, we are anon
 //
+//
 // NOTE: https://github.com/nuxt-modules/supabase/issues/246
 // The logic here may not change
 // But the supabase cookie is present even after logging out

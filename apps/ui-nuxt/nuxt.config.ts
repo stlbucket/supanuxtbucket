@@ -27,7 +27,9 @@ export default defineNuxtConfig({
     dirs: [
       'lib'
       ,'store'
-    ]
+      ,'types'
+    ],
+    global: true
   },
   modules: [
     '@nuxthq/ui',

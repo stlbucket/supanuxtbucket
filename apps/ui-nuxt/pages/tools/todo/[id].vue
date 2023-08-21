@@ -5,7 +5,7 @@
       :treeLevel="0"
     />
   </UCard>
-  <pre>{{ JSON.stringify(todoTree, null, 2) }}</pre>
+  <!-- <pre>{{ JSON.stringify(todoTree, null, 2) }}</pre> -->
 </template>
 
 <script lang="ts" setup>

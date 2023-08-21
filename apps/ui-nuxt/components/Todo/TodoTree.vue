@@ -5,9 +5,9 @@
         <div class="flex gap-1">
           <div class="flex flex-col gap-1 w-30 p-1">
             <div class="flex justify-around gap-1">
-              <div v-if="todoTree.type === 'TASK'" class="flex">
+              <div v-if="todoTree.type.toString().toUpperCase() === 'TASK'" class="flex">
                 <UButton 
-                  v-if="todoTree.status?.toUpperCase() === 'COMPLETE'" 
+                  v-if="todoTree.status?.toString().toUpperCase() === 'COMPLETE'" 
                   icon="i-heroicons-check"
                   size="sm"
                   color="green"
@@ -17,7 +17,7 @@
                   @click="onReopened"
                 />
                 <UButton
-                  v-if="todoTree.status?.toUpperCase() === 'INCOMPLETE'"
+                  v-if="todoTree.status?.toString().toUpperCase() === 'INCOMPLETE'"
                   icon="none"
                   size="sm"
                   color="yellow"
@@ -28,7 +28,7 @@
               </div>
               <div v-else class="flex">
                 <UButton 
-                  v-if="todoTree.status?.toUpperCase() === 'COMPLETE'" 
+                  v-if="todoTree.status?.toString().toUpperCase() === 'COMPLETE'" 
                   icon="i-heroicons-check"
                   size="sm"
                   color="green"
@@ -39,7 +39,7 @@
                   disabled
                 />
                 <UButton
-                  v-if="todoTree.status?.toUpperCase() === 'INCOMPLETE'"
+                  v-if="todoTree.status?.toString().toUpperCase() === 'INCOMPLETE'"
                   size="sm"
                   color="yellow"
                   square 
@@ -76,7 +76,7 @@
             class="flex grow"
             @click="handleSelectTodo"
             :color="primaryButtonColor"
-          >{{ todoTree.type?.split('').at(0) }}: {{ todoTree.name }}</UButton>
+          >{{ todoTree.type?.toString().split('').at(0) }}: {{ todoTree.name }}</UButton>
         </div>
         <div class="flex flex-1 gap-2 grow-0" v-if="detailed">
           <TodoAssign :todo="todoTree" @assigned="handleAssigned" />
@@ -84,13 +84,13 @@
         </div>
       </div>
     </div>
-    <div v-if="todoTree.hiddenChildren?.totalCount > 0" class="flex justify-start min-w-max grow ml-10 hover:cursor-pointer" @click="onLoadSubtree">
-      Load {{ todoTree.hiddenChildren.totalCount }} children...
+    <div v-if="todoTree.hiddenChildren?.totalCount ?? 0 > 0" class="flex justify-start min-w-max grow ml-10 hover:cursor-pointer" @click="onLoadSubtree">
+      Load {{ todoTree.hiddenChildren?.totalCount ?? 0 }} children...
     </div>
-    <div v-if="todoTree.children?.length > 0" class="ml-3">
+    <div v-if="todoTree.children?.length ?? 0 > 0" class="ml-3">
       <TodoTree 
         v-for="c in todoTree.children" 
-        :todo-id="c.id"
+        :todo-id="c.id.toString()"
         :sub-tree="c" 
         :tree-level="(treeLevel + 1)"
         @selected="handleSelectTodo"
@@ -103,26 +103,29 @@
 </template>
 
 <script lang="ts" setup>
+  import { Todo } from 'types';
+
   const props = withDefaults(defineProps<{
     todoId: string,
-    subTree?: any,
+    subTree?: Todo,
     treeLevel?: number
   }>(), {
     treeLevel: 0
   })
 
   const emit = defineEmits<{
-    (e: 'updated', todo: any): void
-    (e: 'subtaskAdded', subTask: any): void    
-    (e: 'assigned', todo: any): void
+    (e: 'updated', todo: Todo): void
+    (e: 'subtaskAdded', subTask: Todo): void    
+    (e: 'assigned', todo: Todo): void
     (e: 'deleted', todoId: string): void
     (e: 'selected', todoId: string): void
   }>()
 
-  const todoTree = ref()
+  const todoTree: Ref<Todo | undefined> = ref()
   const detailed = ref(false)
 
-  const shallowMerge = (todo: any) => {
+  const shallowMerge = (todo: Todo) => {
+
     todoTree.value = {
       ...todoTree.value,
       ...{
@@ -130,7 +133,7 @@
         status: todo.status,
         owner: todo.owner
       }
-    }
+    } as Todo
   }
 
   const shallowRefresh = async () => {
@@ -138,7 +141,7 @@
       id: props.todoId,
     })
     shallowMerge(result.todo) 
-    emit('updated', todoTree)
+    emit('updated', todoTree.value as Todo)
   }
 
   const loadData = async () => {
@@ -160,34 +163,40 @@
 
   // this only happens for tasks, which never have children
   const onClosed = async () => {
-    const result = await GqlUpdateTodoStatus({
-      todoId: props.todoId,
-      status: 'COMPLETE'
-    })
-    todoTree.value.status = result.updateTodoStatus.todo.status
-    emit('updated', result.updateTodoStatus.todo)
+    if (todoTree.value) {
+      const result = await GqlUpdateTodoStatus({
+        todoId: props.todoId,
+        status: 'COMPLETE'
+      })
+      todoTree.value.status = result.updateTodoStatus.todo.status
+      emit('updated', result.updateTodoStatus.todo)
+    }
   }
   // this only happens for tasks, which never have children
   const onReopened = async () => {
-    const result = await GqlUpdateTodoStatus({
-      todoId: props.todoId,
-      status: 'INCOMPLETE'
-    })
-    todoTree.value.status = result.updateTodoStatus.todo.status
-    emit('updated', result.updateTodoStatus.todo)
+    if (todoTree.value) {
+      const result = await GqlUpdateTodoStatus({
+        todoId: props.todoId,
+        status: 'INCOMPLETE'
+      })
+      todoTree.value.status = result.updateTodoStatus.todo.status
+      emit('updated', result.updateTodoStatus.todo)
+    }
   }
-  const onAddSubtask = async (todo: any) => {
-    const result = await GqlCreateTodo({
-      name: todo.name,
-      description: todo.description,
-      parentTodoId: todo.parentTodoId
-    })
-    const children = [
-      ...(todoTree.value.children || []),
-      result.createTodo.todo
-    ]
-    todoTree.value.children = children
-    emit('subtaskAdded', todoTree)
+  const onAddSubtask = async (todo: Todo) => {
+    if (todoTree.value) {
+      const result = await GqlCreateTodo({
+        name: todo.name,
+        description: todo.description,
+        parentTodoId: todo.parentTodoId
+      })
+      const children = [
+        ...(todoTree.value.children || []),
+        result.createTodo.todo
+      ]
+      todoTree.value.children = children
+      emit('subtaskAdded', todoTree.value)
+    }
   }
   const onDelete = async () => {
     const result = await GqlDeleteTodo({
@@ -200,47 +209,49 @@
   }
 
   // this only happens for milestones, which always have children
-  const handleChildUpdated = async (todo: any) => {
+  const handleChildUpdated = async (todo: Todo) => {
     await shallowRefresh()
   }
   // updated is for changes that do not affect task status - name, description, tags...
-  const handleUpdated = async (todo: any) => {
+  const handleUpdated = async (todo: Todo) => {
     await shallowMerge(todo)
   }
   // add the child optimistically, if current state is complete, then we will need to refresh and bubble
-  const handleAddSubtask = async (todo: any) => {
+  const handleAddSubtask = async (todo: Todo) => {
     await shallowRefresh()
   }
   const handleAssigned = async (residentId: string) => {
-    const result = await GqlAssignTodo({
-      todoId: todoTree.value.id,
-      residentId: residentId
-    })
-    await shallowMerge(result.assignTodo.todo)
+    if (todoTree.value) {
+      const result = await GqlAssignTodo({
+        todoId: todoTree.value.id,
+        residentId: residentId
+      })
+      await shallowMerge(result.assignTodo.todo)
+    }
   }
   const handleDelete = async (todoId: string) => {
     await loadData()
-    // emit('updated', todoTree)
-    // alert(todoId)
-    // todoTree.value.children = todoTree.value.children.filter((t:any) => t.id !== todoId)
-    // await shallowRefresh()
   }
   const handleSelectTodo = async () => {
     detailed.value = !detailed.value
   }
   const primaryButtonColor = computed(()=>{
-    switch (todoTree.value.type) {
-      case 'MILESTONE':
-        return 'fuchsia'
-      case 'TASK':
-        return 'teal'
+    if (todoTree.value) {
+      switch (todoTree.value.type.toString().toUpperCase()) {
+        case 'MILESTONE':
+          return 'fuchsia'
+        case 'TASK':
+          return 'teal'
+      }
+      return `teal`
     }
-    return `teal`
   })
 
   const completionRatio = computed(() => {
-    const complete = (todoTree.value.children || []).filter((t:any) => t.status === 'COMPLETE').length
-    const totalCount = (todoTree.value.children || []).length
-    return `${complete}/${totalCount}`
+    if (todoTree.value) {
+      const complete = (todoTree.value.children || []).filter((t:Todo) => t.status.toString().toUpperCase() === 'COMPLETE').length
+      const totalCount = (todoTree.value.children || []).length
+      return `${complete}/${totalCount}`
+    }
   })
 </script>

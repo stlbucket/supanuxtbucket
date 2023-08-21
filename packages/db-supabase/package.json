@@ -1,20 +1,19 @@
 {
   "name": "db-supabase",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./types/.d.ts",
   "scripts": {
+    "build": "tsc .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "kysely-codegen": "^0.10.1"
   },
   "dependencies": {
-    "supabase": "^1.86.1",
-    "kysely": "^0.26.1",
-    "pg": "^8.11.3"
+    "supabase": "^1.86.1"
   }
 }

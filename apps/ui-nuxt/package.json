@@ -18,6 +18,9 @@
     "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
     "@supanuxtphile/tsconfig": "workspace:*",
     "@types/node": "^18",
+    "pg": "^8.11.3",
+    "kysely": "^0.26.1",
+    "kysely-codegen": "^0.10.1",
     "nuxt": "^3.6.5",
     "sass": "^1.63.6"
   },

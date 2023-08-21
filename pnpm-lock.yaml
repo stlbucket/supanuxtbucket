@@ -66,28 +66,27 @@ importers:
       '@types/node':
         specifier: ^18
         version: 18.0.0
+      kysely:
+        specifier: ^0.26.1
+        version: 0.26.1
+      kysely-codegen:
+        specifier: ^0.10.1
+        version: 0.10.1(kysely@0.26.1)(pg@8.11.3)
       nuxt:
         specifier: ^3.6.5
         version: 3.6.5(@types/node@18.0.0)(sass@1.63.6)
+      pg:
+        specifier: ^8.11.3
+        version: 8.11.3
       sass:
         specifier: ^1.63.6
         version: 1.63.6
 
   packages/db-supabase:
     dependencies:
-      kysely:
-        specifier: ^0.26.1
-        version: 0.26.1
-      pg:
-        specifier: ^8.11.3
-        version: 8.11.3
       supabase:
         specifier: ^1.86.1
         version: 1.86.1
-    devDependencies:
-      kysely-codegen:
-        specifier: ^0.10.1
-        version: 0.10.1(kysely@0.26.1)(pg@8.11.3)
 
   packages/eslint-config-custom:
     dependencies:
@@ -8978,6 +8977,7 @@ packages:
   /kysely@0.26.1:
     resolution: {integrity: sha512-FVRomkdZofBu3O8SiwAOXrwbhPZZr8mBN5ZeUWyprH29jzvy6Inzqbd0IMmGxpd4rcOCL9HyyBNWBa8FBqDAdg==}
     engines: {node: '>=14.0.0'}
+    dev: true
 
   /latest-version@7.0.0:
     resolution: {integrity: sha512-KvNT4XqAMzdcL6ka6Tl3i2lYeFDgXNCuIX+xNx6ZMVR1dFq+idXd9FLKNMOIx0t9mJ9/HudyX4oZWXZQ0UJHeg==}
