@@ -19,6 +19,7 @@ npx kysely-codegen --camel-case --include-pattern 'inc.*' --out-file ./db-types/
 Then pull them together explicitly
 ``` ts
 // apps/ui-nuxt/db-types/index.ts
+...
 // TODO
 export interface ITodoResident extends todo.TodoTodoResident {
 
@@ -35,6 +36,7 @@ export interface ITodo extends todo.TodoTodo {
 declare global {
   type Todo = ITodo
 }
+...
 ```
 This process is likely to be refactored.  The Postgraphile v5 server supports a fairly flexible entity naming inflector as well as some other as-yet unexplored features, which might be leveraged to further automate this process.
 
