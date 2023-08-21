@@ -36,4 +36,6 @@ declare global {
   type Todo = ITodo
 }
 ```
-This process is likely to be refactored.  The Postgraphile v5 server supports a fairly flexible entity naming inflector, which might be leveraged to further automate this process.  Also, using graphql codegen could improve this as well.
+This process is likely to be refactored.  The Postgraphile v5 server supports a fairly flexible entity naming inflector as well as some other as-yet unexplored features, which might be leveraged to further automate this process.
+
+Also, it would be nice to add support for function calls, which may be easier with graphql codegen or postgraphile.
