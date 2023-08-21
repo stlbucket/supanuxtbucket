@@ -1,13 +1,7 @@
 <template>
   <UTable
     :rows="residents"
-    :columns="[
-      {key: 'action'},
-      {key: 'displayName', label: 'Display Name', sortable: true},
-      // {key: 'email', label: 'Email', sortable: true},
-      {key: 'status', label: 'Status', sortable: true},
-      {key: 'tenantName', label: 'Tenant', sortable: true},
-    ]"
+    :columns="columns"
     :sort="{ column: 'tenantName', direction: 'asc' }"
   >
     <template #email-data="{ row }">
@@ -15,17 +9,17 @@
     </template>
     <template #action-data="{ row }">
         <UButton v-if="rowActionName" @click="handleRowAction(row)">{{rowActionName}}</UButton>
-        <!-- <UButton @click="onSupport(row)" v-if="showSupportAction">Support</UButton> -->
       </template>
   </UTable>
 </template>
 
 <script lang="ts" setup>
 
-  defineProps<{
+  const props = defineProps<{
     residents: Resident[]
     rowActionName?: string
-    showSupportAction?: boolean
+    showEmail?: boolean
+    showDisplayName?: boolean
   }>()
 
   const emit = defineEmits<{
@@ -36,5 +30,16 @@
     emit('rowAction', row)
   }
 
+  const columns = computed(()=>{
+    return [
+      {key: 'action'},
+      {key: 'displayName', label: 'Display Name', sortable: true},
+      {key: 'email', label: 'Email', sortable: true},
+      {key: 'status', label: 'Status', sortable: true},
+      {key: 'tenantName', label: 'Tenant', sortable: true},
+    ]
+    .filter(c => c.key !== 'displayName' || props.showDisplayName )
+    .filter(c => c.key !== 'email'  || props.showEmail)
+  })
 
 </script>

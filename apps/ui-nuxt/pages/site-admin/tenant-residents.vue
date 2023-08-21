@@ -9,7 +9,13 @@
       <div>
         <UInput v-model="searchTerm" />
       </div>
-      <ResidentsList :residents="residents" @row-action="onRowAction" row-action-name="Support"/>
+      <ResidentsList 
+        :residents="residents" 
+        @row-action="onRowAction" 
+        row-action-name="Support"
+        show-display-name
+        show-email
+      />
     </UCard>
 </template>
 

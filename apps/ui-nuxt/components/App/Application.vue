@@ -5,7 +5,7 @@
         <div class="flex-1">{{ application.name }}</div>
         <div class="flex-1">{{ application.key }}</div>
       </div>
-      <LicenseTypeList :license-types="application.licenseTypes" />
+      <LicenseTypeList :license-types="application.licenseTypes || []" />
     </template>
   </UCard>  
 </template>

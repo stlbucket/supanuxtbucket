@@ -1,10 +1,5 @@
 <template>
-  <UCard>
-    <template #header>
-      <div class="text-2xl">{{ subscription.licensePackKey }}</div>
-    </template>
-    <LicensePack :license-pack="subscription.licensePack" />
-  </UCard>
+  <LicensePack :license-pack="subscription.licensePack" />
 </template>
 
 <script lang="ts" setup>

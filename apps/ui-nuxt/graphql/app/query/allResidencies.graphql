@@ -4,6 +4,7 @@ query AllResidents {
       id
       tenantName
       email
+      displayName
       status
     }
   }

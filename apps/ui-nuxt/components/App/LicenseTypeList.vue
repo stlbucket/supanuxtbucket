@@ -1,6 +1,8 @@
 <template>
   <UCard>
-    <template #header>License Types</template>
+    <template #header>
+      <div class="text-xs">LICENSE TYPES</div>
+    </template>
     <UTable
       :rows="licenseTypes"
       :columns="[
@@ -13,15 +15,17 @@
         {{ row.licenses.totalCount }}
       </template>
       <template #permissions-data="{ row }">
-        <UBadge v-for="p in row.permissions">{{ p.permissionKey }}</UBadge>
+        <div class="flex flex-wrap">
+          <UBadge class="flex m-1" v-for="p in row.permissions">{{ p.permissionKey }}</UBadge>
+        </div>
       </template>
     </UTable>
-    <!-- <pre>{{ licenseTypes }}</pre> -->
   </UCard>
 </template>
 
+
 <script lang="ts" setup>
   defineProps<{
-    licenseTypes: []
+    licenseTypes: LicenseType[]
   }>()
 </script>

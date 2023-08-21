@@ -7,7 +7,11 @@
       </div>
       <ResidentModal @new-resident="onNewResident"/>
     </template>
-    <ResidentsList :residents="residents"/>
+    <ResidentsList 
+      :residents="residents"
+      show-display-name
+      show-email
+    />
   </UCard>
 </template>
 

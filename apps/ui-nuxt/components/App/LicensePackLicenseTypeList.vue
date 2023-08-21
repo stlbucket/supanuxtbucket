@@ -1,6 +1,8 @@
 <template>
   <UCard>
-    <template #header>License Types</template>
+    <template #header>
+      <div class="text-xs">LICENSE TYPES</div>
+    </template>
     <UTable
       :rows="sorted"
       :columns="[
@@ -21,7 +23,9 @@
         <UBadge>{{ row.licenseType.assignmentScope }}</UBadge>
       </template>
       <template #permissions-data="{ row }">
-        <UBadge v-for="p in row.licenseType.permissions">{{ p.permissionKey }}</UBadge>
+        <div class="flex flex-wrap">
+          <UBadge class="flex m-1" v-for="p in row.licenseType.permissions">{{ p.permissionKey }}</UBadge>
+        </div>
       </template>
     </UTable>
     <!-- <pre>{{ licensePackLicenseTypes }}</pre> -->
@@ -30,7 +34,7 @@
 
 <script lang="ts" setup>
   const props = defineProps<{
-    licensePackLicenseTypes: []
+    licensePackLicenseTypes: LicensePackLicenseType[]
   }>()
 
   const sorted = computed(() => {

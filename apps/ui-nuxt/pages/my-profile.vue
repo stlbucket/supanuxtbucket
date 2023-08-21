@@ -5,7 +5,12 @@
         <MyResidents/>
       </div>
       <div class="flex">
-        <pre class="text-xs">{{ JSON.stringify(supUser,null,2) }}</pre>
+        <UCard>
+          <template #header>
+            SUPABASE USER
+          </template>
+          <pre class="text-xs">{{ JSON.stringify(supUser,null,2) }}</pre>
+        </UCard>
       </div>
     </div>
 </template>
