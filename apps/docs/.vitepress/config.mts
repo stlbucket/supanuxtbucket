@@ -16,6 +16,7 @@ export default {
           { text: 'Demo Data', link: '/demo-tenants' },
           { text: 'Postraphile v5', link: '/postgraphile' },
           { text: 'Credentials Flow', link: '/credentials-flow' },
+          { text: 'Typescript', link: '/typescript' },
           { text: 'Installing an Application', link: 'installing-an-application'},
           {
             text: 'Schemas',
