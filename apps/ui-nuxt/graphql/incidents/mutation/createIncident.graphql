@@ -1,0 +1,22 @@
+mutation CreateIncident(
+  $name: String!
+  $description: String
+  $tags: [String]
+) {
+	createIncident(input: {
+    _incidentInfo: {
+      name: $name
+      description: $description
+      tags: $tags
+    }    
+  }) {
+    incident {
+      id
+      name
+      description
+      status
+      todoId
+      topicId
+    }
+  }
+}

@@ -5,6 +5,9 @@
         <div class="text-3xl">INCIDENTS</div>
         <IncidentModal @new="onNewIncident" />
       </div>
+      <div>
+        <UInput v-model="searchTerm" />
+      </div>
     </template>
     <UTable
       :rows="incidents"
@@ -22,12 +25,18 @@
 
 <script lang="ts" setup>
   const incidents: Ref<any[]> = ref([])
+  const searchTerm = ref()
 
   const loadData = async () => {
-    const result = await GqlAllIncidents()
-    incidents.value = result.incidents.nodes
+    // const result = await GqlAllIncidents()
+    const result = await GqlSearchIncidents({
+      searchTerm: searchTerm.value
+    })
+    incidents.value = result.searchIncidents.nodes
   }
   loadData()
+
+  watch(()=>searchTerm.value, loadData)
 
   const onNewIncident = async (incidentInfo: IncidentInfo) => {
     const result = await GqlCreateIncident({

@@ -3,6 +3,13 @@ create schema inc;
 create schema if not exists inc_api;
 create schema if not exists inc_fn;
 
+create type inc.incident_status as enum (
+  'open'
+  ,'closed'
+  ,'pending'
+  ,'deleted'
+);
+
 create type inc_fn.incident_info as (
   name citext
   ,description citext
@@ -10,12 +17,10 @@ create type inc_fn.incident_info as (
   ,tags citext[]
   ,is_template boolean
 );
-
-create type inc.incident_status as enum (
-  'open'
-  ,'closed'
-  ,'pending'
-  ,'deleted'
+create type inc_fn.search_incidents_options as (
+  search_term citext
+  ,incident_status inc.incident_status
+  ,paging_options app_fn.paging_options
 );
 
 create table inc.inc_tenant (

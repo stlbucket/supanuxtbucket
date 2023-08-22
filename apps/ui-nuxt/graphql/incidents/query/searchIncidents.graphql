@@ -1,0 +1,17 @@
+query SearchIncidents(
+  $searchTerm: String
+) {
+   searchIncidents (
+    _options: {
+      searchTerm: $searchTerm
+  	}
+  ){
+    nodes {
+      id
+      name
+      description
+      status
+      identifier
+    }
+  }
+}

@@ -291,3 +291,41 @@ CREATE OR REPLACE FUNCTION inc_fn.delete_incident(_incident_id uuid)
     return true;
   end;
   $$;
+
+---------------------------------------------- search_incidents
+CREATE OR REPLACE FUNCTION inc_api.search_incidents(_options inc_fn.search_incidents_options)
+  RETURNS setof inc.incident
+  LANGUAGE plpgsql
+  stable
+  SECURITY INVOKER
+  AS $$
+  DECLARE
+  BEGIN
+    return query select * from inc_fn.search_incidents(_options);
+  end;
+  $$;
+
+CREATE OR REPLACE FUNCTION inc_fn.search_incidents(_options inc_fn.search_incidents_options)
+  RETURNS setof inc.incident
+  LANGUAGE plpgsql
+  stable
+  SECURITY INVOKER
+  AS $$
+  DECLARE
+    _use_options inc_fn.search_incidents_options;
+  BEGIN
+    -- incident: add paging options
+
+    return query
+    select i.* 
+    from inc.incident i
+    where (
+      _options.search_term is null 
+      or i.name like '%'||_options.search_term||'%'
+      or i.description like '%'||_options.search_term||'%'
+    )
+    and (_options.incident_status is null or i.status = _options.incident_status)
+    ;
+  end;
+  $$;
+
