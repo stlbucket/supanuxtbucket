@@ -1,0 +1,21 @@
+mutation UpdateIncident(
+  $incidentId: UUID!
+  $name: String!
+  $description: String
+) {
+	updateIncident(input: {
+    _incidentId: $incidentId
+    _name: $name
+    _description: $description
+    
+  }) {
+    incident {
+      id
+      name
+      description
+      status
+      todoId
+      topicId
+    }
+  }
+}

@@ -252,7 +252,6 @@ CREATE OR REPLACE FUNCTION app_fn.create_anchor_tenant(_name citext, _email cite
       ;
 
       perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'anchor');
-      -- perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'app');
       perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, key) from app.license_pack where auto_subscribe = true;
 
       perform app_fn.invite_user(_tenant.id, _email, 'superadmin');

@@ -118,6 +118,13 @@ declare global {
 // INC
 export interface IIncident extends inc.IncIncident {}
 
+export interface IIncidentInfo {
+  id?: string
+  name: string
+  description?: string
+}
+
 declare global {
   type Incident = IIncident
+  type IncidentInfo = IIncidentInfo
 }

@@ -75,7 +75,14 @@
   select inc_fn.create_incident(
     _incident_info => row(
       aut.display_name||' Demo Incident'::citext
-      ,'This is a demo incident'::citext
+      ,'This is a demo incident.  A long-winded way of saying
+      
+      
+      that we want to see
+
+      what happens when we put a lot of text in here. Blah blah blah
+      blah blahblah blahblah blahblah blahblah blahblah blahblah blahblah blahblah blahblah blahblah blah
+      '::citext
       ,aut.display_name||'-demo'::citext
       ,'{}'::citext[]
       ,false::boolean

@@ -1,13 +1,3 @@
-create schema if not exists inc_api;
-create schema if not exists inc_fn;
-
-create type inc_fn.incident_info as (
-  name citext
-  ,description citext
-  ,identifier citext
-  ,tags citext[]
-  ,is_template boolean
-);
 ----------------------------------- install_incidents_application ---  NO API
 CREATE OR REPLACE FUNCTION inc_fn.install_incidents_application()
   RETURNS app.application
@@ -263,7 +253,6 @@ CREATE OR REPLACE FUNCTION inc_fn.update_incident_status(
   BEGIN
       update inc.incident set 
         status = _status
-        ,updated_at = current_timestamp
       where id = _incident_id
       returning * into _incident
       ;

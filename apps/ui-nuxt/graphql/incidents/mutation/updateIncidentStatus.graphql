@@ -1,0 +1,16 @@
+mutation UpdateIncidentStatus(
+  $incidentId: UUID!
+  $status: IncidentStatus!
+) {
+	updateIncidentStatus(input: {
+    _incidentId: $incidentId
+    _status: $status
+  }) {
+    incident {
+      id
+      name
+      description
+      status
+    }
+  }
+}

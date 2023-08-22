@@ -1,12 +1,21 @@
 -- incidents
 create schema inc;
+create schema if not exists inc_api;
+create schema if not exists inc_fn;
+
+create type inc_fn.incident_info as (
+  name citext
+  ,description citext
+  ,identifier citext
+  ,tags citext[]
+  ,is_template boolean
+);
 
 create type inc.incident_status as enum (
-  'reported'
-  ,'open'
+  'open'
   ,'closed'
   ,'pending'
-  ,'aborted'
+  ,'deleted'
 );
 
 create table inc.inc_tenant (
@@ -30,7 +39,7 @@ create table inc.incident (
   name citext not null,
   description citext,
   identifier text,
-  status inc.incident_status not null default 'reported',
+  status inc.incident_status not null default 'open',
   tags citext[] not null default '{}'::citext[],
   is_template boolean not null default false
 );

@@ -3,7 +3,7 @@
     <LMap
       ref="map"
       :zoom="zoom"
-      :center="[47.608013, -122.335167]"
+      :center="[47.6242311, -122.3616521]"
     >
       <LTileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -13,6 +13,7 @@
       />
       <l-marker :lat-lng="coordinates" draggable> </l-marker>
     </LMap>
+    <!-- <pre>{{ JSON.stringify(coordinates,null,2) }}</pre> -->
   </div>
 </template>
 
@@ -22,7 +23,8 @@
   const coordinates = ref({})
 
   const loadData = async () => {
-    const {data,error} = await useFetch('https://geocode.maps.co/search?street=1300+Elliot+Ave&city=Seattle&state=WA&postalcode=98119&country=US')
+    // const {data,error} = await useFetch('https://geocode.maps.co/search?street=530+4th+Ave+W&city=Seattle&state=WA&postalcode=98119&country=US')
+    const {data,error} = await useFetch('https://geocode.maps.co/search?street=530+4th+Ave+W&city=Seattle&state=WA&postalcode=98119&country=US')
 
     if (error) {
       console.log(error)
