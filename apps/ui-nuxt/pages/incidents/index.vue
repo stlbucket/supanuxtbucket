@@ -3,7 +3,7 @@
     <template #header>
       <div class="flex justify-between">
         <div class="text-3xl">INCIDENTS</div>
-        <UButton @click="onNewIncident">New Incident</UButton>
+        <IncidentModal @new="onNewIncident" />
       </div>
     </template>
     <UTable
@@ -29,7 +29,12 @@
   }
   loadData()
 
-  const onNewIncident = async () => {
-    alert('fuq')
+  const onNewIncident = async (incidentInfo: IncidentInfo) => {
+    const result = await GqlCreateIncident({
+      name: incidentInfo.name,
+      description: incidentInfo.description,
+      tags: incidentInfo.tags ?? []
+    })
+    navigateTo(`/incidents/${result.incident.id}`)
   }
 </script>

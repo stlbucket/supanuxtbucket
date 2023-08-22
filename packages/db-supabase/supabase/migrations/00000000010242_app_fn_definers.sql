@@ -256,7 +256,7 @@ CREATE OR REPLACE FUNCTION app_fn.invite_user(
           join app.license_pack lp on lp.key = lplt.license_pack_key
           join app.tenant_subscription ats on ats.license_pack_key = lp.key
           where ats.tenant_id = _tenant_id
-          and (lt.assignment_scope = _assignment_scope or lt.assignment_scope = 'all')
+          and (lt.assignment_scope = _assignment_scope or lt.assignment_scope = 'all' or (lt.assignment_scope = 'admin' and _assignment_scope = 'superadmin'))
       loop
         insert into app.license(
           tenant_id

@@ -1,6 +1,6 @@
 <template>
   <UButton @click="showModal = true">{{ incident ? 'Edit' : 'New' }}</UButton>
-  <UModal v-model="showModal" class="z-50">
+  <UModal v-model="showModal">
     <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
       <template #header>
         Incident

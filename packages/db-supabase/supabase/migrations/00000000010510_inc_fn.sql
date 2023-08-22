@@ -165,7 +165,7 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
         ,_incident_info.description
         ,_incident_info.identifier
         ,_incident_info.tags
-        ,_incident_info.is_template
+        ,coalesce(_incident_info.is_template, false)
       )
       returning * into _incident;
     end if;

@@ -122,6 +122,7 @@ export interface IIncidentInfo {
   id?: string
   name: string
   description?: string
+  tags?: string[]
 }
 
 declare global {
