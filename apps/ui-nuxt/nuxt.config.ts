@@ -37,7 +37,8 @@ export default defineNuxtConfig({
     'nuxt-graphql-client',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    'nuxt3-leaflet'
   ],
   pinia: {
     autoImports: [
@@ -91,6 +92,10 @@ export default defineNuxtConfig({
       },
       {
         "path": "~/components/Todo",
+        "global": true
+      },
+      {
+        "path": "~/components/Map",
         "global": true
       },
       {

@@ -15,13 +15,14 @@
       </div>
     </template>
     <div class="flex">
-      <div class="flex grow max-w-[50%] overflow-hidden">
+      <div class="flex grow max-w-[50%] overflow-hidden flex-col">
+        <MarkerMap class="min-h-[25%]" />
         <MsgTopic
           :topicId="incident.topic.id"
           title="Group Discussion"
         />
       </div>
-      <div class="flex grow max-w-[50%] overflow-hidden">
+      <div class="flex grow max-w-[50%] overflow-hidden flex-col">
         <UCard>
           <template #header>
             <div class="text-2xl">Tasks for this Incident</div>

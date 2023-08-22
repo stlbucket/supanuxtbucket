@@ -31,6 +31,13 @@
         to: '/tools/discussions',
         title: 'Discussions',
         permissionKey: ['p:discussions']
+      },
+      {
+        label: 'Maps',
+        icon: 'i-heroicons-user-group',
+        to: '/tools/maps',
+        title: 'Maps',
+        // permissionKey: ['p:maps']
       }
     ]
       .map((l: any) => {

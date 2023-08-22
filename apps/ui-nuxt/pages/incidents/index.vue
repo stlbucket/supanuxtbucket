@@ -3,7 +3,7 @@
     <template #header>
       <div class="flex justify-between">
         <div class="text-3xl">INCIDENTS</div>
-        <UButton>New Incident</UButton>
+        <UButton @click="onNewIncident">New Incident</UButton>
       </div>
     </template>
     <UTable
@@ -28,4 +28,8 @@
     incidents.value = result.incidents.nodes
   }
   loadData()
+
+  const onNewIncident = async () => {
+    alert('fuq')
+  }
 </script>

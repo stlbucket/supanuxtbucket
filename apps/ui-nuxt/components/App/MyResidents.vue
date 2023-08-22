@@ -29,6 +29,6 @@
     if (error) alert(error.toString())
 
     await supabase.auth.refreshSession()
-    reloadNuxtApp({path: '/tools/todo'})
+    reloadNuxtApp({path: '/tools/todo', force: true})
   }
 </script>
