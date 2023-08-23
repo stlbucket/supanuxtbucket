@@ -1,9 +1,11 @@
 query SearchIncidents(
   $searchTerm: String
+  $isTemplate: Boolean
 ) {
    searchIncidents (
     _options: {
       searchTerm: $searchTerm
+      isTemplate: $isTemplate
   	}
   ){
     nodes {

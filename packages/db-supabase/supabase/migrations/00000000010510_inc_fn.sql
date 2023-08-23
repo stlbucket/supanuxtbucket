@@ -132,6 +132,7 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
         ,_options => row(
           _incident_info.description::citext
           ,null
+          ,coalesce(_incident_info.is_template, false)
         )::todo_fn.create_todo_options
       );
 
@@ -325,7 +326,45 @@ CREATE OR REPLACE FUNCTION inc_fn.search_incidents(_options inc_fn.search_incide
       or i.description like '%'||_options.search_term||'%'
     )
     and (_options.incident_status is null or i.status = _options.incident_status)
+    and (i.is_template = coalesce(_options.is_template, false))  -- default is_template to false
     ;
   end;
   $$;
+
+---------------------------------------------- templatize_incident
+CREATE OR REPLACE FUNCTION inc_api.templatize_incident(
+    _incident_id uuid
+  )
+  RETURNS inc.incident
+  VOLATILE
+  SECURITY INVOKER
+  LANGUAGE plpgsql
+  AS $function$
+  DECLARE
+    _template inc.incident;
+  BEGIN
+    _template := inc_fn.templatize_incident(_incident_id);
+    return _template;
+  end;
+  $function$
+  ;
+
+CREATE OR REPLACE FUNCTION inc_fn.templatize_incident(
+    _incident_id uuid
+  )
+  RETURNS inc.incident
+  VOLATILE
+  SECURITY INVOKER
+  LANGUAGE plpgsql
+  AS $function$
+  DECLARE
+    _template inc.incident;
+    _incident inc.incident;
+  BEGIN
+
+
+    return _incident;
+  end;
+  $function$
+  ;
 

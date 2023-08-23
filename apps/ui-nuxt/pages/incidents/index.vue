@@ -28,9 +28,9 @@
   const searchTerm = ref()
 
   const loadData = async () => {
-    // const result = await GqlAllIncidents()
     const result = await GqlSearchIncidents({
-      searchTerm: searchTerm.value
+      searchTerm: searchTerm.value,
+      isTemplate: false
     })
     incidents.value = result.searchIncidents.nodes
   }

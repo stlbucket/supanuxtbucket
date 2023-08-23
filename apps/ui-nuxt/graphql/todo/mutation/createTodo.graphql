@@ -18,6 +18,8 @@ mutation CreateTodo(
       type
       createdAt
       updatedAt
+      parentTodoId
+      isTemplate
     }
   }
 }

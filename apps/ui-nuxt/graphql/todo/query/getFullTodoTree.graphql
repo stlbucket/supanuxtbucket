@@ -1,5 +1,0 @@
-query GetFullTodoTree(
-  $todoId: UUID!
-) {
-  getFullTodoTree(_todoId: $todoId)
-}

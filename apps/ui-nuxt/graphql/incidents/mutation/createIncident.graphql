@@ -2,12 +2,14 @@ mutation CreateIncident(
   $name: String!
   $description: String
   $tags: [String]
+  $isTemplate: Boolean
 ) {
 	createIncident(input: {
     _incidentInfo: {
       name: $name
       description: $description
       tags: $tags
+      isTemplate: $isTemplate
     }    
   }) {
     incident {
@@ -17,6 +19,7 @@ mutation CreateIncident(
       status
       todoId
       topicId
+      isTemplate
     }
   }
 }

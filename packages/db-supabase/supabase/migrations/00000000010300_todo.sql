@@ -39,7 +39,7 @@ create table if not exists todo.todo (
   id uuid NOT NULL DEFAULT gen_random_uuid() primary key
   ,parent_todo_id uuid null references todo.todo(id)
   ,tenant_id uuid not null references todo.todo_tenant(tenant_id)
-  ,resident_id uuid not null references todo.todo_resident(resident_id)
+  ,resident_id uuid null references todo.todo_resident(resident_id)
   ,created_at timestamptz not null default current_timestamp
   ,updated_at timestamptz not null default current_timestamp
   ,name citext not null

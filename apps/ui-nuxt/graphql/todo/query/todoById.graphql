@@ -10,6 +10,7 @@ query TodoById(
     createdAt
     updatedAt
     parentTodoId
+    isTemplate
     owner: resident {
       residentId
       displayName
@@ -23,6 +24,7 @@ query TodoById(
       createdAt
       updatedAt
       parentTodoId
+      isTemplate
       owner: resident {
           residentId
           displayName
@@ -36,6 +38,7 @@ query TodoById(
         createdAt
         updatedAt
         parentTodoId
+        isTemplate
         owner: resident {
           residentId
           displayName
@@ -49,6 +52,7 @@ query TodoById(
           createdAt
           updatedAt
           parentTodoId
+          isTemplate
           owner: resident {
             residentId
             displayName
@@ -60,6 +64,4 @@ query TodoById(
       }
     }
   }
-
-  getFullTodoTree(_todoId: $id)
 }

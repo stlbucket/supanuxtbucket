@@ -22,8 +22,9 @@
                   size="sm"
                   color="yellow"
                   square variant="outline"
-                  title="Close"
+                  :title="Boolean(todoTree.isTemplate) ? 'This is a template so no action can be taken' : 'Close'"
                   @click="onClosed"
+                  :disabled="Boolean(todoTree.isTemplate)"
                 />
               </div>
               <div v-else class="flex">
@@ -131,7 +132,7 @@
       ...{
         name: todo.name,
         status: todo.status,
-        owner: todo.owner
+        owner: todo.owner,
       }
     } as Todo
   }

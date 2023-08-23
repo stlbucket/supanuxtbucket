@@ -7,6 +7,7 @@ query IncidentById(
     description
     status
     identifier
+    isTemplate
     todo {
       id
       name

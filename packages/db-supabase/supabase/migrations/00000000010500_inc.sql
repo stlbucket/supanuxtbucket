@@ -20,6 +20,7 @@ create type inc_fn.incident_info as (
 create type inc_fn.search_incidents_options as (
   search_term citext
   ,incident_status inc.incident_status
+  ,is_template boolean
   ,paging_options app_fn.paging_options
 );
 

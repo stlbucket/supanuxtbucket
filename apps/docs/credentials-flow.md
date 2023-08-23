@@ -161,11 +161,12 @@ CREATE OR REPLACE FUNCTION todo_api.create_todo(
     if auth_ext.has_permission('p:todo') = false then
       raise exception '30000: PERMISSION DENIED';
     end if;
+  
+    _options.resident_id = auth_ext.resident_id()::uuid;
 
     -- call todo_fn layer, including relevant context info; _resident_id, in this case.
     _retval := todo_fn.create_todo(
-      auth_ext.resident_id()::uuid
-      ,_name::citext
+      _name::citext
       ,_options::todo_fn.create_todo_options
     );
     return _retval;
@@ -173,8 +174,7 @@ CREATE OR REPLACE FUNCTION todo_api.create_todo(
   $$;
 
 CREATE OR REPLACE FUNCTION todo_fn.create_todo(
-    _resident_id uuid
-    ,_name citext
+    _name citext
     ,_options todo_fn.create_todo_options
   )
   RETURNS todo.todo
@@ -187,7 +187,7 @@ CREATE OR REPLACE FUNCTION todo_fn.create_todo(
     _todo_resident todo.todo_resident;
     _retval todo.todo;
   BEGIN
-    _todo_resident := todo_fn.ensure_todo_resident(_resident_id);
+    _todo_resident := todo_fn.ensure_todo_resident(_options.resident_id);
 
     _ordinal := 0;
     if _options.parent_todo_id is not null then

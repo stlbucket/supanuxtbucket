@@ -4,16 +4,21 @@
       <div class="flex gap-2">
         <div class="flex flex-col gap-1.5 max-w-[50%] min-w-[50%]">
           <div class="text-2xl">{{ incident.name }}</div>
-          <div class="flex justify-start gap-5">
-            <div class="flex">
-              <IncidentModal
-                :incident="incident"
-                @updated="onUpdateIncident"
-              />
+          <div class="flex justify-between">
+            <div class="flex justify-start gap-5">
+              <div class="flex">
+                <IncidentModal
+                  :incident="incident"
+                  @updated="onUpdateIncident"
+                />
+              </div>
+              <div class="flex" v-if="!incident.isTemplate">
+                <UButton v-if="incident.status === 'OPEN'" color="green" @click="onClose">Close</UButton>
+                <UButton v-if="incident.status === 'CLOSED'" color="yellow" @click="onOpen">Reopen</UButton>
+              </div>
             </div>
-            <div class="flex">
-              <UButton v-if="incident.status === 'OPEN'" color="green" @click="onClose">Close</UButton>
-              <UButton v-if="incident.status === 'CLOSED'" color="yellow" @click="onOpen">Reopen</UButton>
+            <div class="flex" v-if="!incident.isTemplate">
+              <UButton color="blue" @click="onMakeTemplate">Make Template</UButton>
             </div>
           </div>
           <div class="flex grow">
@@ -91,5 +96,9 @@
       description: incidentInfo.description
     })
     await loadData()
+  }
+
+  const onMakeTemplate = async () => {
+    alert('no')
   }
   </script>

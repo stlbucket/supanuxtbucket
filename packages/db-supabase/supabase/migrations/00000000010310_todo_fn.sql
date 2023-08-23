@@ -81,6 +81,7 @@ CREATE OR REPLACE FUNCTION todo_fn.create_todo(
   DECLARE
     _ordinal integer;
     _todo_resident todo.todo_resident;
+    _parent_todo todo.todo;
     _retval todo.todo;
   BEGIN
     _todo_resident := todo_fn.ensure_todo_resident(_resident_id);
@@ -88,6 +89,8 @@ CREATE OR REPLACE FUNCTION todo_fn.create_todo(
     _ordinal := 0;
     if _options.parent_todo_id is not null then
       _ordinal := (select count(*) + 1 from todo.todo where parent_todo_id = _options.parent_todo_id);
+      select * into _parent_todo from todo.todo where id = _options.parent_todo_id;
+      _options.is_template = _parent_todo.is_template;
     end if;
 
     insert into todo.todo(
@@ -97,6 +100,7 @@ CREATE OR REPLACE FUNCTION todo_fn.create_todo(
       ,description
       ,parent_todo_id
       ,ordinal
+      ,is_template
     ) 
     values(
       _todo_resident.tenant_id
@@ -105,16 +109,19 @@ CREATE OR REPLACE FUNCTION todo_fn.create_todo(
       ,_options.description
       ,_options.parent_todo_id
       ,_ordinal
+      ,coalesce(_options.is_template, false)
     )
     returning * into _retval;
 
     if _options.parent_todo_id is not null then
       update todo.todo set type = 'milestone' where id = _options.parent_todo_id;
 
-      perform todo_fn.update_todo_status(
-        _todo_id => _retval.id
-        ,_status => 'incomplete'
-      );
+      if _retval.is_template = false then
+        perform todo_fn.update_todo_status(
+          _todo_id => _retval.id
+          ,_status => 'incomplete'
+        );
+      end if;
     end if;
 
     
@@ -200,26 +207,31 @@ CREATE OR REPLACE FUNCTION todo_fn.update_todo_status(
   DECLARE
     _todo todo.todo;
   BEGIN
-      update todo.todo set 
-        status = _status
-        ,updated_at = current_timestamp
-      where id = _todo_id
-      returning * into _todo
-      ;
+    select * into _todo from todo.todo where id = _todo_id;
+    if _todo.is_template = true then
+      raise exception '30029: CANNOT UPDATE STATUS FOR TEMPLATE TODO';
+    end if;
 
-      if _todo.parent_todo_id is not null then
-        if _status = 'complete' then
-          if (select count(*) from todo.todo where parent_todo_id = _todo.parent_todo_id and status = 'incomplete') = 0 then
-            -- update todo.todo set status = 'complete' where id = _todo.parent_todo_id;
-            perform todo_fn.update_todo_status(_todo.parent_todo_id, 'complete');
-          end if; 
-        end if;
+    update todo.todo set 
+      status = _status
+      ,updated_at = current_timestamp
+    where id = _todo_id
+    returning * into _todo
+    ;
 
-        if _status = 'incomplete' then
-          perform todo_fn.update_todo_status(_todo.parent_todo_id, 'incomplete');
-          -- update todo.todo set status = 'incomplete' where id = _todo.parent_todo_id;
-        end if;
+    if _todo.parent_todo_id is not null then
+      if _status = 'complete' then
+        if (select count(*) from todo.todo where parent_todo_id = _todo.parent_todo_id and status = 'incomplete') = 0 then
+          -- update todo.todo set status = 'complete' where id = _todo.parent_todo_id;
+          perform todo_fn.update_todo_status(_todo.parent_todo_id, 'complete');
+        end if; 
       end if;
+
+      if _status = 'incomplete' then
+        perform todo_fn.update_todo_status(_todo.parent_todo_id, 'incomplete');
+        -- update todo.todo set status = 'incomplete' where id = _todo.parent_todo_id;
+      end if;
+    end if;
       
     return _todo;
   end;
@@ -357,54 +369,6 @@ CREATE OR REPLACE FUNCTION todo_fn.assign_todo(_todo_id uuid, _resident_id uuid)
   end;
   $$;
 
----------------------------------------------- get_full_todo_tree
-CREATE OR REPLACE FUNCTION todo_api.get_full_todo_tree(_todo_id uuid)
-  RETURNS jsonb
-  LANGUAGE plpgsql
-  STABLE
-  SECURITY INVOKER
-  AS $$
-  DECLARE
-    _retval jsonb;
-  BEGIN
-    _retval := todo_fn.get_full_todo_tree(_todo_id);
-    return _retval;
-  end;
-  $$;
-
-CREATE OR REPLACE FUNCTION todo_fn.get_full_todo_tree(_todo_id uuid)
-  RETURNS jsonb
-  LANGUAGE plpgsql
-  STABLE
-  SECURITY INVOKER
-  AS $$
-  DECLARE
-    _retval jsonb;
-    _children jsonb[];
-  BEGIN
-    select array_agg(coalesce(todo_fn.get_full_todo_tree(id), '{}'::jsonb))
-    into _children
-    from todo.todo where parent_todo_id = _todo_id
-    ;
-
-    select jsonb_build_object(
-      'id', _todo_id,
-      'name', t.name,
-      'status', t.status,
-      'type', t.type,
-      'canEdit', (_children is null or array_length(_children, 1) = 0),
-      'children', coalesce(_children, '{}'::jsonb[])
-    )
-    into _retval
-    from todo.todo t
-    where id = _todo_id
-    ;
-
-    return _retval;
-  end;
-  $$;
-
-
 ---------------------------------------------- search_todos
   CREATE OR REPLACE FUNCTION todo_api.search_todos(_options todo_fn.search_todos_options)
     RETURNS setof todo.todo
@@ -446,3 +410,38 @@ CREATE OR REPLACE FUNCTION todo_fn.get_full_todo_tree(_todo_id uuid)
     end;
     $$;
 
+---------------------------------------------- deep_copy_todo
+-- CREATE OR REPLACE FUNCTION todo_fn.deep_copy_todo(
+--     _todo_id uuid
+--     ,_is_template boolean
+--   )
+--   RETURNS todo.todo
+--   LANGUAGE plpgsql
+--   VOLATILE
+--   SECURITY INVOKER
+--   AS $$
+--   DECLARE
+--     _child_id uuid;
+--     _todo todo.todo;
+--     _copy todo.todo;
+--   BEGIN
+--     select * into _todo from todo.todo where id = _todo_id;
+
+--     if _todo_id.is null then
+--       raise exception '30030: NO TODO FOR ID';
+--     end if;
+
+--     -- _copy := todo_fn.create_todo(
+      
+--     -- )
+
+--     -- for _child_id in
+--     --   select id from todo.todo where parent_todo_id = _todo.id
+--     -- loop
+
+--     end loop;
+
+    
+--     return _todo;
+--   end;
+--   $$;
