@@ -20,6 +20,7 @@
                 @make-template="onMakeTemplate"
                 @updated="onUpdateIncident"
                 @clone-template="onCloneTemplate"
+                @delete="onDelete"
               />
             </template>
             <template #locations="{ item }">
@@ -127,5 +128,12 @@
       incidentId: incident.value.id
     })
     navigateTo(`/incidents/${result.cloneIncidentTemplate.incident.id}`)
+  }
+
+  const onDelete = async() => {
+    const result = await GqlDeleteIncident({
+      incidentId: incident.value.id
+    })
+    navigateTo('/incidents')
   }
   </script>

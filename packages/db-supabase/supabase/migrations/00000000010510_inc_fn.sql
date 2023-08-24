@@ -174,33 +174,10 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
 
     foreach _location_info in array(coalesce(_incident_info.locations, '{}'::inc_fn.location_info[]))
     loop
-      insert into inc.location(
-        incident_id,
-        tenant_id,
-        name,
-        address1,
-        address2,
-        city,
-        state,
-        postalCode,
-        country,
-        lat,
-        lon
-      ) values (
-        _incident.id,
-        _incident.tenant_id,
-        _location_info.name,
-        _location_info.address1,
-        _location_info.address2,
-        _location_info.city,
-        _location_info.state,
-        _location_info.postalCode,
-        _location_info.country,
-        _location_info.lat,
-        _location_info.lon
-      )
-      on conflict (incident_id, name) do nothing
-      ;
+      perform inc_fn.create_incident_location(
+        _incident.id
+        ,_location_info
+      );
     end loop;
 
     return _incident;
@@ -320,7 +297,15 @@ CREATE OR REPLACE FUNCTION inc_fn.delete_incident(_incident_id uuid)
     _parent_child_count integer;
     _incident inc.incident;
   BEGIN
+    select * into _incident from inc.incident where id = _incident_id;
+
+    perform inc_fn.delete_incident_location(id) from inc.location where incident_id = _incident.id;
+    
     delete from inc.incident where id = _incident_id;
+
+    perform todo_fn.delete_todo(_incident.todo_id);
+    perform msg_fn.delete_topic(_incident.topic_id);
+
     return true;
   end;
   $$;
@@ -490,4 +475,99 @@ CREATE OR REPLACE FUNCTION inc_fn.clone_incident_template(
   end;
   $function$
   ;
+---------------------------------------------- create_incident_location
+CREATE OR REPLACE FUNCTION inc_api.create_incident_location(
+    _incident_id uuid
+    ,_location_info inc_fn.location_info
+  )
+  RETURNS inc.location
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $$
+  DECLARE
+    _retval inc.incident;
+  BEGIN
+    _retval := inc_fn.create_incident_location(
+      _incident_id
+      ,_location_info
+    );
+    return _retval;
+  end;
+  $$;
+
+CREATE OR REPLACE FUNCTION inc_fn.create_incident_location(
+    _incident_id uuid
+    ,_location_info inc_fn.location_info
+  )
+  RETURNS inc.location
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $$
+  DECLARE
+    _incident inc.incident;
+    _retval inc.location;
+  BEGIN
+    select * into _incident from inc.incident where id = _incident_id;
+
+    insert into inc.location(
+      incident_id,
+      tenant_id,
+      name,
+      address1,
+      address2,
+      city,
+      state,
+      postalCode,
+      country,
+      lat,
+      lon
+    ) values (
+      _incident.id,
+      _incident.tenant_id,
+      _location_info.name,
+      _location_info.address1,
+      _location_info.address2,
+      _location_info.city,
+      _location_info.state,
+      _location_info.postalCode,
+      _location_info.country,
+      _location_info.lat,
+      _location_info.lon
+    )
+    on conflict (incident_id, name) do nothing
+    ;
+
+    return _retval;
+  end;
+  $$;
+---------------------------------------------- delete_incident_location
+CREATE OR REPLACE FUNCTION inc_api.delete_incident_location(_location_id uuid)
+  RETURNS boolean
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $$
+  DECLARE
+    _retval boolean;
+  BEGIN
+    _retval := inc_fn.delete_incident_location(_location_id);
+    return _retval;
+  end;
+  $$;
+
+CREATE OR REPLACE FUNCTION inc_fn.delete_incident_location(_location_id uuid)
+  RETURNS boolean
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $$
+  DECLARE
+  BEGIN
+    delete from inc.location where id = _location_id;
+    return true;
+  end;
+  $$;
+
 

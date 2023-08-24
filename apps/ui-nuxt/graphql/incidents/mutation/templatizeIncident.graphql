@@ -1,0 +1,17 @@
+mutation TemplatizeIncident(
+  $incidentId: UUID!
+) {
+	templatizeIncident(input: {
+    _incidentId: $incidentId
+  }) {
+    incident {
+      id
+      name
+      description
+      status
+      todoId
+      topicId
+      isTemplate
+    }
+  }
+}

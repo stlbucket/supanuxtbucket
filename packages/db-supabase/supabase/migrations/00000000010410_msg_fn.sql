@@ -291,3 +291,34 @@ CREATE OR REPLACE FUNCTION msg_fn.deactivate_subscriber(
     return _subscriber;
   end;
   $$;
+---------------------------------------------- delete_topic
+CREATE OR REPLACE FUNCTION msg_api.delete_topic(_topic_id uuid)
+  RETURNS boolean
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $$
+  DECLARE
+    _retval boolean;
+  BEGIN
+    _retval := msg_fn.delete_topic(_topic_id);
+    return _retval;
+  end;
+  $$;
+
+CREATE OR REPLACE FUNCTION msg_fn.delete_topic(_topic_id uuid)
+  RETURNS boolean
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $$
+  DECLARE
+  BEGIN
+    delete from msg.message where _topic_id = _topic_id;
+    delete from msg.subscriber where topic_id = _topic_id;
+    delete from msg.topic where id = _topic_id;
+    return true;
+  end;
+  $$;
+
+

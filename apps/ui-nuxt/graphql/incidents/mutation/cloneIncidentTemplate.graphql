@@ -1,0 +1,17 @@
+mutation CloneIncidentTemplate(
+  $incidentId: UUID!
+) {
+  cloneIncidentTemplate(input: {
+    _incidentId: $incidentId
+  }) {
+    incident {
+      id
+      name
+      description
+      status
+      todoId
+      topicId
+      isTemplate      
+    }
+  }
+}

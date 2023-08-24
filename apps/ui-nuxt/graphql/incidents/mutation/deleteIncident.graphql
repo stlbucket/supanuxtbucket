@@ -1,0 +1,9 @@
+mutation DeleteIncident(
+  $incidentId: UUID!
+) {
+  deleteIncident(input: {
+    _incidentId: $incidentId
+  }) {
+    boolean
+  }
+}
