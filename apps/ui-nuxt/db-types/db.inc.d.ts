@@ -34,8 +34,24 @@ export interface IncIncTenant {
   name: string;
 }
 
+export interface IncLocation {
+  id: Generated<string>;
+  tenantId: string;
+  incidentId: string;
+  name: string | null;
+  address1: string | null;
+  address2: string | null;
+  city: string | null;
+  state: string | null;
+  postalcode: string | null;
+  country: string | null;
+  lat: string | null;
+  lon: string | null;
+}
+
 export interface DB {
   "inc.incident": IncIncident;
   "inc.incResident": IncIncResident;
   "inc.incTenant": IncIncTenant;
+  "inc.location": IncLocation;
 }

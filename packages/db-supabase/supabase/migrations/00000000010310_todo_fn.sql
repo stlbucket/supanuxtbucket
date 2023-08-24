@@ -411,37 +411,49 @@ CREATE OR REPLACE FUNCTION todo_fn.assign_todo(_todo_id uuid, _resident_id uuid)
     $$;
 
 ---------------------------------------------- deep_copy_todo
--- CREATE OR REPLACE FUNCTION todo_fn.deep_copy_todo(
---     _todo_id uuid
---     ,_is_template boolean
---   )
---   RETURNS todo.todo
---   LANGUAGE plpgsql
---   VOLATILE
---   SECURITY INVOKER
---   AS $$
---   DECLARE
---     _child_id uuid;
---     _todo todo.todo;
---     _copy todo.todo;
---   BEGIN
---     select * into _todo from todo.todo where id = _todo_id;
+CREATE OR REPLACE FUNCTION todo_fn.deep_copy_todo(
+    _resident_id uuid
+    ,_todo_id uuid
+    ,_is_template boolean
+    ,_parent_todo_id uuid default null
+  )
+  RETURNS todo.todo
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $$
+  DECLARE
+    _child_id uuid;
+    _todo todo.todo;
+    _copy todo.todo;
+  BEGIN
+    select * into _todo from todo.todo where id = _todo_id;
 
---     if _todo_id.is null then
---       raise exception '30030: NO TODO FOR ID';
---     end if;
+    if _todo_id is null then
+      raise exception '30030: NO TODO FOR ID';
+    end if;
 
---     -- _copy := todo_fn.create_todo(
-      
---     -- )
+    _copy := todo_fn.create_todo(
+      _resident_id
+      ,_todo.name
+      ,row(
+        _todo.description
+        ,_parent_todo_id
+        ,_is_template
+      )
+    );
 
---     -- for _child_id in
---     --   select id from todo.todo where parent_todo_id = _todo.id
---     -- loop
+    for _child_id in
+      select id from todo.todo where parent_todo_id = _todo.id
+    loop
+      perform todo_fn.deep_copy_todo(
+        _resident_id
+        ,_child_id
+        ,_is_template
+        ,_copy.id
+      );
+    end loop;
 
---     end loop;
-
-    
---     return _todo;
---   end;
---   $$;
+    return _copy;
+  end;
+  $$;

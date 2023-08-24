@@ -86,6 +86,30 @@
       ,aut.display_name||'-demo'::citext
       ,'{}'::citext[]
       ,false::boolean
+      ,array[
+        row(
+          'Space Needle',
+          '400 Broad St',
+          null,
+          'Seattle',
+          'WA',
+          '98109',
+          'US',
+          '47.6205131',
+          '-122.34930359883187'
+        ),
+        row(
+          'Gas Works Park',
+          '2101 N Northlake Way',
+          null,
+          'Seattle',
+          'WA',
+          '98103',
+          'US',
+          '47.64570',
+          '-122.33434'
+        )
+      ]::inc_fn.location_info[]
     )::inc_fn.incident_info
     ,_resident_id => aut.id::uuid
   )

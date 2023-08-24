@@ -118,6 +118,7 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
     _incident inc.incident;
     _topic msg.topic;
     _todo todo.todo;
+    _location_info inc_fn.location_info;
   BEGIN
     _inc_resident := inc_fn.ensure_inc_resident(_resident_id);
 
@@ -170,6 +171,37 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
       )
       returning * into _incident;
     end if;
+
+    foreach _location_info in array(coalesce(_incident_info.locations, '{}'::inc_fn.location_info[]))
+    loop
+      insert into inc.location(
+        incident_id,
+        tenant_id,
+        name,
+        address1,
+        address2,
+        city,
+        state,
+        postalCode,
+        country,
+        lat,
+        lon
+      ) values (
+        _incident.id,
+        _incident.tenant_id,
+        _location_info.name,
+        _location_info.address1,
+        _location_info.address2,
+        _location_info.city,
+        _location_info.state,
+        _location_info.postalCode,
+        _location_info.country,
+        _location_info.lat,
+        _location_info.lon
+      )
+      on conflict (incident_id, name) do nothing
+      ;
+    end loop;
 
     return _incident;
   end;
@@ -343,7 +375,7 @@ CREATE OR REPLACE FUNCTION inc_api.templatize_incident(
   DECLARE
     _template inc.incident;
   BEGIN
-    _template := inc_fn.templatize_incident(_incident_id);
+    _template := inc_fn.templatize_incident(_incident_id, auth_ext.resident_id()::uuid);
     return _template;
   end;
   $function$
@@ -351,6 +383,7 @@ CREATE OR REPLACE FUNCTION inc_api.templatize_incident(
 
 CREATE OR REPLACE FUNCTION inc_fn.templatize_incident(
     _incident_id uuid
+    ,_resident_id uuid
   )
   RETURNS inc.incident
   VOLATILE
@@ -360,10 +393,100 @@ CREATE OR REPLACE FUNCTION inc_fn.templatize_incident(
   DECLARE
     _template inc.incident;
     _incident inc.incident;
+    _todo todo.todo;
   BEGIN
 
+    select * into _incident from inc.incident where id = _incident_id;
 
-    return _incident;
+    _template := inc_fn.create_incident(
+      row(
+        ('TEMPLATE: '||_incident.name)::citext
+        ,_incident.description::citext
+        ,null::citext
+        ,'{}'::citext[]
+        ,true::boolean
+        ,'{}'::inc_fn.location_info[]
+      )
+      ,_resident_id
+    );
+
+    _todo := todo_fn.deep_copy_todo(
+      _resident_id::uuid
+      ,_incident.todo_id::uuid
+      ,true
+      ,null::uuid
+    );
+
+    update inc.incident set todo_id = _todo.id where id = _template.id;
+    delete from todo.todo where id = _template.todo_id;
+
+    select * into _template from inc.incident where id = _template.id;
+
+    return _template;
+  end;
+  $function$
+  ;
+
+---------------------------------------------- clone_incident_template
+CREATE OR REPLACE FUNCTION inc_api.clone_incident_template(
+    _incident_id uuid
+  )
+  RETURNS inc.incident
+  VOLATILE
+  SECURITY INVOKER
+  LANGUAGE plpgsql
+  AS $function$
+  DECLARE
+    _clone inc.incident;
+  BEGIN
+    _clone := inc_fn.clone_incident_template(_incident_id, auth_ext.resident_id()::uuid);
+    return _clone;
+  end;
+  $function$
+  ;
+
+CREATE OR REPLACE FUNCTION inc_fn.clone_incident_template(
+    _incident_id uuid
+    ,_resident_id uuid
+  )
+  RETURNS inc.incident
+  VOLATILE
+  SECURITY INVOKER
+  LANGUAGE plpgsql
+  AS $function$
+  DECLARE
+    _template inc.incident;
+    _clone inc.incident;
+    _todo todo.todo;
+  BEGIN
+
+    select * into _template from inc.incident where id = _incident_id;
+
+    _clone := inc_fn.create_incident(
+      row(
+        ('CLONE FROM: '||_template.name)::citext
+        ,_template.description::citext
+        ,null::citext
+        ,'{}'::citext[]
+        ,false::boolean
+        ,'{}'::inc_fn.location_info[]
+      )
+      ,_resident_id
+    );
+
+    _todo := todo_fn.deep_copy_todo(
+      _resident_id::uuid
+      ,_template.todo_id::uuid
+      ,false
+      ,null::uuid
+    );
+
+    update inc.incident set todo_id = _todo.id where id = _clone.id;
+    delete from todo.todo where id = _clone.todo_id;
+
+    select * into _clone from inc.incident where id = _clone.id;
+
+    return _clone;
   end;
   $function$
   ;

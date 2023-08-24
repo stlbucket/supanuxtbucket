@@ -2,37 +2,39 @@
   <UCard v-if="incident">
     <template #header>
       <div class="flex gap-2">
-        <div class="flex flex-col gap-1.5 max-w-[50%] min-w-[50%]">
+        <div class="flex flex-col gap-1.5 max-w-[50%] min-w-[50%] min-h-[300px] max-h-[300px]">
           <div class="text-2xl">{{ incident.name }}</div>
-          <div class="flex justify-between">
-            <div class="flex justify-start gap-5">
-              <div class="flex">
-                <IncidentModal
-                  :incident="incident"
-                  @updated="onUpdateIncident"
-                />
-              </div>
-              <div class="flex" v-if="!incident.isTemplate">
-                <UButton v-if="incident.status === 'OPEN'" color="green" @click="onClose">Close</UButton>
-                <UButton v-if="incident.status === 'CLOSED'" color="yellow" @click="onOpen">Reopen</UButton>
-              </div>
-            </div>
-            <div class="flex" v-if="!incident.isTemplate">
-              <UButton color="blue" @click="onMakeTemplate">Make Template</UButton>
-            </div>
-          </div>
-          <div class="flex grow">
-            <UTextarea
-              v-model="incident.description"
-              disabled
-              :ui="{
-                wrapper: 'flex grow'
-              }"
-            />
-          </div>
+          <UTabs 
+            :items="tabItems" 
+            :ui="{
+              container: 'flex flex-col grow w-full',
+              base: 'focus:outline-none flex flex-col grow',
+              wrapper: 'flex flex-col grow space-y-2'
+            }"
+          >
+            <template #detail="{ item }">
+              <IncidentDetail
+                :incident="incident"
+                @close="onClose"
+                @open="onOpen"
+                @make-template="onMakeTemplate"
+                @updated="onUpdateIncident"
+                @clone-template="onCloneTemplate"
+              />
+            </template>
+            <template #locations="{ item }">
+              <IncidentLocations :incident="incident" />
+            </template>
+            <template #attachments="{ item }">
+              <p>ATTACHMENTS - documents, photos</p>
+              <p>videos might be a stretch</p>
+            </template>
+          </UTabs>          
         </div>
         <div class="flex min-w-[30%] min-h-[300px] max-h-[300px] grow z-1">
-          <MarkerMap />
+          <MarkerMap 
+            :locations="incident.locations"
+          />
         </div>
       </div>
     </template>
@@ -63,6 +65,21 @@
   const route = useRoute()
   const incident = ref()
   const selectedStatus = ref()
+
+  const tabItems = ref([
+    {
+      slot: 'detail',
+      label: 'Detail',
+    }, 
+    {
+      slot: 'locations',
+      label: 'Locations',
+    }, 
+    {
+      slot: 'attachments',
+      label: 'Attachments',
+    }
+  ])
   
   const loadData = async () => {
     const result = await GqlIncidentById({
@@ -99,6 +116,16 @@
   }
 
   const onMakeTemplate = async () => {
-    alert('no')
+    const result = await GqlTemplatizeIncident({
+      incidentId: incident.value.id
+    })
+    navigateTo(`/incidents/${result.templatizeIncident.incident.id}`)
+  }
+
+  const onCloneTemplate = async () => {
+    const result = await GqlCloneIncidentTemplate({
+      incidentId: incident.value.id
+    })
+    navigateTo(`/incidents/${result.cloneIncidentTemplate.incident.id}`)
   }
   </script>

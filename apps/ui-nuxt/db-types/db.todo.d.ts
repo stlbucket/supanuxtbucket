@@ -14,7 +14,7 @@ export interface TodoTodo {
   id: Generated<string>;
   parentTodoId: string | null;
   tenantId: string;
-  residentId: string;
+  residentId: string | null;
   createdAt: Generated<Timestamp>;
   updatedAt: Generated<Timestamp>;
   name: string;
