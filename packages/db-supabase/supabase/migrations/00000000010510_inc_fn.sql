@@ -571,3 +571,60 @@ CREATE OR REPLACE FUNCTION inc_fn.delete_incident_location(_location_id uuid)
   $$;
 
 
+
+
+-- CREATE OR REPLACE FUNCTION inc_fn.install_mg_application()
+--   RETURNS app.application
+--   LANGUAGE plpgsql
+--   VOLATILE
+--   SECURITY INVOKER
+--   AS $function$
+--   DECLARE
+--     _application app.application;
+--   BEGIN
+--     _application := app_fn.install_application(
+--       _application_info => row(
+--         'mg'::citext
+--         ,'Magnolia Beef'::citext
+--         ,array[
+--           row(
+--             'mg-user'::citext
+--             ,'Magnolia Beef User'::citext
+--             ,'{"p:mg"}'::citext[]
+--             ,'user'::app.license_type_assignment_scope
+--           )::app_fn.license_type_info
+--           ,row(
+--             'mg-admin'::citext
+--             ,'Magnolia Beef Admin'::citext
+--             ,'{"p:mg","p:mg-admin"}'::citext[]
+--             ,'admin'::app.license_type_assignment_scope
+--           )::app_fn.license_type_info
+--         ]::app_fn.license_type_info[]
+--         ,array[
+--           row(
+--             'mg'::citext
+--             ,'Magnolia Beef'::citext
+--             ,array[
+--               row(
+--                 'mg-user'::citext
+--                 ,0::integer
+--                 ,'none'::app.expiration_interval_type
+--                 ,0::integer
+--               )::app_fn.license_pack_license_type_info
+--               ,row(
+--                 'mg-admin'::citext
+--                 ,0::integer
+--                 ,'none'::app.expiration_interval_type
+--                 ,0::integer
+--               )::app_fn.license_pack_license_type_info
+--             ]::app_fn.license_pack_license_type_info[]
+--             ,true
+--           )::app_fn.license_pack_info
+--         ]::app_fn.license_pack_info[]
+--       )::app_fn.application_info
+--     );
+
+--     return _application;
+--   end;
+--   $function$
+--   ;

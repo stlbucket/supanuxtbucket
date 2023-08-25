@@ -113,8 +113,8 @@ CREATE OR REPLACE FUNCTION app_fn.install_anchor_application()
   BEGIN
     _application := app_fn.install_application(
       _application_info => row(
-        'app'::citext
-        ,'App'::citext
+        'base'::citext
+        ,'Base'::citext
         ,array[
           row(
             'app-user'::citext
@@ -180,8 +180,8 @@ CREATE OR REPLACE FUNCTION app_fn.install_anchor_application()
             ,false
           )::app_fn.license_pack_info
           ,row(
-            'app'::citext
-            ,'App'::citext
+            'base'::citext
+            ,'Base'::citext
             ,array[
               row(
                 'app-user'::citext
@@ -396,7 +396,6 @@ CREATE OR REPLACE FUNCTION app_fn.create_tenant(_name citext, _identifier citext
     ) returning * into _tenant
     ;
 
-    -- perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, 'app');
     perform app_fn.subscribe_tenant_to_license_pack(_tenant.id, key) from app.license_pack where auto_subscribe = true;
     perform app_fn.invite_user(_tenant.id, _email, 'admin');
 

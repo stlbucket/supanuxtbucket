@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col grow">
     <div>
-      <UButton>Add Location</UButton>
+      <UButton @click="onAddLocation">Add Location</UButton>
     </div>
     <UTable
       :rows="incident.locations"
@@ -30,6 +30,8 @@
   const props = defineProps<{
     incident: Incident
   }>()
+
+  // const onAddLocation = async
 </script>
 
 

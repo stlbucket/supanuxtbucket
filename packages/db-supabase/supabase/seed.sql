@@ -12,8 +12,8 @@ begin;
 commit;
 
 begin;
-  insert into app.app_settings(application_key, key, display_name, value) values ('app', 'support-email', 'Site Support Email', 'site-support@example.com');
-  insert into app.app_settings(application_key, key, display_name, value) values ('app', 'support-display-name', 'Site Support Display Name', 'Site Support');
+  insert into app.app_settings(application_key, key, display_name, value) values ('base', 'support-email', 'Site Support Email', 'site-support@example.com');
+  insert into app.app_settings(application_key, key, display_name, value) values ('base', 'support-display-name', 'Site Support Display Name', 'Site Support');
 commit;
 ------------------------ INSTALL APPLICATIONS AND SUBSCRIBE ANCHOR TENANT TO EACH ------------------------------
 
