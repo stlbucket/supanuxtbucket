@@ -6,7 +6,7 @@ export default {
     siteTitle: 'SupaNuxtPhile',
     nav: [
       { text: 'Getting started', link: '/getting-started' },
-      { text: 'Github', link: 'https://github.com/stlbucket/supanuxtphile' },
+      { text: 'Github', link: 'https://github.com/stlbucket/supanuxtbucket' },
     ],
     sidebar: [
       {
