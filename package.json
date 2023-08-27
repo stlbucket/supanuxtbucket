@@ -25,7 +25,7 @@
   "packageManager": "pnpm@7.32.5",
   "pnpm" : {
     "overrides": {
-      "@supabase/supabase-js": "2.32.0"
+      "@supabase/supabase-js": "2.33.1"
     }
   }
 }

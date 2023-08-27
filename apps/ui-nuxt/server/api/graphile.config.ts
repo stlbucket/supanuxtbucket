@@ -7,6 +7,8 @@ import { PostGraphileAmberPreset as amber} from "postgraphile/presets/amber";
 import { makePgService } from "postgraphile/adaptors/pg";
 import { makeV4Preset } from "postgraphile/presets/v4";
 
+console.log('graphile.config')
+
 const preset: GraphileConfig.Preset = {
   extends: [
     amber,
