@@ -20,7 +20,7 @@
     "@types/node": "^18",
     "kysely": "^0.26.1",
     "kysely-codegen": "^0.10.1",
-    "nuxt": "^3.6.5",
+    "nuxt": "3.6.5",
     "nuxt3-leaflet": "^1.0.12",
     "pg": "^8.11.3",
     "sass": "^1.63.6"
@@ -30,6 +30,6 @@
     "@pinia/nuxt": "^0.4.11",
     "nuxt-graphql-client": "^0.2.27",
     "pinia": "^2.1.6",
-    "postgraphile": "5.0.0-beta.6"
+    "postgraphile": "5.0.0-beta.7"
   }
 }
