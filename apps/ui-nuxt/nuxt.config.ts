@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     },
     clientOptions: {
       auth: {
-        flowType: 'implicit',
+        flowType: 'pkce',
         detectSessionInUrl: true,
         persistSession: true,
         autoRefreshToken: true
