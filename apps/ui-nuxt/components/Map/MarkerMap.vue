@@ -58,4 +58,7 @@
 body {
   margin: 0;
 }
+.leaflet-container {
+  z-index: 0 !important;
+}
 </style>

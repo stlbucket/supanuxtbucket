@@ -15,12 +15,12 @@ export default defineNuxtConfig({
       secure: true
     },
     clientOptions: {
-      auth: {
-        flowType: 'pkce',
-        detectSessionInUrl: true,
-        persistSession: true,
-        autoRefreshToken: true
-      },
+      // auth: {
+      //   flowType: 'pkce',
+      //   detectSessionInUrl: true,
+      //   persistSession: true,
+      //   autoRefreshToken: true
+      // },
     }
   },
   imports: {
@@ -66,10 +66,12 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {      
+      clerkPublishableKey: process.env.CLERK_PUBLISHABLE_KEY,
       'graphql-client': {
         codegen: false
       },
       GQL_HOST: 'http://localhost:3025/api/graphql', // overwritten by process.env.GQL_HOST
+      clerkSecretKey: process.env.CLERK_SECRET_KEY,
     }  
   },
   components: {

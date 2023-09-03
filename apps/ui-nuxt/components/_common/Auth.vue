@@ -18,6 +18,8 @@
 </template>
 
 <script lang="ts" setup>
+  const route = useRoute();
+  
   const supUser = useSupabaseUser()
   const supabase = useSupabaseClient()
   const email = ref('')
@@ -27,7 +29,7 @@
     const { error } = await supabase.auth.signInWithOtp({
       email: email.value,
       options: {
-        emailRedirectTo: 'http://localhost:3025/authenticated',
+        emailRedirectTo: 'http://localhost:3025/confirm',
       }
     })
     if (error) {
