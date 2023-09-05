@@ -42,7 +42,7 @@ export default defineNuxtConfig({
   ],
   pinia: {
     autoImports: [
-      ['defineStore', 'definePiniaStore'], // import { defineStore as definePiniaStore } from 'pinia'
+      ['defineStore', 'definePiniaStore'],
     ],
   },
   devtools: { enabled: true },
@@ -66,12 +66,10 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {      
-      clerkPublishableKey: process.env.CLERK_PUBLISHABLE_KEY,
       'graphql-client': {
         codegen: false
       },
       GQL_HOST: 'http://localhost:3025/api/graphql', // overwritten by process.env.GQL_HOST
-      clerkSecretKey: process.env.CLERK_SECRET_KEY,
     }  
   },
   components: {

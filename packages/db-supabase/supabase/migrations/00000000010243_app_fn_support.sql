@@ -40,8 +40,8 @@ CREATE OR REPLACE FUNCTION app_fn.become_support(_tenant_id uuid, _profile_id uu
       where profile_id = _profile_id and status = 'active'
       returning * into _actual_resident;
 
-      select coalesce(value, 'support@example.com') into _support_email from app.app_settings where key = 'support-email' and application_key = 'app';
-      select coalesce(value, 'Site Support') into _support_display_name from app.app_settings where key = 'support-display-name' and application_key = 'app';
+      select coalesce(value, 'support@example.com') into _support_email from app.app_settings where key = 'support-email' and application_key = 'base';
+      select coalesce(value, 'Site Support') into _support_display_name from app.app_settings where key = 'support-display-name' and application_key = 'base';
 
       insert into app.resident(
         tenant_id
@@ -178,7 +178,7 @@ CREATE OR REPLACE FUNCTION app_fn.deactivate_tenant(_tenant_id uuid)
     update app.tenant set status = 'inactive' where id = _tenant_id;
     update app.resident set status = 'blocked_tenant' where tenant_id = _tenant_id and status in ('invited', 'active', 'inactive');
 
-    perform app_fn.configure_user_metadata(aut.id) from app.resident aut where id = any(_active_resident_ids);
+    perform app_fn.configure_user_metadata(aut.profile_id) from app.resident aut where id = any(_active_resident_ids);
 
     return _tenant;
   end;
@@ -228,6 +228,83 @@ CREATE OR REPLACE FUNCTION app_fn.activate_tenant(_tenant_id uuid)
     ;
 
     return _tenant;
+  end;
+  $function$
+  ;
+----------------------------------- deactivate_tenant_subscription
+CREATE OR REPLACE FUNCTION app_api.deactivate_tenant_subscription(_tenant_subscription_id uuid)
+  RETURNS app.tenant_subscription
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $function$
+  DECLARE
+    _tenant_subscription app.tenant_subscription;
+  BEGIN
+    if auth_ext.has_permission('p:app-admin-super') != true then 
+      raise exception '30000: NOT AUTHORIZED'; 
+    end if;
+
+    _tenant_subscription := app_fn.deactivate_tenant_subscription(_tenant_subscription_id);
+    return _tenant_subscription;
+  end;
+  $function$
+  ;
+
+CREATE OR REPLACE FUNCTION app_fn.deactivate_tenant_subscription(_tenant_subscription_id uuid)
+  RETURNS app.tenant_subscription
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $function$
+  DECLARE
+    _tenant_subscription app.tenant_subscription;
+   BEGIN
+    update app.tenant_subscription set status = 'inactive' where id = _tenant_subscription_id returning * into _tenant_subscription;
+    update app.license set status = 'inactive' where tenant_subscription_id = _tenant_subscription_id;
+
+    perform app_fn.configure_user_metadata(profile_id) from app.resident aut where tenant_id = _tenant_subscription.tenant_id and status = 'active';
+
+    return _tenant_subscription;
+  end;
+  $function$
+  ;
+
+----------------------------------- reactivate_tenant_subscription
+CREATE OR REPLACE FUNCTION app_api.reactivate_tenant_subscription(_tenant_subscription_id uuid)
+  RETURNS app.tenant_subscription
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $function$
+  DECLARE
+    _tenant_subscription app.tenant_subscription;
+  BEGIN
+    if auth_ext.has_permission('p:app-admin-super') != true then 
+      raise exception '30000: NOT AUTHORIZED'; 
+    end if;
+
+    _tenant_subscription := app_fn.reactivate_tenant_subscription(_tenant_subscription_id);
+    return _tenant_subscription;
+  end;
+  $function$
+  ;
+
+CREATE OR REPLACE FUNCTION app_fn.reactivate_tenant_subscription(_tenant_subscription_id uuid)
+  RETURNS app.tenant_subscription
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $function$
+  DECLARE
+    _tenant_subscription app.tenant_subscription;
+  BEGIN
+    update app.tenant_subscription set status = 'active' where id = _tenant_subscription_id returning * into _tenant_subscription;
+    update app.license set status = 'active' where tenant_subscription_id = _tenant_subscription_id and status = 'inactive';  -- ignore expired
+
+    perform app_fn.configure_user_metadata(profile_id) from app.resident aut where tenant_id = _tenant_subscription.tenant_id and status = 'active';
+
+    return _tenant_subscription;
   end;
   $function$
   ;

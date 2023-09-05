@@ -14,6 +14,8 @@ export type AppResidentType = "guest" | "home" | "support";
 
 export type AppTenantStatus = "active" | "inactive" | "paused";
 
+export type AppTenantSubscriptionStatus = "active" | "inactive";
+
 export type AppTenantType = "anchor" | "customer" | "demo" | "test" | "trial";
 
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
@@ -51,6 +53,7 @@ export interface AppLicensePack {
   createdAt: Generated<Timestamp>;
   updatedAt: Generated<Timestamp>;
   displayName: string;
+  description: string;
   autoSubscribe: Generated<boolean>;
 }
 
@@ -128,6 +131,7 @@ export interface AppTenantSubscription {
   licensePackKey: string;
   createdAt: Generated<Timestamp>;
   updatedAt: Generated<Timestamp>;
+  status: Generated<AppTenantSubscriptionStatus>;
 }
 
 export interface DB {

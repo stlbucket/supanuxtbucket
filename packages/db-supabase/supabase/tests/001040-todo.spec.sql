@@ -88,6 +88,7 @@ SELECT * FROM no_plan();
         ,_options => row(
           null
           ,null
+          ,false
         )
       )
     )
@@ -117,6 +118,7 @@ SELECT * FROM no_plan();
         ,_options => row(
           null
           ,(select id from todo.todo where name = :'_todo_list_name'::citext)
+          ,false
         )
       )
     )
@@ -166,6 +168,7 @@ SELECT * FROM no_plan();
         ,_options => row(
           null
           ,(select id from todo.todo where name = :'_todo_list_name'::citext)
+          ,false
         )
       )
     )

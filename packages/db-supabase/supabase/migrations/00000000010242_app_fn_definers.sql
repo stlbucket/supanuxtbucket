@@ -26,6 +26,7 @@ create or replace function app_fn.handle_new_user()
   as $$
   DECLARE
     _resident app.resident;
+    _claims jsonb;
   begin
     insert into app.profile (id, email, display_name)
     values (new.id, new.email, split_part(new.email, '@', 1));
@@ -40,11 +41,14 @@ create or replace function app_fn.handle_new_user()
 
     select * into _resident from app.resident where profile_id = new.id and status = 'active' limit 1;
 
-    -- this has to happen directly because this is inside a trigger
-    update auth.users set 
-      raw_user_meta_data = (select to_jsonb(app_fn.current_profile_claims(_resident.profile_id)))
-    where id = _resident.profile_id
-    ;
+    if _resident.id is not null then
+      -- this has to happen directly because this is inside a trigger
+      _claims := to_jsonb(app_fn.current_profile_claims(_resident.profile_id));
+      update auth.users set
+        raw_user_meta_data = _claims
+      where id = _resident.profile_id
+      ;
+    end if;
 
     return new;
   end;
@@ -256,7 +260,10 @@ CREATE OR REPLACE FUNCTION app_fn.invite_user(
           join app.license_pack lp on lp.key = lplt.license_pack_key
           join app.tenant_subscription ats on ats.license_pack_key = lp.key
           where ats.tenant_id = _tenant_id
-          and (lt.assignment_scope = _assignment_scope or lt.assignment_scope = 'all' or (lt.assignment_scope = 'admin' and _assignment_scope = 'superadmin'))
+          and (
+            lt.assignment_scope = _assignment_scope or lt.assignment_scope = 'all' 
+            -- or (lt.assignment_scope = 'admin' and _assignment_scope = 'superadmin')
+          )
       loop
         insert into app.license(
           tenant_id

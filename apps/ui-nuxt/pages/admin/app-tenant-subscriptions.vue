@@ -1,18 +1,34 @@
 <template>
   <UCard>
     <template #header>
-      <div class="text-3xl">SUBSCRIPTIONS</div>
+      <div class="text-3xl">ACTIVE SUBSCRIPTIONS</div>
     </template>
-    <TenantSubscription v-for="s in tenantSubscriptions" :subscription="s"/>
+    <TenantSubscription
+      v-if="activeSubscriptions.length > 0"
+      v-for="s in activeSubscriptions" 
+      :subscription="s"
+    />
+    <div v-else class="flex grow justify-center">NO ACTIVE SUBSCRIPTIONS</div>
+  </UCard>  
+  <UCard>
+    <template #header>
+      <div class="text-3xl">INACTIVE SUBSCRIPTIONS</div>
+    </template>
+    <TenantSubscription 
+      v-if="inactiveSubscriptions.length > 0"
+      v-for="s in inactiveSubscriptions" 
+      :subscription="s"
+    />
+    <div v-else class="flex grow justify-center">NO INACTIVE SUBSCRIPTIONS</div>
   </UCard>  
 </template>
 
 <script lang="ts" setup>
+  const user = useSupabaseUser()
   const tenantSubscriptions = ref([])
   const loadData = async () => {
-    const user = await useSupabaseClient().auth.getUser()
     const result = await GqlTenantSubscriptions({
-      tenantId: user.data.user?.user_metadata.tenant_id
+      tenantId: user.value?.user_metadata.tenant_id
     })
     tenantSubscriptions.value = result.tenantSubscriptions.nodes.map((ats:any) => {
       return {
@@ -22,4 +38,12 @@
     })
   }
   loadData()
-</script>
+
+  const activeSubscriptions = computed(()=> {
+    return tenantSubscriptions.value.filter((s:TenantSubscription) => String(s.status) === 'ACTIVE')
+  })
+
+  const inactiveSubscriptions = computed(()=> {
+    return tenantSubscriptions.value.filter((s:TenantSubscription) => String(s.status) === 'INACTIVE')
+  })
+  </script>

@@ -41,7 +41,7 @@ select isa_ok(
     );
     ------------------------------------
     select is(
-      (select count(*) from app.tenant_subscription where license_pack_key = 'app' and tenant_id = (select id from app.tenant where identifier = :'_identifier'::citext))::integer
+      (select count(*) from app.tenant_subscription where license_pack_key = 'base' and tenant_id = (select id from app.tenant where identifier = :'_identifier'::citext))::integer
       ,1::integer
       ,'should be 1 app tenant_subscriptions'
     );

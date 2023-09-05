@@ -91,6 +91,8 @@ begin
 
     -- execute format('set request.jwt.claim=%L', json_strip_nulls(json_build_object('user_meta_data', (_auth_user).raw_user_meta_data))::text);
     -- execute format('set request.jwt.claim=%L', jsonb_strip_nulls(to_jsonb(_profile_claims))::text);
+    -- raise notice '_auth_user: %', jsonb_pretty(to_jsonb(_auth_user));
+    -- raise notice 'claims: %', jsonb_pretty(to_jsonb(_profile_claims));
     execute format('set request.jwt.claim=%L', jsonb_build_object('user_metadata', jsonb_strip_nulls(to_jsonb(_profile_claims)))::text);
     execute format('set request.jwt.claim.sub=%L', (_auth_user).id::text);
     execute format('set request.jwt.claim.role=%I', (_auth_user).role);

@@ -64,9 +64,9 @@ CREATE OR REPLACE FUNCTION app_fn.install_application(_application_info app_fn.a
 
     foreach _license_pack_info in array(_application_info.license_pack_infos)
     loop
-      insert into app.license_pack(key, display_name, auto_subscribe)
+      insert into app.license_pack(key, display_name, description, auto_subscribe)
         values 
-          (_license_pack_info.key, _license_pack_info.display_name, _license_pack_info.auto_subscribe)
+          (_license_pack_info.key, _license_pack_info.display_name, _license_pack_info.description, _license_pack_info.auto_subscribe)
         on conflict(key)
         do update set display_name = _license_pack_info.display_name
         returning * into _license_pack
@@ -132,6 +132,7 @@ CREATE OR REPLACE FUNCTION app_fn.install_anchor_application()
             'app-admin-super'::citext
             ,'App Super Admin'::citext
             ,'{"p:app-admin-super","p:app-admin","p:app-admin-support"}'::citext[]
+            -- ,'{"p:app-admin-super","p:app-admin-support"}'::citext[]
             ,'superadmin'::app.license_type_assignment_scope
           )::app_fn.license_type_info
           ,row(
@@ -163,6 +164,7 @@ CREATE OR REPLACE FUNCTION app_fn.install_anchor_application()
           row(
             'anchor'::citext
             ,'Anchor'::citext
+            ,'Only the anchor tenant is subscribed to this license pack.'
             ,array[
               row(
                 'app-admin-super'::citext
@@ -182,6 +184,7 @@ CREATE OR REPLACE FUNCTION app_fn.install_anchor_application()
           ,row(
             'base'::citext
             ,'Base'::citext
+            ,'This is the core license pack that every platform tenant will be subscribed to. Alternate versions could be added.'
             ,array[
               row(
                 'app-user'::citext
@@ -282,7 +285,7 @@ CREATE OR REPLACE FUNCTION app_fn.current_profile_claims(_profile_id uuid)
   RETURNS app_fn.profile_claims
   LANGUAGE plpgsql
   STABLE
-  SECURITY INVOKER
+  SECURITY DEFINER
   AS $function$
   DECLARE
     _profile app.profile;
@@ -301,12 +304,15 @@ CREATE OR REPLACE FUNCTION app_fn.current_profile_claims(_profile_id uuid)
       _profile_claims.tenant_name = _resident.tenant_name;
       _profile_claims.resident_id = _resident.id;
       _profile_claims.permissions = (
-        select array_agg(ltp.permission_key) 
+        select array_agg(ltp.permission_key)
         from app.license_type_permission ltp 
         join app.license_type lt on lt.key = ltp.license_type_key
         join app.license l on l.license_type_key = lt.key
         where l.resident_id = _resident.id
+        and l.status = 'active'
       );
+          -- raise exception 'wtfff: %', _resident.profile_id;
+
     else
       _profile_claims.profile_id = _profile_id;
     end if;
@@ -505,7 +511,7 @@ CREATE OR REPLACE FUNCTION app_fn.grant_user_license(_resident_id uuid, _license
   DECLARE
     _tenant_subcription app.tenant_subscription;
     _resident app.resident;
-    _license_pack app.license_type;
+    _license_pack app.license_pack;
     _license app.license;
     _license_type app.license_type;
   BEGIN

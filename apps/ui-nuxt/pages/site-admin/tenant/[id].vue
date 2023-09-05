@@ -25,17 +25,43 @@
     </div>
     <UCard>
       <template #header>
-        SUBSCRIPTIONS
+        ACTIVE SUBSCRIPTIONS
       </template>
       <UTable
-        :rows="tenant.tenantSubscriptions"
+        :rows="tenant.tenantSubscriptions.filter((s:TenantSubscription) => String(s.status) === 'ACTIVE')"
         :columns="[
           {key: 'licensePackKey', label: 'Key'},
-          {key: 'licenseCount', label: '# Licenses'}
+          {key: 'licenseCount', label: '# Licenses'},
+          {key: 'status', label: 'Status'}
         ]"
       >
         <template #licenseCount-data="{row}">
           {{ row.licenses.totalCount }}
+        </template>
+        <template #status-data="{row}">
+          <UButton v-if="row.status === 'ACTIVE'" @click="onDeactivateSubscription(row.id)">Deactivate</UButton>
+          <UButton v-if="row.status === 'INACTIVE'" @click="onReactivateSubscription(row.id)">Reactivate</UButton>
+        </template>
+      </UTable>
+    </UCard>
+    <UCard>
+      <template #header>
+        INACTIVE SUBSCRIPTIONS
+      </template>
+      <UTable
+        :rows="tenant.tenantSubscriptions.filter((s:TenantSubscription) => String(s.status) === 'INACTIVE')"
+        :columns="[
+          {key: 'licensePackKey', label: 'Key'},
+          {key: 'licenseCount', label: '# Licenses'},
+          {key: 'status', label: 'Status'}
+        ]"
+      >
+        <template #licenseCount-data="{row}">
+          {{ row.licenses.totalCount }}
+        </template>
+        <template #status-data="{row}">
+          <UButton v-if="row.status === 'ACTIVE'" @click="onDeactivateSubscription(row.id)">Deactivate</UButton>
+          <UButton v-if="row.status === 'INACTIVE'" @click="onReactivateSubscription(row.id)">Reactivate</UButton>
         </template>
       </UTable>
     </UCard>
@@ -67,4 +93,18 @@
     })
     await loadData()
   }
-  </script>
+
+  const onDeactivateSubscription = async (tenantSubscriptionId: string) => {
+    const result = await GqlDeactivateTenantSubscription({
+      tenantSubscriptionId: tenantSubscriptionId
+    })
+    await loadData()
+  }
+
+  const onReactivateSubscription = async (tenantSubscriptionId: string) => {
+    const result = await GqlReactivateTenantSubscription({
+      tenantSubscriptionId: tenantSubscriptionId
+    })
+    await loadData()
+  }
+</script>

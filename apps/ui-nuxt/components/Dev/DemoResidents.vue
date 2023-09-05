@@ -41,8 +41,9 @@
     })
     if (error) {
       alert(error.message)
+    } else {
+      alert('Check your email inbox for the magic link!')
+      navigateTo('http://localhost:54324/monitor', {external: true})
     }
-    alert('Check your email inbox for the magic link!')
-    navigateTo('http://localhost:54324/monitor', {external: true})
   }
 </script>

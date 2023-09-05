@@ -20,6 +20,9 @@
       ]"
       :sort="{ column: 'name', direction: 'asc' }"
     >
+      <template #name-data="{ row }">
+        <NuxtLink :to="`/site-admin/tenant/${row.id}`">{{ row.name }}</NuxtLink>
+      </template>
       <template #action-data="{ row }">
         <UButton @click="onSupport(row)">Support</UButton>
       </template>

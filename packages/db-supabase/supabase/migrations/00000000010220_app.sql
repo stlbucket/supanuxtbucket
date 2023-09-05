@@ -18,6 +18,11 @@ create type app.tenant_status as enum (
     ,'paused'
   );
 ----------------------------------------------------------------------------------------------
+create type app.tenant_subscription_status as enum (
+    'active'
+    ,'inactive'
+  );
+----------------------------------------------------------------------------------------------
 create type app.resident_type as enum (
   'home'  -- only one of these per user
   ,'guest'
@@ -95,6 +100,7 @@ CREATE TABLE app.license_pack (
   ,created_at timestamptz not null default current_timestamp
   ,updated_at timestamptz not null default current_timestamp
   ,display_name citext not null
+  ,description citext not null
   ,auto_subscribe boolean not null default false
 );
 --------------------------------------------------------------------------------------------
@@ -131,6 +137,7 @@ CREATE TABLE app.tenant_subscription (
   ,license_pack_key citext not null references app.license_pack(key)
   ,created_at timestamptz not null default current_timestamp
   ,updated_at timestamptz not null default current_timestamp
+  ,status app.tenant_subscription_status not null default 'active'
 );
 ----------------------------------------------------------------------------------------------
 create table if not exists app.profile (

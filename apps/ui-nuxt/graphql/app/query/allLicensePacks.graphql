@@ -3,6 +3,7 @@ query AllLicensePacks {
     nodes {
       key
       displayName
+      description
       licensePackLicenseTypes: licensePackLicenseTypesByLicensePackKeyList {
         licensePackKey
         licenseTypeKey
