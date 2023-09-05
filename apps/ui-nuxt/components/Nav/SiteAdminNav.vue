@@ -26,7 +26,7 @@
       {
         label: 'Site Users',
         icon: 'i-heroicons-users',
-        to: '/site-admin/app-users',
+        to: '/site-admin/site-users',
         title: 'Site Users',
       },
       {

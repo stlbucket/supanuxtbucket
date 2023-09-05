@@ -392,7 +392,6 @@ CREATE OR REPLACE FUNCTION app_fn.search_profiles(_options app_fn.search_profile
     end;
     $$;
 
-
 ---------------------------------------------- search_tenants
 CREATE OR REPLACE FUNCTION app_api.search_tenants(_options app_fn.search_tenants_options)
     RETURNS setof app.tenant
@@ -433,6 +432,100 @@ CREATE OR REPLACE FUNCTION app_fn.search_tenants(_options app_fn.search_tenants_
       and (_options.type is null or t.type = _options.type)
       and type != 'anchor'
       ;
+    end;
+    $$;
+
+
+-- ---------------------------------------------- search_site_users
+-- CREATE OR REPLACE FUNCTION app_api.search_site_users(_options app_fn.search_site_users_options)
+--     RETURNS setof app.tenant
+--     LANGUAGE plpgsql
+--     stable
+--     SECURITY DEFINER
+--     AS $$
+--     DECLARE
+--     BEGIN
+--       if auth_ext.has_permission('p:app-admin-support') != true then 
+--         raise exception '30000: NOT AUTHORIZED'; 
+--       end if;
+
+--       return query select * from app_fn.search_site_users(_options);
+--     end;
+--     $$;
+
+-- CREATE OR REPLACE FUNCTION app_fn.search_site_users(_options app_fn.search_site_users_options)
+--     RETURNS setof app.tenant
+--     LANGUAGE plpgsql
+--     stable
+--     SECURITY DEFINER
+--     AS $$
+--     DECLARE
+--       _use_options app_fn.search_site_users_options;
+--     BEGIN
+--       -- profile: add paging options
+
+--       return query
+--       select t.* 
+--       from app.tenant t
+--       where (
+--         _options.search_term is null 
+--         or t.name like '%'||_options.search_term||'%'
+--         or t.identifier like '%'||_options.search_term||'%'
+--       )
+--       and (_options.status is null or t.status = _options.status)
+--       and (_options.type is null or t.type = _options.type)
+--       and type != 'anchor'
+--       ;
+--     end;
+--     $$;
+
+
+---------------------------------------------- site_user_by_id
+CREATE OR REPLACE FUNCTION app_api.site_user_by_id(_id uuid)
+    RETURNS jsonb
+    LANGUAGE plpgsql
+    stable
+    SECURITY DEFINER
+    AS $$
+    DECLARE
+      _result jsonb;
+    BEGIN
+      if auth_ext.has_permission('p:app-admin-support') != true then 
+        raise exception '30000: NOT AUTHORIZED'; 
+      end if;
+
+      _result := app_fn.site_user_by_id(_id);
+      return _result;
+    end;
+    $$;
+
+CREATE OR REPLACE FUNCTION app_fn.site_user_by_id(_id uuid)
+    RETURNS jsonb
+    LANGUAGE plpgsql
+    stable
+    SECURITY DEFINER
+    AS $$
+    DECLARE
+      _result jsonb;
+      _auth_user jsonb;
+      _residency_info jsonb[];
+      _resident app.resident;
+      _license app.license;
+    BEGIN
+      select to_jsonb(u.*) into _auth_user from auth.users u where u.id = _id;
+
+      _residency_info = '{}'::jsonb[];
+      for _resident in
+        select * from app.resident where profile_id = _id
+      loop
+        _residency_info := array_append(_residency_info, to_jsonb(_resident));
+      end loop;
+
+      _result = jsonb_build_object(
+        'authUser', _auth_user,
+        'residencies', _residency_info
+      );
+      return _result;
     end;
     $$;
 

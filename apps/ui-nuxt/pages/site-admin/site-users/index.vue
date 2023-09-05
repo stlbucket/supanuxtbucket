@@ -19,6 +19,9 @@
       ]"
       :sort="{ column: 'name', direction: 'asc' }"
     >
+      <template #email-data="{ row }">
+        <NuxtLink :to="`/site-admin/site-users/${row.id}`">{{ row.email }}</NuxtLink>
+      </template>
     </UTable>
   </UCard>  
 </template>
