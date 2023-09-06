@@ -262,7 +262,7 @@ CREATE OR REPLACE FUNCTION app_fn.invite_user(
           where ats.tenant_id = _tenant_id
           and (
             lt.assignment_scope = _assignment_scope or lt.assignment_scope = 'all' 
-            -- or (lt.assignment_scope = 'admin' and _assignment_scope = 'superadmin')
+            or (lt.assignment_scope = 'admin' and _assignment_scope = 'superadmin')
           )
       loop
         insert into app.license(
