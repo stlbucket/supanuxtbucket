@@ -175,35 +175,42 @@ CREATE OR REPLACE FUNCTION app_fn.update_profile(
   ;
 
 ----------------------------------- invite_user
-CREATE OR REPLACE FUNCTION app_api.invite_user(_email citext)
-  RETURNS app.resident
-  LANGUAGE plpgsql
-  VOLATILE
-  SECURITY DEFINER
-  AS $function$
-  DECLARE
-    _profile app.profile;
-    _resident app.resident;
-  BEGIN
-    -- this function invites a user to the same tenant as the current user
-    -- can only be called by user with app-admin license or better.
+-- for now this is being held out of the api
+-- instead, it is implemented as a nuxt endpoint at api/invite-user
+-- this is because we want to call supabaseClient.auth.admin.inviteUserByEmail
+-- folding the supabase client into the graphql context is a bit clunky
+-- also, isolating into the api endpoint (perhaps along with other uses of supabase client)
+-- will make for easier refactoring later if changing auth providers
+-- as the instantiation model could be different
+-- 
+-- CREATE OR REPLACE FUNCTION app_api.invite_user(_email citext)
+--   RETURNS app.resident
+--   LANGUAGE plpgsql
+--   VOLATILE
+--   SECURITY DEFINER
+--   AS $function$
+--   DECLARE
+--     _profile app.profile;
+--     _resident app.resident;
+--   BEGIN
+--     -- this function invites a user to the same tenant as the current user
+--     -- can only be called by user with app-admin license or better.
+--     if auth_ext.has_permission('p:app-admin') = false then
+--       raise exception '30000: UNAUTHORIZED';
+--     end if;
 
-    if auth_ext.has_permission('p:app-admin') = false then
-      raise exception '30000: UNAUTHORIZED';
-    end if;
+--     select * into _resident 
+--     from app.resident 
+--     where profile_id = auth.uid() 
+--     and status = 'active'
+--     ;
 
-    select * into _resident 
-    from app.resident 
-    where profile_id = auth.uid() 
-    and status = 'active'
-    ;
+--     _resident = (select app_fn.invite_user(_resident.tenant_id, _email));
 
-    _resident = (select app_fn.invite_user(_resident.tenant_id, _email));
-
-    return _resident;
-  end;
-  $function$
-  ;
+--     return _resident;
+--   end;
+--   $function$
+--   ;
 
 CREATE OR REPLACE FUNCTION app_fn.invite_user(
     _tenant_id uuid
@@ -226,7 +233,7 @@ CREATE OR REPLACE FUNCTION app_fn.invite_user(
     _license_pack_license_type app.license_pack_license_type;
     _license_type_key citext;
     _tenant_subscription_id uuid;
-  BEGIN    
+  BEGIN
     -- find existing records for profile and resident
     select * into _profile from app.profile where email = _email;
     select * into _resident from app.resident where email = _email and tenant_id = _tenant_id;

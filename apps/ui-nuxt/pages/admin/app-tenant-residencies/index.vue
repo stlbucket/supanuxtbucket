@@ -24,9 +24,24 @@
   loadData()
 
   const onNewResident = async (email: string) => {
-    const result = await GqlInviteUser({
-      email: email
+
+    const url = `/api/invite-user`
+    const { data, pending, error, refresh } = await useFetch(url, {
+      method: 'POST',
+      body: {
+        email: email
+      }
     })
-    navigateTo(`/admin/app-tenant-residencies/${result.inviteUser.resident.id}`)
+
+    if (error.value) {
+      alert(error.value.data.message)
+    } else {
+      alert(JSON.stringify(data.value,null,2))
+    }
+
+    // const result = await GqlInviteUser({
+    //   email: email
+    // })
+    // navigateTo(`/admin/app-tenant-residencies/${result.inviteUser.resident.id}`)
   }
 </script>

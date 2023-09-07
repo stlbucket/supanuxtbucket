@@ -18,13 +18,14 @@
     "kysely-codegen": "^0.10.1",
     "nuxt": "3.7.0",
     "nuxt3-leaflet": "^1.0.12",
-    "pg": "^8.11.3",
     "sass": "^1.66.1"
   },
   "dependencies": {
+    "graphile-utils": "5.0.0-beta.7",
     "@graphile/simplify-inflection": "8.0.0-beta.1",
     "@pinia/nuxt": "^0.4.11",
     "nuxt-graphql-client": "^0.2.30",
+    "pg": "^8.11.3",
     "pinia": "^2.1.6",
     "postgraphile": "5.0.0-beta.7"
   }

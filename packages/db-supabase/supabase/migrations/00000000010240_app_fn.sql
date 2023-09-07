@@ -304,14 +304,13 @@ CREATE OR REPLACE FUNCTION app_fn.current_profile_claims(_profile_id uuid)
       _profile_claims.tenant_name = _resident.tenant_name;
       _profile_claims.resident_id = _resident.id;
       _profile_claims.permissions = (
-        select array_agg(ltp.permission_key)
+        select array_agg(distinct ltp.permission_key)
         from app.license_type_permission ltp 
         join app.license_type lt on lt.key = ltp.license_type_key
         join app.license l on l.license_type_key = lt.key
         where l.resident_id = _resident.id
         and l.status = 'active'
       );
-          -- raise exception 'wtfff: %', _resident.profile_id;
 
     else
       _profile_claims.profile_id = _profile_id;

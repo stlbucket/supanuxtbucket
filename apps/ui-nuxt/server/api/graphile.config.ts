@@ -7,8 +7,6 @@ import { PostGraphileAmberPreset as amber} from "postgraphile/presets/amber";
 import { makePgService } from "postgraphile/adaptors/pg";
 import { makeV4Preset } from "postgraphile/presets/v4";
 
-console.log('graphile.config')
-
 const preset: GraphileConfig.Preset = {
   extends: [
     amber,
@@ -22,6 +20,7 @@ const preset: GraphileConfig.Preset = {
   ],
 
   plugins: [
+    // inviteUserPlugin
   ],
 
   inflection: {
@@ -49,7 +48,7 @@ const preset: GraphileConfig.Preset = {
   grafast: {
     explain: true,  
     /* options for Grafast, including setting GraphQL context*/
-    context: (requestContext, args) => {
+    context: async (requestContext, args) => {
       // this is where user session data set in 
       // server/middleware/auth is used to pass into the query context
       const session = requestContext.h3v1?.event.context.session
@@ -63,7 +62,8 @@ const preset: GraphileConfig.Preset = {
         'request.jwt.claim.aud': claims?.aud,
         'request.jwt.claim.email': claims?.email,
         'request.jwt.claim': JSON.stringify(claims)
-      }  
+      }
+      console.log('additionalSettings', additionalSettings)
       return {
         pgSettings: {
           ...args.contextValue?.pgSettings,

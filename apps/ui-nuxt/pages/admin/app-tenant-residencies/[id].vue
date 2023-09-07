@@ -8,7 +8,9 @@
   >
     <template #header>
       <div class="flex justify-between">
-        <div class="text-3xl">App User Tenancy</div>
+        <div class="flex">
+          <div class="text-2xl">Tenant Resident</div>
+        </div>
         <div class="flex gap-2">
           <UButton v-if="residency.status !== 'BLOCKED_INDIVIDUAL' && residency.status !== 'BLOCKED_TENANT'" @click="onBlockResidency" color="red">Block</UButton>
           <UButton v-if="residency.status === 'BLOCKED_INDIVIDUAL'" @click="onUnblockResidency" color="yellow">Unblock</UButton>
