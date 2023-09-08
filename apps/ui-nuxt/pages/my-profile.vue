@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-col gap-2">
-    <div class="flex justify-around">
-      <div class="flex flex-col">
+    <div class="flex">
+      <div class="flex flex-col min-w-[50%]">
         <Myself />
       </div>
-      <div class="flex">
+      <div class="flex min-w-[50%]">
         <MyResidents/>
       </div>
     </div>

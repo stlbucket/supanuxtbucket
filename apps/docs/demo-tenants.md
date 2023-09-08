@@ -1,5 +1,5 @@
 # Demo Data
-By default, the stack is configured to support OTP login with **implicit flow**
+By default, the stack is configured to support OTP magic-link login with **PKCE flow**
 
 This is to provide zero friction in getting your app started quickly.
 ![demo-data](./assets/demo-users.png)

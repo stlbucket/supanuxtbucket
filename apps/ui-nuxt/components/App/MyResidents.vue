@@ -1,16 +1,25 @@
 <template>
-  <UCard>
-    <template #header>
-      MY RESIDENCIES
-    </template>
-    <ResidentsList 
-      title="MY APP USER TENANCIES" 
-      :residents="residents"
-      row-action-name="Assume"
-      @row-action="assumeResidency"
-    >
-    </ResidentsList>
-  </UCard>
+  <div class="flex flex-col grow">
+    <UCard :ui="{
+      header: {
+        padding: 'py-4 px-4'
+      }
+    }">
+      <template #header>
+        MY RESIDENCIES
+      </template>
+      <div class="flex">
+        <ResidentsList
+          title="MY APP USER TENANCIES" 
+          :residents="residents"
+          row-action-name="Assume"
+          @row-action="assumeResidency"
+          disable-sort
+        >
+        </ResidentsList>
+      </div>
+    </UCard>
+  </div>
 </template>
 
 <script lang="ts" setup>

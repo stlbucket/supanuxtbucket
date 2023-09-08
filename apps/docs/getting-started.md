@@ -20,13 +20,38 @@ psql postgresql://postgres:postgres@localhost:54322/postgres -f ./supabase/demo-
 ```
 Create your .env file:
 ```
-# /apps/ui-nuxt/.env
+# /apps/ui-nuxt/.env.example
+################################################################################################
+#  local dev
+
+# these two are for nuxt supabase module.  they do not follow the nuxt_VAR convention
 SUPABASE_URL=http://localhost:54321
-SUPABASE_KEY=YOUR_SUPABASE_ANON_KEY
-SUPABASE_URI=postgresql://postgres:postgres@localhost:54322/postgres
+SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
 SUPABASE_JWT_SECRET=super-secret-jwt-token-with-at-least-32-characters-long
 
+# this one is for postgraphile
+SUPABASE_URI=postgresql://postgres:postgres@localhost:54322/postgres
+
+# this is for keysely codegen
+DATABASE_URL=postgres://postgres:postgres@localhost:54322
+################################################################################################
+
+################################
+##  all environments
 GRAPHQL_SCHEMAS=todo,todo_api,app,app_api,msg,msg_api,inc,inc_api
+NUXT_GRAPHQL_SCHEMAS=todo,todo_api,app,app_api,msg,msg_api,inc,inc_api
+################################
+
+################################################################################################
+##  staging, etc. - an instance deployed on the supabase platform
+# SUPABASE_KEY=YOUR_SUPABASE_KEY
+# SUPABASE_URL=YOUR_SUPABASE_URL
+# SUPABASE_URI=YOUR_SUPABASE_URI
+# SUPABASE_JWT_SECRET=YOUR_SUPABASE_JWT_SECRET
+
+# RESEND_API_KEY=YOUR_RESEND_API_KEY
+################################################################################################
 ```
 In original terminal:
 ```

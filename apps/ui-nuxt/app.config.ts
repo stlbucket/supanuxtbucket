@@ -45,7 +45,7 @@ export default defineAppConfig({
       },
       "td": {
         "base": "whitespace-nowrap",
-        "padding": "px-1 py-2",
+        "padding": "px-2 py-2",
         "color": "text-gray-500 dark:text-gray-400",
         "font": "",
         "size": "text-sm"
