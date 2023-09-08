@@ -6,7 +6,8 @@
           <div class="flex text-xs">Invitees may not yet be actual users</div>
         </div>
       </template>
-      <div>
+      <div class="flex flex-col">
+        <div class="text-xs">SEARCH TERM</div>
         <UInput v-model="searchTerm" />
       </div>
       <ResidentsList 

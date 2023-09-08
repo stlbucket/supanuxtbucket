@@ -1,20 +1,16 @@
 <template>
-  <UCard class="card">
-    <div v-if="!supUser" class="login">
-      <UInput placeholder="Your Email address" v-model="email"></UInput>
-      <UButton @click="handleLogin">Send Magic Link</UButton>
+  <div v-if="!supUser" class="flex">
+    <UInput placeholder="Your Email address" v-model="email"></UInput>
+    <UButton @click="handleLogin">Send Magic Link</UButton>
+  </div>
+  <div v-else class="flex justify-between grow items-end">
+    <div v-if="showExitSupportMode"><UButton color="yellow" @click="exitSupportMode">Exit Support Mode</UButton></div>
+    <div class="text-sm"><NuxtLink to="/my-profile">{{ supUser.user_metadata.display_name }}</NuxtLink></div>
+    <div>
+      <UButton @click="handleLogout">Logout</UButton>
     </div>
-    <div v-else class="card">
-      <div class="menu-bar">
-        <div v-if="showExitSupportMode"><UButton color="yellow" @click="exitSupportMode">Exit Support Mode</UButton></div>
-        <div class="text-sm"><NuxtLink to="/my-profile">{{ supUser.user_metadata.display_name }}</NuxtLink></div>
-        <div>
-          <UButton @click="handleLogout">Logout</UButton>
-        </div>
-        <div class="text-sm">{{ supUser.user_metadata.tenant_name }}</div>
-      </div>
-    </div>
-  </UCard>
+    <div class="text-sm">{{ supUser.user_metadata.tenant_name }}</div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -29,7 +25,7 @@
     const { error } = await supabase.auth.signInWithOtp({
       email: email.value,
       options: {
-        emailRedirectTo: 'http://localhost:3025/confirm',
+        emailRedirectTo: 'http://localhost:3025/authenticated',
       }
     })
     if (error) {

@@ -1,24 +1,22 @@
 <template>
-    <div class="flex">
+  <div class="flex flex-col gap-2">
+    <div class="flex justify-around">
       <div class="flex flex-col">
         <Myself />
-        <MyResidents/>
       </div>
       <div class="flex">
-        <UCard>
-          <template #header>
-            SUPABASE USER
-          </template>
-          <pre class="text-xs">{{ JSON.stringify(supUser,null,2) }}</pre>
-        </UCard>
+        <MyResidents/>
       </div>
     </div>
     <UCard>
-          <template #header>
-            SUPABASE SESSION
-          </template>
-          <pre class="text-xs">{{ JSON.stringify(supSession,null,2) }}</pre>
-        </UCard>
+      <template #header>
+        SUPABASE SESSION
+      </template>
+      <div class="flex">
+        <pre class="text-xs flex max-w-lg flex-wrap">{{ JSON.stringify(supSession,null,2) }}</pre>
+      </div>
+    </UCard>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -30,7 +28,7 @@
     try{
       const { data, error } = await supabase.auth.getSession()
       supUser.value = data.session?.user
-      supSession.value = data.session
+      supSession.value = data.session //? { ...data.session, access_token: 'REMOVED'} : null
     } catch (e) {
       console.log('ERROR', e)
     }

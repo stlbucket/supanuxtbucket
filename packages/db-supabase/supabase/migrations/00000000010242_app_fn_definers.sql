@@ -33,7 +33,7 @@ create or replace function app_fn.handle_new_user()
 
     update app.resident set
       profile_id = new.id
-      ,status = 'active'
+      -- ,status = 'active'
     where email = new.email
     and status != 'blocked_individual'
     and status != 'blocked_tenant'

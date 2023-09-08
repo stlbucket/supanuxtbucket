@@ -1,12 +1,15 @@
 <template>
   <UCard>
     <template #header>
-      <div class="flex justify-between">
-        <div class="text-3xl">INCIDENTS</div>
-        <IncidentModal @new="onNewIncident" />
-      </div>
-      <div>
-        <UInput v-model="searchTerm" />
+      <div class="flex flex-col gap-2">
+        <div class="flex justify-between">
+          <div class="text-3xl">INCIDENTS</div>
+          <IncidentModal @new="onNewIncident" />
+        </div>
+        <div class="flex flex-col">
+          <div class="text-xs">SEARCH TERM</div>
+          <UInput v-model="searchTerm" />
+        </div>
       </div>
     </template>
     <UTable

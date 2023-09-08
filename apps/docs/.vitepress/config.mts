@@ -17,7 +17,8 @@ export default {
           { text: 'Postraphile v5', link: '/postgraphile' },
           { text: 'Credentials Flow', link: '/credentials-flow' },
           { text: 'Typescript', link: '/typescript' },
-          { text: 'Installing an Application', link: 'installing-an-application'},
+          { text: 'Installing an Application', link: '/installing-an-application'},
+          { text: 'Shortcomings', link: '/shortcomings' },
           {
             text: 'Schemas',
             link: '/schemas/index.schema',
@@ -29,30 +30,30 @@ export default {
               { text: 'inc', link: '/schemas/inc.schema' },
             ],
           },
-          { text: 'UI Boilerplate', items: [
-            { text: 'SiteAdmin', items: [
-              { text: 'Applications', link: '/site-admin/applications' },
-              { text: 'License Packs', link: '/site-admin/license-packs' },
-              { text: 'Site Users', link: '/site-admin/site-users' },
-              { text: 'Tenant Residents', link: '/site-admin/tenant-residents' },
-              { text: 'Tenant Support', link: '/site-admin/tenant-support' },
-            ]},
-            { text: 'Admin', items: [
-              { text: 'App Users', link: '/admin/app-users' },
-              { text: 'Subscriptions', link: '/admin/subscriptions' },
-            ]},
-            { text: 'Tools', 
-              link: '/tools/index',
-              items: [
-                { text: 'Todo', link: '/tools/todo-tool' },
-                { text: 'Discussions', link: '/tools/discussions' },
-                { text: 'Address Book', link: '/tools/address-book' },
-              ]
-            },
-            { text: 'Incidents', items: [
-              { text: 'Incidents', link: '/apps/incidents' },
-            ]},
-          ]}
+          // { text: 'UI Boilerplate', items: [
+          //   { text: 'SiteAdmin', items: [
+          //     { text: 'Applications', link: '/site-admin/applications' },
+          //     { text: 'License Packs', link: '/site-admin/license-packs' },
+          //     { text: 'Site Users', link: '/site-admin/site-users' },
+          //     { text: 'Tenant Residents', link: '/site-admin/tenant-residents' },
+          //     { text: 'Tenant Support', link: '/site-admin/tenant-support' },
+          //   ]},
+          //   { text: 'Admin', items: [
+          //     { text: 'App Users', link: '/admin/app-users' },
+          //     { text: 'Subscriptions', link: '/admin/subscriptions' },
+          //   ]},
+          //   { text: 'Tools', 
+          //     link: '/tools/index',
+          //     items: [
+          //       { text: 'Todo', link: '/tools/todo-tool' },
+          //       { text: 'Discussions', link: '/tools/discussions' },
+          //       { text: 'Address Book', link: '/tools/address-book' },
+          //     ]
+          //   },
+          //   { text: 'Incidents', items: [
+          //     { text: 'Incidents', link: '/apps/incidents' },
+          //   ]},
+          // ]}
         ],
       },
     ],

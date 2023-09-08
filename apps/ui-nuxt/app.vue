@@ -1,5 +1,5 @@
 <template>
-  <UContainer class="app-container">
+  <UContainer class="dark:bg-stone-900">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

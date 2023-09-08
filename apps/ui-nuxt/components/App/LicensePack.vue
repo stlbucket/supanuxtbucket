@@ -6,7 +6,7 @@
           <div class="flex-1 text-xs">LICENSE PACK KEY</div>
           <div class="flex-1 text-2xl">{{ licensePack.key }}</div>
         </div>
-        <div class="flex flex-col basis-2/3">
+        <div class="flex flex-col basis-2/3 gap-2">
           <div class="flex-1 text-xs">DESCRIPTION</div>
           <div class="flex text">{{ licensePack.description }}</div>
         </div>

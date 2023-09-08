@@ -6,6 +6,7 @@ import { PostGraphileAmberPreset as amber} from "postgraphile/presets/amber";
 // Use the 'pg' module to connect to the database
 import { makePgService } from "postgraphile/adaptors/pg";
 import { makeV4Preset } from "postgraphile/presets/v4";
+// import TopicMessageSubscriptionPlugin from "./plug-ins/eventSubscription";
 
 const preset: GraphileConfig.Preset = {
   extends: [
@@ -20,7 +21,7 @@ const preset: GraphileConfig.Preset = {
   ],
 
   plugins: [
-    // inviteUserPlugin
+    // TopicMessageSubscriptionPlugin
   ],
 
   inflection: {
@@ -73,7 +74,16 @@ const preset: GraphileConfig.Preset = {
     }
   },
   grafserv: {
-    graphqlPath: '/api/graphql'
+    graphqlPath: "/api/graphql",
+
+    // graphiql: true,
+    // graphqlPath: "/api/graphql",
+    // eventStreamPath: "/api/graphql/stream",
+    // graphiqlPath: "/graphiql",
+    // graphiqlOnGraphQLGET: true,
+    // websockets: true,
+    // watch: true,
+    // graphqlOverGET: false,
   }
 };
 

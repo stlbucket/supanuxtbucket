@@ -7,7 +7,10 @@
       </div>
     </template>
     <div>
-      <UInput v-model="searchTerm" />
+      <div class="flex flex-col">
+        <div class="text-xs">SEARCH TERM</div>
+        <UInput v-model="searchTerm" />
+      </div>
     </div>
     <UTable
       :rows="tenants"

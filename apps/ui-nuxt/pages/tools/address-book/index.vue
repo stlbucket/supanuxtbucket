@@ -47,10 +47,25 @@
     const result = await GqlLeaveAddressBook()
     await loadData()
   }
-  const onInviteUser = async (row) => {
-    const result = await GqlInviteUser({
-      email: row.email
+  const onInviteUser = async (row: any) => {
+    const url = `/api/invite-user`
+    const { data, pending, error, refresh } = await useFetch(url, {
+      method: 'POST',
+      body: {
+        email: row.email
+      }
     })
-    navigateTo('/admin/app-tenant-residencies')
+
+    if (error.value) {
+      alert(error.value.data.message)
+    } else {
+      alert(`${data.value?.inviteResult.data.user?.email} has been invited`)
+    }
+
+
+    // const result = await GqlInviteUser({
+    //   email: row.email
+    // })
+    // navigateTo('/admin/app-tenant-residencies')
   }
 </script>

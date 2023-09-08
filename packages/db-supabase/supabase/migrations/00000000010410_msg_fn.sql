@@ -133,6 +133,9 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_message(
     _msg_resident msg.msg_resident;
     _topic msg.topic;
     _message msg.message;
+
+    -- v_event text = TG_ARGV[0];
+    -- v_sub text;
   BEGIN
     _msg_resident := msg_fn.ensure_msg_resident(_resident_id);
 
@@ -184,6 +187,8 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_message(
       ;
     end if;
 
+    -- NOTIFY 'topic:'||_topic.id||':message', '{"event": "upsert", "sub": '||_topic.id||', "id": '||_message.id||'}';
+    
     return _message;
   end;
   $$;

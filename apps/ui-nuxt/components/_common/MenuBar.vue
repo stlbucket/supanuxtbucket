@@ -1,8 +1,8 @@
 
 <template>
-  <div class="flex justify-between items-center">
-    <div class="text-4xl hover:bg-sky-700 focus:cursor-pointer" @click="navigateTo('/')">SupaNuxtPhile</div>
-    <div class="flex items-center">
+  <div class="flex justify-between px-2 py-3">
+    <div class="text-3xl hover:bg-sky-700 focus:cursor-pointer" @click="navigateTo('/')">SupaNuxtPhile</div>
+    <div class="flex basis-2/3 gap-3">
       <Auth />
       <ColorMode />
     </div>

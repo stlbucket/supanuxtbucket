@@ -36,7 +36,7 @@
     if (error.value) {
       alert(error.value.data.message)
     } else {
-      alert(JSON.stringify(data.value,null,2))
+      alert(`${data.value?.inviteResult.data.user?.email} has been invited`)
     }
 
     // const result = await GqlInviteUser({

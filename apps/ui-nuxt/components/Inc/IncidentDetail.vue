@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="flex" v-if="!incident.isTemplate">
-        <UButton color="blue" @click="onMakeTemplate">Make Template</UButton>
+        <UButton color="blue" @click="onMakeTemplate" v-if="showMakeTemplate">Make Template</UButton>
       </div>
       <div class="flex" v-if="incident.isTemplate">
         <UButton color="blue" @click="onNewIncident">New Incident</UButton>
@@ -34,6 +34,7 @@
 </template>
 
 <script lang="ts" setup>
+  const user = useSupabaseUser()
   const props = defineProps<{
     incident: Incident
   }>()
@@ -74,4 +75,8 @@
   const onNewIncident = async () => {
     emit('cloneTemplate')
   }
+
+  const showMakeTemplate = computed(() => {
+    return useHasPermission(user, 'p:incidents-admin')
+  })
 </script>

@@ -2,7 +2,7 @@
   <UCard>
     <template #header>
       <div class="flex justify-between">
-        <div>LICENSE PACKS</div>
+        <div class="text-2xl">LICENSE PACKS</div>
         <UButton @click="onNew">New</UButton>
       </div>
     </template>
