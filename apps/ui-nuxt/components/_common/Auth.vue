@@ -3,13 +3,13 @@
     <UInput placeholder="Your Email address" v-model="email"></UInput>
     <UButton @click="handleLogin">Send Magic Link</UButton>
   </div>
-  <div v-else class="flex justify-between grow items-end">
+  <div v-else class="flex grow items-end justify-around gap-2">
+    <div class="text-sm">{{ supUser.user_metadata.tenant_name }}</div>
     <div v-if="showExitSupportMode"><UButton color="yellow" @click="exitSupportMode">Exit Support Mode</UButton></div>
     <div class="text-sm"><NuxtLink to="/my-profile">{{ supUser.user_metadata.display_name }}</NuxtLink></div>
     <div>
       <UButton @click="handleLogout">Logout</UButton>
     </div>
-    <div class="text-sm">{{ supUser.user_metadata.tenant_name }}</div>
   </div>
 </template>
 

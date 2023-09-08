@@ -64,7 +64,7 @@ const preset: GraphileConfig.Preset = {
         'request.jwt.claim.email': claims?.email,
         'request.jwt.claim': JSON.stringify(claims)
       }
-      console.log('additionalSettings', additionalSettings)
+      // console.log('additionalSettings', additionalSettings)
       return {
         pgSettings: {
           ...args.contextValue?.pgSettings,

@@ -34,13 +34,15 @@
     <div class="flex flex-col gap-1 grow" :key="componentKey">
       <div class="text-2xl">User Licenses by Application</div>
       <div class="text-sm">Users have one scoped license per application and any number of unscoped licenses</div>
-      <LicenseAssignment 
-        v-for="s in subscriptions"
-        :license-pack="s.licensePack" 
-        :resident="residency"
-        @revoke-license="onRevokeLicense"
-        @grant-license="onGrantLicense"
-      />
+      <div class="flex flex-col gap-2">
+        <LicenseAssignment 
+          v-for="s in subscriptions"
+          :license-pack="s.licensePack" 
+          :resident="residency"
+          @revoke-license="onRevokeLicense"
+          @grant-license="onGrantLicense"
+        />
+      </div>
     </div>
     <!-- <div class="flex">
       <div class="flex">

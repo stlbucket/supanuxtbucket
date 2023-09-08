@@ -3,9 +3,8 @@
     <template #header>
       <div class="flex flex-col gap-2">
         <div class="flex justify-between">
-          <div class="text-2xl">Projects</div>
+          <div class="text-2xl">Todo</div>
           <TodoModal @updated="handleCreate"></TodoModal>
-          {{ loggedIn }}
         </div>
         <div class="flex flex-col">
           <div class="text-xs">SEARCH TERM</div>

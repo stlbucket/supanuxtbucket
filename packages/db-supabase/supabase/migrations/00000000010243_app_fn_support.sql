@@ -521,6 +521,8 @@ CREATE OR REPLACE FUNCTION app_fn.site_user_by_id(_id uuid)
         _residency_info := array_append(_residency_info, to_jsonb(_resident));
       end loop;
 
+      _auth_user = _auth_user || jsonb_build_object('encrypted_password', 'HIDDEN');
+
       _result = jsonb_build_object(
         'authUser', _auth_user,
         'residencies', _residency_info

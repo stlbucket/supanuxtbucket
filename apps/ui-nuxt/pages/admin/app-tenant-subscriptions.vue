@@ -4,29 +4,27 @@
   >
     <template #activeSubscriptions="{ item }">
       <UCard>
-        <!-- <template #header>
-          <div class="text-3xl">ACTIVE SUBSCRIPTIONS</div>
-        </template> -->
-        <TenantSubscription
-          v-if="activeSubscriptions.length > 0"
-          v-for="s in activeSubscriptions" 
-          :subscription="s"
-        />
-        <div v-else class="flex grow justify-center">NO ACTIVE SUBSCRIPTIONS</div>
+        <div class="flex flex-col gap-2">
+          <TenantSubscription
+            v-if="activeSubscriptions.length > 0"
+            v-for="s in activeSubscriptions" 
+            :subscription="s"
+          />
+          <div v-else class="flex grow justify-center">NO ACTIVE SUBSCRIPTIONS</div>
+        </div>
       </UCard>  
     </template>
 
     <template #inactiveSubscriptions="{ item }">
       <UCard>
-        <!-- <template #header>
-          <div class="text-3xl">INACTIVE SUBSCRIPTIONS</div>
-        </template> -->
-        <TenantSubscription 
-          v-if="inactiveSubscriptions.length > 0"
-          v-for="s in inactiveSubscriptions" 
-          :subscription="s"
-        />
-        <div v-else class="flex grow justify-center">NO INACTIVE SUBSCRIPTIONS</div>
+        <div class="flex flex-col gap-2">
+          <TenantSubscription 
+            v-if="inactiveSubscriptions.length > 0"
+            v-for="s in inactiveSubscriptions" 
+            :subscription="s"
+          />
+          <div v-else class="flex grow justify-center">NO INACTIVE SUBSCRIPTIONS</div>
+        </div>
       </UCard>  
     </template>
   </UTabs>

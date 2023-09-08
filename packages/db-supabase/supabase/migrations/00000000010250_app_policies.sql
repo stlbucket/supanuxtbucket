@@ -70,7 +70,7 @@ alter table app.tenant enable row level security;
 ------------------------------------------------------------------------ tenant_subscription
 alter table app.tenant_subscription enable row level security;
     CREATE POLICY view_own_tenant_subscriptions ON app.tenant_subscription
-      FOR ALL
+      FOR SELECT
       USING (auth_ext.has_permission('p:app-admin', tenant_id));
     CREATE POLICY manage_tenant_subscription ON app.tenant_subscription
       FOR ALL
