@@ -1,5 +1,5 @@
 # Installing an application
-To add an application to the platform, you call ***app_fn.install_application***.
+To add an application to the platform, you call ```app_fn.install_application```.
 
 This will handle setting up all the proper records to drive the rest of the app.
 

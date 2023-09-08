@@ -1,0 +1,824 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="PostgreSQL" id="Project_cc" database="PostgreSQL" >
+	<schema name="app" >
+		<udt name="expiration_interval_type" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'none', 'day' , 'week' , 'month' , 'quarter' , 'year' , 'explicit'  )]]></udt_script>
+		</udt>
+		<udt name="license_status" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'active', 'inactive' , 'expired'  )]]></udt_script>
+		</udt>
+		<udt name="license_type_assignment_scope" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'user', 'admin' , 'superadmin' , 'support' , 'none' , 'all'  )]]></udt_script>
+		</udt>
+		<udt name="profile_status" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'active', 'inactive' , 'blocked'  )]]></udt_script>
+		</udt>
+		<udt name="resident_status" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'invited', 'declined' , 'active' , 'inactive' , 'blocked_individual' , 'blocked_tenant' , 'supporting'  )]]></udt_script>
+		</udt>
+		<udt name="resident_type" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'home', 'guest' , 'support'  )]]></udt_script>
+		</udt>
+		<udt name="tenant_status" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'active', 'inactive' , 'paused'  )]]></udt_script>
+		</udt>
+		<udt name="tenant_subscription_status" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'active', 'inactive'  )]]></udt_script>
+		</udt>
+		<udt name="tenant_type" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'anchor', 'customer' , 'demo' , 'test' , 'trial'  )]]></udt_script>
+		</udt>
+		<table name="app_settings" >
+			<column name="key" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="application_key" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="display_name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="value" type="citext" decimal="0" jt="12" mandatory="y" />
+			<index name="app_settings_pkey" unique="PRIMARY_KEY" >
+				<column name="key" />
+			</index>
+			<fk name="app_settings_application_key_fkey" to_schema="app" to_table="application" >
+				<fk_column name="application_key" pk="key" />
+			</fk>
+		</table>
+		<table name="application" >
+			<column name="key" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<index name="application_pkey" unique="PRIMARY_KEY" >
+				<column name="key" />
+			</index>
+		</table>
+		<table name="license" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
+				<defo><![CDATA[gen_random_uuid()]]></defo>
+			</column>
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="resident_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="tenant_subscription_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="license_type_key" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="created_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="expires_at" type="timestamptz" length="12" decimal="6" jt="93" />
+			<column name="status" type="license_status" decimal="0" jt="12" mandatory="y" >
+				<defo><![CDATA['active'::app.license_status]]></defo>
+			</column>
+			<index name="license_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="uqresident_license" unique="UNIQUE_KEY" >
+				<column name="resident_id" />
+				<column name="license_type_key" />
+			</index>
+			<index name="idx_app_license_license_type_key" unique="NORMAL" >
+				<column name="license_type_key" />
+			</index>
+			<index name="idx_license_resident" unique="NORMAL" >
+				<column name="resident_id" />
+			</index>
+			<index name="idx_license_tenant" unique="NORMAL" >
+				<column name="tenant_id" />
+			</index>
+			<index name="idx_license_tenant_subscription" unique="NORMAL" >
+				<column name="tenant_subscription_id" />
+			</index>
+			<fk name="license_license_type_key_fkey" to_schema="app" to_table="license_type" >
+				<fk_column name="license_type_key" pk="key" />
+			</fk>
+			<fk name="license_resident_id_fkey" to_schema="app" to_table="resident" >
+				<fk_column name="resident_id" pk="id" />
+			</fk>
+			<fk name="license_tenant_id_fkey" to_schema="app" to_table="tenant" >
+				<fk_column name="tenant_id" pk="id" />
+			</fk>
+			<fk name="license_tenant_subscription_id_fkey" to_schema="app" to_table="tenant_subscription" >
+				<fk_column name="tenant_subscription_id" pk="id" />
+			</fk>
+		</table>
+		<table name="license_pack" >
+			<column name="key" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="created_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="display_name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="description" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="auto_subscribe" type="boolean" length="1" decimal="0" jt="-7" mandatory="y" >
+				<defo><![CDATA[false]]></defo>
+			</column>
+			<index name="license_pack_pkey" unique="PRIMARY_KEY" >
+				<column name="key" />
+			</index>
+		</table>
+		<table name="license_pack_license_type" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
+				<defo><![CDATA[gen_random_uuid()]]></defo>
+			</column>
+			<column name="license_pack_key" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="license_type_key" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="number_of_licenses" type="integer" length="10" decimal="0" jt="4" mandatory="y" >
+				<defo><![CDATA['-1'::integer]]></defo>
+			</column>
+			<column name="expiration_interval_type" type="expiration_interval_type" decimal="0" jt="12" mandatory="y" >
+				<defo><![CDATA['none'::app.expiration_interval_type]]></defo>
+			</column>
+			<column name="expiration_interval_multiplier" type="integer" length="10" decimal="0" jt="4" mandatory="y" >
+				<defo><![CDATA[1]]></defo>
+			</column>
+			<index name="license_pack_license_type_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="license_pack_license_type_license_pack_key_license_type_key_key" unique="UNIQUE_KEY" >
+				<column name="license_pack_key" />
+				<column name="license_type_key" />
+			</index>
+			<index name="idx_lplt_license_pack" unique="NORMAL" >
+				<column name="license_pack_key" />
+			</index>
+			<index name="idx_lplt_license_type" unique="NORMAL" >
+				<column name="license_type_key" />
+			</index>
+			<fk name="license_pack_license_type_license_pack_key_fkey" to_schema="app" to_table="license_pack" >
+				<fk_column name="license_pack_key" pk="key" />
+			</fk>
+			<fk name="license_pack_license_type_license_type_key_fkey" to_schema="app" to_table="license_type" >
+				<fk_column name="license_type_key" pk="key" />
+			</fk>
+		</table>
+		<table name="license_type" >
+			<column name="key" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="created_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="application_key" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="display_name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="assignment_scope" type="license_type_assignment_scope" decimal="0" jt="12" mandatory="y" />
+			<index name="license_type_pkey" unique="PRIMARY_KEY" >
+				<column name="key" />
+			</index>
+			<index name="idx_uq_app_license_type_scope_user" unique="UNIQUE_INDEX" options="WHERE (assignment_scope = &#039;user&#039;::app.license_type_assignment_scope)" >
+				<column name="key" />
+				<column name="application_key" />
+			</index>
+			<index name="idx_license_type_application" unique="NORMAL" >
+				<column name="application_key" />
+			</index>
+			<fk name="license_type_application_key_fkey" to_schema="app" to_table="application" >
+				<fk_column name="application_key" pk="key" />
+			</fk>
+		</table>
+		<table name="license_type_permission" >
+			<column name="license_type_key" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="permission_key" type="citext" decimal="0" jt="12" mandatory="y" />
+			<index name="license_type_permission_license_type_key_permission_key_key" unique="UNIQUE_KEY" >
+				<column name="license_type_key" />
+				<column name="permission_key" />
+			</index>
+			<index name="idx_lplt_permission" unique="NORMAL" >
+				<column name="permission_key" />
+			</index>
+			<index name="idx_ltp_license_type" unique="NORMAL" >
+				<column name="license_type_key" />
+			</index>
+			<fk name="license_type_permission_license_type_key_fkey" to_schema="app" to_table="license_type" >
+				<fk_column name="license_type_key" pk="key" />
+			</fk>
+			<fk name="license_type_permission_permission_key_fkey" to_schema="app" to_table="permission" >
+				<fk_column name="permission_key" pk="key" />
+			</fk>
+		</table>
+		<table name="permission" >
+			<column name="key" type="citext" decimal="0" jt="12" mandatory="y" />
+			<index name="permission_pkey" unique="PRIMARY_KEY" >
+				<column name="key" />
+			</index>
+		</table>
+		<table name="profile" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="created_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="email" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="identifier" type="citext" decimal="0" jt="12" />
+			<column name="first_name" type="citext" decimal="0" jt="12" />
+			<column name="last_name" type="citext" decimal="0" jt="12" />
+			<column name="phone" type="citext" decimal="0" jt="12" />
+			<column name="display_name" type="citext" decimal="0" jt="12" />
+			<column name="avatar_key" type="citext" decimal="0" jt="12" />
+			<column name="status" type="profile_status" decimal="0" jt="12" mandatory="y" >
+				<defo><![CDATA['active'::app.profile_status]]></defo>
+			</column>
+			<column name="is_public" type="boolean" length="1" decimal="0" jt="-7" mandatory="y" >
+				<defo><![CDATA[false]]></defo>
+			</column>
+			<column name="full_name" type="citext" decimal="0" jt="12" >
+				<type_extra><![CDATA[GENERATED BY DEFAULT AS (((first_name)::text || ' '::text) || (last_name)::text)]]></type_extra>
+			</column>
+			<index name="profile_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="profile_display_name_key" unique="UNIQUE_KEY" >
+				<column name="display_name" />
+			</index>
+			<index name="profile_email_key" unique="UNIQUE_KEY" >
+				<column name="email" />
+			</index>
+			<index name="profile_identifier_key" unique="UNIQUE_KEY" >
+				<column name="identifier" />
+			</index>
+			<fk name="profile_id_fkey" to_schema="auth" to_table="users" delete_action="cascade" >
+				<fk_column name="id" pk="id" />
+			</fk>
+		</table>
+		<table name="resident" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
+				<defo><![CDATA[gen_random_uuid()]]></defo>
+			</column>
+			<column name="profile_id" type="uuid" decimal="0" jt="1111" />
+			<column name="invited_by_profile_id" type="uuid" decimal="0" jt="1111" />
+			<column name="invited_by_display_name" type="citext" decimal="0" jt="12" />
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="tenant_name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="email" type="text" decimal="0" jt="12" mandatory="y" />
+			<column name="display_name" type="citext" decimal="0" jt="12" />
+			<column name="created_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="status" type="resident_status" decimal="0" jt="12" mandatory="y" >
+				<defo><![CDATA['invited'::app.resident_status]]></defo>
+			</column>
+			<column name="type" type="resident_type" decimal="0" jt="12" mandatory="y" />
+			<index name="resident_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="uq_resident" unique="UNIQUE_KEY" >
+				<column name="tenant_id" />
+				<column name="profile_id" />
+			</index>
+			<index name="idx_app_resident_invited_by_profile_id" unique="NORMAL" >
+				<column name="invited_by_profile_id" />
+			</index>
+			<index name="idx_resident_profile" unique="NORMAL" >
+				<column name="profile_id" />
+			</index>
+			<index name="idx_resident_tenant" unique="NORMAL" >
+				<column name="tenant_id" />
+			</index>
+			<fk name="resident_invited_by_profile_id_fkey" to_schema="app" to_table="profile" >
+				<fk_column name="invited_by_profile_id" pk="id" />
+			</fk>
+			<fk name="resident_profile_id_fkey" to_schema="app" to_table="profile" >
+				<fk_column name="profile_id" pk="id" />
+			</fk>
+			<fk name="resident_tenant_id_fkey" to_schema="app" to_table="tenant" >
+				<fk_column name="tenant_id" pk="id" />
+			</fk>
+		</table>
+		<table name="tenant" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
+				<defo><![CDATA[gen_random_uuid()]]></defo>
+			</column>
+			<column name="created_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="identifier" type="citext" decimal="0" jt="12" />
+			<column name="name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="type" type="tenant_type" decimal="0" jt="12" mandatory="y" >
+				<defo><![CDATA['customer'::app.tenant_type]]></defo>
+			</column>
+			<column name="status" type="tenant_status" decimal="0" jt="12" mandatory="y" >
+				<defo><![CDATA['active'::app.tenant_status]]></defo>
+			</column>
+			<index name="tenant_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="tenant_identifier_key" unique="UNIQUE_KEY" >
+				<column name="identifier" />
+			</index>
+			<index name="tenant_name_key" unique="UNIQUE_KEY" >
+				<column name="name" />
+			</index>
+		</table>
+		<table name="tenant_subscription" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
+				<defo><![CDATA[gen_random_uuid()]]></defo>
+			</column>
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="license_pack_key" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="created_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="status" type="tenant_subscription_status" decimal="0" jt="12" mandatory="y" >
+				<defo><![CDATA['active'::app.tenant_subscription_status]]></defo>
+			</column>
+			<index name="tenant_subscription_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_app_tenant_subscription_tenant_id" unique="NORMAL" >
+				<column name="tenant_id" />
+			</index>
+			<index name="idx_ats_license_pack" unique="NORMAL" >
+				<column name="license_pack_key" />
+			</index>
+			<fk name="tenant_subscription_license_pack_key_fkey" to_schema="app" to_table="license_pack" >
+				<fk_column name="license_pack_key" pk="key" />
+			</fk>
+			<fk name="tenant_subscription_tenant_id_fkey" to_schema="app" to_table="tenant" >
+				<fk_column name="tenant_id" pk="id" />
+			</fk>
+		</table>
+		<function name="application_license_count" id="Function_1c3d" isSystem="false" params_known="y" >
+			<string><![CDATA[CREATE OR REPLACE FUNCTION app.application_license_count(_application app.application)
+ RETURNS integer
+ LANGUAGE plpgsql
+ STABLE
+AS $function$
+  DECLARE
+    _license_count integer;
+  BEGIN
+    _license_count := (
+      select count(*)
+      from app.license
+      where license_type_key in (
+        select key from app.license_type where application_key = _application.key
+      )
+    );
+      
+    return _license_count;
+  end;
+  $function$
+;]]></string>
+			<input_param name="_application" jt="-1" type="USER-DEFINED" />
+		</function>
+		<function name="license_pack_license_type_issued_count" id="Function_1e7" isSystem="false" params_known="y" >
+			<string><![CDATA[CREATE OR REPLACE FUNCTION app.license_pack_license_type_issued_count(_license_pack_license_type app.license_pack_license_type)
+ RETURNS integer
+ LANGUAGE plpgsql
+ STABLE
+AS $function$
+  DECLARE
+    _license_count integer;
+  BEGIN
+    _license_count := (
+      select count(*)
+      from app.license_pack_license_type lplt
+      join app.license_pack lp on lp.key = lplt.license_pack_key
+      join app.tenant_subscription ats on ats.license_pack_key = lp.key
+      join app.license l on l.tenant_subscription_id = ats.id
+      where lplt.license_pack_key = _license_pack_license_type.license_pack_key
+      and lplt.license_type_key = _license_pack_license_type.license_type_key
+      and l.license_type_key = _license_pack_license_type.license_type_key
+    );
+      
+    return _license_count;
+  end;
+  $function$
+;]]></string>
+			<input_param name="_license_pack_license_type" jt="-1" type="USER-DEFINED" />
+		</function>
+	</schema>
+	<schema name="auth" >
+		<table name="users" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
+				<defo><![CDATA[gen_random_uuid()]]></defo>
+			</column>
+			<column name="email" type="text" decimal="0" jt="12" />
+			<index name="users_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<function name="uid" id="Function_4e9" isSystem="false" params_known="y" >
+			<string><![CDATA[CREATE OR REPLACE FUNCTION auth.uid()
+ RETURNS uuid
+ LANGUAGE plpgsql
+ STABLE
+AS $function$
+  DECLARE
+    _retval uuid;
+  BEGIN
+    _retval = gen_random_uuid();
+    return _retval;
+  end;
+  $function$
+;]]></string>
+			<result_param jt="-1" />
+		</function>
+	</schema>
+	<schema name="inc" >
+		<udt name="incident_status" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'open', 'closed' , 'pending' , 'deleted'  )]]></udt_script>
+		</udt>
+		<table name="inc_resident" >
+			<column name="resident_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="display_name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<index name="inc_resident_pkey" unique="PRIMARY_KEY" >
+				<column name="resident_id" />
+			</index>
+			<fk name="inc_resident_tenant_id_fkey" to_schema="inc" to_table="inc_tenant" >
+				<fk_column name="tenant_id" pk="tenant_id" />
+			</fk>
+			<fk name="inc_resident_resident_id_fkey" to_schema="app" to_table="resident" >
+				<fk_column name="resident_id" pk="id" />
+			</fk>
+		</table>
+		<table name="inc_tenant" >
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<index name="inc_tenant_pkey" unique="PRIMARY_KEY" >
+				<column name="tenant_id" />
+			</index>
+			<fk name="inc_tenant_tenant_id_fkey" to_schema="app" to_table="tenant" >
+				<fk_column name="tenant_id" pk="id" />
+			</fk>
+		</table>
+		<table name="incident" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
+				<defo><![CDATA[gen_random_uuid()]]></defo>
+			</column>
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="todo_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="topic_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="created_by_resident_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="created_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="description" type="citext" decimal="0" jt="12" />
+			<column name="identifier" type="text" decimal="0" jt="12" />
+			<column name="status" type="incident_status" decimal="0" jt="12" mandatory="y" >
+				<defo><![CDATA['open'::inc.incident_status]]></defo>
+			</column>
+			<column name="tags" type="_citext" decimal="0" jt="2003" mandatory="y" >
+				<defo><![CDATA['{}'::citext[]]]></defo>
+			</column>
+			<column name="is_template" type="boolean" length="1" decimal="0" jt="-7" mandatory="y" >
+				<defo><![CDATA[false]]></defo>
+			</column>
+			<index name="incident_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_uq_incident_identifier_template" unique="UNIQUE_INDEX" options="WHERE (is_template = true)" >
+				<column name="tenant_id" />
+				<column name="identifier" />
+			</index>
+			<fk name="incident_created_by_resident_id_fkey" to_schema="inc" to_table="inc_resident" >
+				<fk_column name="created_by_resident_id" pk="resident_id" />
+			</fk>
+			<fk name="incident_tenant_id_fkey" to_schema="inc" to_table="inc_tenant" >
+				<fk_column name="tenant_id" pk="tenant_id" />
+			</fk>
+			<fk name="incident_todo_id_fkey" to_schema="todo" to_table="todo" >
+				<fk_column name="todo_id" pk="id" />
+			</fk>
+			<fk name="incident_topic_id_fkey" to_schema="msg" to_table="topic" >
+				<fk_column name="topic_id" pk="id" />
+			</fk>
+		</table>
+		<table name="location" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
+				<defo><![CDATA[gen_random_uuid()]]></defo>
+			</column>
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="incident_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="name" type="text" decimal="0" jt="12" />
+			<column name="address1" type="text" decimal="0" jt="12" />
+			<column name="address2" type="text" decimal="0" jt="12" />
+			<column name="city" type="text" decimal="0" jt="12" />
+			<column name="state" type="text" decimal="0" jt="12" />
+			<column name="postalcode" type="text" decimal="0" jt="12" />
+			<column name="country" type="text" decimal="0" jt="12" />
+			<column name="lat" type="text" decimal="0" jt="12" />
+			<column name="lon" type="text" decimal="0" jt="12" />
+			<index name="location_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="location_incident_id_name_key" unique="UNIQUE_KEY" >
+				<column name="incident_id" />
+				<column name="name" />
+			</index>
+			<fk name="location_tenant_id_fkey" to_schema="inc" to_table="inc_tenant" >
+				<fk_column name="tenant_id" pk="tenant_id" />
+			</fk>
+			<fk name="location_incident_id_fkey" to_schema="inc" to_table="incident" >
+				<fk_column name="incident_id" pk="id" />
+			</fk>
+		</table>
+	</schema>
+	<schema name="msg" >
+		<udt name="message_status" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'draft', 'sent' , 'deleted'  )]]></udt_script>
+		</udt>
+		<udt name="subscriber_status" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'active', 'inactive' , 'blocked'  )]]></udt_script>
+		</udt>
+		<udt name="topic_status" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'open', 'closed' , 'locked'  )]]></udt_script>
+		</udt>
+		<table name="message" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
+				<defo><![CDATA[gen_random_uuid()]]></defo>
+			</column>
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="created_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="status" type="message_status" decimal="0" jt="12" mandatory="y" >
+				<defo><![CDATA['sent'::msg.message_status]]></defo>
+			</column>
+			<column name="topic_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="content" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="posted_by_msg_resident_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="tags" type="text[]" decimal="0" jt="2003" mandatory="y" >
+				<defo><![CDATA['{}'::text[]]]></defo>
+			</column>
+			<index name="pk_message" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_message_posted_by_msg_resident_id" unique="NORMAL" >
+				<column name="posted_by_msg_resident_id" />
+			</index>
+			<index name="idx_message_tenant_id" unique="NORMAL" >
+				<column name="tenant_id" />
+			</index>
+			<fk name="message_posted_by_msg_resident_id_fkey" to_schema="msg" to_table="msg_resident" >
+				<fk_column name="posted_by_msg_resident_id" pk="id" />
+			</fk>
+			<fk name="message_tenant_id_fkey" to_schema="msg" to_table="msg_tenant" >
+				<fk_column name="tenant_id" pk="tenant_id" />
+			</fk>
+			<fk name="message_topic_id_fkey" to_schema="msg" to_table="topic" >
+				<fk_column name="topic_id" pk="id" />
+			</fk>
+		</table>
+		<table name="msg_resident" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="display_name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<index name="msg_resident_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="msg_resident_tenant_id_fkey" to_schema="msg" to_table="msg_tenant" >
+				<fk_column name="tenant_id" pk="tenant_id" />
+			</fk>
+			<fk name="msg_resident_id_fkey" to_schema="app" to_table="resident" >
+				<fk_column name="id" pk="id" />
+			</fk>
+		</table>
+		<table name="msg_tenant" >
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<index name="msg_tenant_pkey" unique="PRIMARY_KEY" >
+				<column name="tenant_id" />
+			</index>
+			<fk name="msg_tenant_tenant_id_fkey" to_schema="app" to_table="tenant" >
+				<fk_column name="tenant_id" pk="id" />
+			</fk>
+		</table>
+		<table name="subscriber" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
+				<defo><![CDATA[gen_random_uuid()]]></defo>
+			</column>
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="created_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="status" type="subscriber_status" decimal="0" jt="12" mandatory="y" >
+				<defo><![CDATA['active'::msg.subscriber_status]]></defo>
+			</column>
+			<column name="topic_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="msg_resident_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="last_read" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<index name="pk_subscriber" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="uq_subscriber" unique="UNIQUE_KEY" >
+				<column name="topic_id" />
+				<column name="msg_resident_id" />
+			</index>
+			<index name="idx_subscriber_msg_resident_id" unique="NORMAL" >
+				<column name="msg_resident_id" />
+			</index>
+			<index name="idx_subscriber_tenant_id" unique="NORMAL" >
+				<column name="tenant_id" />
+			</index>
+			<fk name="subscriber_msg_resident_id_fkey" to_schema="msg" to_table="msg_resident" >
+				<fk_column name="msg_resident_id" pk="id" />
+			</fk>
+			<fk name="subscriber_tenant_id_fkey" to_schema="msg" to_table="msg_tenant" >
+				<fk_column name="tenant_id" pk="tenant_id" />
+			</fk>
+			<fk name="subscriber_topic_id_fkey" to_schema="msg" to_table="topic" >
+				<fk_column name="topic_id" pk="id" />
+			</fk>
+		</table>
+		<table name="topic" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
+				<defo><![CDATA[gen_random_uuid()]]></defo>
+			</column>
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="created_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="identifier" type="text" decimal="0" jt="12" />
+			<column name="tags" type="_citext" decimal="0" jt="2003" mandatory="y" >
+				<defo><![CDATA['{}'::citext[]]]></defo>
+			</column>
+			<column name="status" type="topic_status" decimal="0" jt="12" mandatory="y" >
+				<defo><![CDATA['open'::msg.topic_status]]></defo>
+			</column>
+			<index name="pk_topic" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_topic_tenant_identifier" unique="UNIQUE_INDEX" >
+				<column name="tenant_id" />
+				<column name="identifier" />
+			</index>
+			<index name="idx_topic_msg_tenant" unique="NORMAL" >
+				<column name="tenant_id" />
+			</index>
+			<fk name="topic_tenant_id_fkey" to_schema="msg" to_table="msg_tenant" >
+				<fk_column name="tenant_id" pk="tenant_id" />
+			</fk>
+		</table>
+	</schema>
+	<schema name="todo" >
+		<udt name="todo_status" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'incomplete', 'complete' , 'archived' , 'unfinished'  )]]></udt_script>
+		</udt>
+		<udt name="todo_type" udt_java_type="12" udt_precision="NONE" >
+			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'task', 'milestone'  )]]></udt_script>
+		</udt>
+		<table name="todo" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
+				<defo><![CDATA[gen_random_uuid()]]></defo>
+			</column>
+			<column name="parent_todo_id" type="uuid" decimal="0" jt="1111" />
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="resident_id" type="uuid" decimal="0" jt="1111" />
+			<column name="created_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="timestamptz" length="12" decimal="6" jt="93" mandatory="y" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<column name="description" type="citext" decimal="0" jt="12" />
+			<column name="status" type="todo_status" decimal="0" jt="12" mandatory="y" >
+				<defo><![CDATA['incomplete'::todo.todo_status]]></defo>
+			</column>
+			<column name="type" type="todo_type" decimal="0" jt="12" mandatory="y" >
+				<defo><![CDATA['task'::todo.todo_type]]></defo>
+			</column>
+			<column name="ordinal" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="pinned" type="boolean" length="1" decimal="0" jt="-7" mandatory="y" >
+				<defo><![CDATA[false]]></defo>
+			</column>
+			<column name="tags" type="_citext" decimal="0" jt="2003" mandatory="y" >
+				<defo><![CDATA['{}'::citext[]]]></defo>
+			</column>
+			<column name="is_template" type="boolean" length="1" decimal="0" jt="-7" mandatory="y" >
+				<defo><![CDATA[false]]></defo>
+			</column>
+			<index name="todo_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_todo_todo_parent_todo_id" unique="NORMAL" >
+				<column name="parent_todo_id" />
+			</index>
+			<index name="idx_todo_todo_resident_id" unique="NORMAL" >
+				<column name="resident_id" />
+			</index>
+			<index name="idx_todo_todo_tenant_id" unique="NORMAL" >
+				<column name="tenant_id" />
+			</index>
+			<constraint name="todo_name_check" >
+				<string><![CDATA[CHECK ((char_length((name)::text) >= 3))]]></string>
+			</constraint>
+			<fk name="todo_parent_todo_id_fkey" to_schema="todo" to_table="todo" >
+				<fk_column name="parent_todo_id" pk="id" />
+			</fk>
+			<fk name="todo_resident_id_fkey" to_schema="todo" to_table="todo_resident" >
+				<fk_column name="resident_id" pk="resident_id" />
+			</fk>
+			<fk name="todo_tenant_id_fkey" to_schema="todo" to_table="todo_tenant" >
+				<fk_column name="tenant_id" pk="tenant_id" />
+			</fk>
+		</table>
+		<table name="todo_resident" >
+			<column name="resident_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="display_name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<index name="todo_resident_pkey" unique="PRIMARY_KEY" >
+				<column name="resident_id" />
+			</index>
+			<fk name="todo_resident_resident_id_fkey" to_schema="app" to_table="resident" >
+				<fk_column name="resident_id" pk="id" />
+			</fk>
+			<fk name="todo_resident_tenant_id_fkey" to_schema="todo" to_table="todo_tenant" >
+				<fk_column name="tenant_id" pk="tenant_id" />
+			</fk>
+		</table>
+		<table name="todo_tenant" >
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<index name="todo_tenant_pkey" unique="PRIMARY_KEY" >
+				<column name="tenant_id" />
+			</index>
+			<fk name="todo_tenant_tenant_id_fkey" to_schema="app" to_table="tenant" >
+				<fk_column name="tenant_id" pk="id" />
+			</fk>
+		</table>
+	</schema>
+	<connector name="PostgreSQL" database="PostgreSQL" driver_class="org.postgresql.Driver" driver_jar="postgresql-42.2.16.jar" driver_desc="Standard" url="jdbc:postgresql://0.0.0.0:5432/snb" host="localhost" port="5432" instance="postgres" user="postgres" passwd="MTIzNA==" />
+	<layout name="app" id="Layout_1b6b" show_relation="columns" >
+		<entity schema="app" name="app_settings" color="EEF7EC" x="256" y="528" />
+		<entity schema="app" name="application" color="EEF7EC" x="512" y="544" />
+		<entity schema="app" name="license" color="EEF7EC" x="752" y="304" />
+		<entity schema="app" name="license_pack" color="EEF7EC" x="1104" y="384" />
+		<entity schema="app" name="license_pack_license_type" color="EEF7EC" x="1072" y="576" />
+		<entity schema="app" name="license_type" color="EEF7EC" x="784" y="576" />
+		<entity schema="app" name="license_type_permission" color="EEF7EC" x="528" y="704" />
+		<entity schema="app" name="permission" color="EEF7EC" x="272" y="704" />
+		<entity schema="app" name="profile" color="EEF7EC" x="208" y="112" />
+		<entity schema="app" name="resident" color="EEF7EC" x="432" y="112" />
+		<entity schema="app" name="tenant" color="EEF7EC" x="784" y="80" />
+		<entity schema="app" name="tenant_subscription" color="EEF7EC" x="1120" y="128" />
+		<entity schema="auth" name="users" color="3986C1" x="48" y="160" />
+		<group name="app" color="EEF7EC" >
+			<entity schema="app" name="resident" />
+			<entity schema="app" name="tenant" />
+			<entity schema="app" name="tenant_subscription" />
+			<entity schema="app" name="profile" />
+			<entity schema="app" name="license_pack_license_type" />
+			<entity schema="app" name="license_pack" />
+			<entity schema="app" name="app_settings" />
+			<entity schema="app" name="application" />
+			<entity schema="app" name="license" />
+			<entity schema="app" name="license_type" />
+			<entity schema="app" name="license_type_permission" />
+			<entity schema="app" name="permission" />
+		</group>
+		<group name="auth - stub" color="C4E0F9" >
+			<entity schema="auth" name="users" />
+		</group>
+	</layout>
+	<layout name="inc" id="Layout_e3d" show_relation="columns" >
+		<entity schema="inc" name="inc_resident" color="E6B3CC" x="288" y="80" />
+		<entity schema="inc" name="inc_tenant" color="E6B3CC" x="48" y="80" />
+		<entity schema="inc" name="incident" color="E6B3CC" x="240" y="288" />
+		<entity schema="inc" name="location" color="E6B3CC" x="48" y="288" />
+		<group name="inc" color="E6B3CC" >
+			<entity schema="inc" name="incident" />
+			<entity schema="inc" name="inc_tenant" />
+			<entity schema="inc" name="inc_resident" />
+			<entity schema="inc" name="location" />
+		</group>
+	</layout>
+	<layout name="msg" id="Layout_21c" show_relation="columns" >
+		<entity schema="msg" name="message" color="CCB3FF" x="48" y="288" />
+		<entity schema="msg" name="msg_resident" color="CCB3FF" x="528" y="80" />
+		<entity schema="msg" name="msg_tenant" color="CCB3FF" x="288" y="80" />
+		<entity schema="msg" name="subscriber" color="CCB3FF" x="752" y="352" />
+		<entity schema="msg" name="topic" color="CCB3FF" x="432" y="256" />
+		<group name="msg" color="CCB3FF" >
+			<entity schema="msg" name="msg_tenant" />
+			<entity schema="msg" name="msg_resident" />
+			<entity schema="msg" name="topic" />
+			<entity schema="msg" name="message" />
+			<entity schema="msg" name="subscriber" />
+		</group>
+	</layout>
+	<layout name="todo" id="Layout_cdf" show_relation="columns" >
+		<entity schema="todo" name="todo" color="FFFF99" x="48" y="96" />
+		<entity schema="todo" name="todo_resident" color="FFFF99" x="352" y="80" />
+		<entity schema="todo" name="todo_tenant" color="FFFF99" x="352" y="256" />
+		<group name="todo" color="FFFF99" >
+			<entity schema="todo" name="todo" />
+			<entity schema="todo" name="todo_resident" />
+			<entity schema="todo" name="todo_tenant" />
+		</group>
+	</layout>
+</project>

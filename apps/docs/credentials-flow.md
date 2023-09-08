@@ -1,10 +1,10 @@
 # Authentication and Authorization
 ## Default Setup
-By default, implicit flow with OTP login is enabled.  This will soon be updated to PKCE flow for better default security.
+By default, PKCE flow with OTP magic-link login is enabled.
 
 Coupled with the demo data and the DemoAppTenants component, this helps during early stages of development and demonstration.
 
-It is up to you to implement the final authentication flow.
+It is up to you to implement the final authentication flow; you might also keep or evolve this one.
 
 This is intentional, so as not to be tied to any of the external authentication solutions including:
   - [oso](https://www.osohq.com/)
@@ -15,11 +15,11 @@ This is intentional, so as not to be tied to any of the external authentication 
 [supabase auth docs](https://supabase.com/docs/guides/auth) - learn it.  love it.  live it.
 
 ## Permissions and Licensing
-A core function of the app and app_fn schema is to derive user claims from the licenses they are assigned.
+A core function of the app and app_fn schema is to derive user claims from the licenses they are assigned and to update them in the ```auth.users.raw_user_meta_data``` field.
 
-Each application (todo, incidents, your_app) exposes license-types to which users are subscribed.  Each license-type has one or more permissions associated with it.
+Each application (base, incidents, your_app) exposes license-types to which users are subscribed.  Each license-type has one or more permissions associated with it.
 
-Claims are the rollup of all of these permissions, as well as a few other useful datapoints and can be obtained by calling ***app_fn.current_profile_claims*** as follows:
+Claims are the rollup of all of these permissions, as well as a few other useful datapoints and can be obtained by calling ```app_fn.current_profile_claims``` as follows:
 ```
 postgres=> select jsonb_pretty(to_jsonb(app_fn.current_profile_claims(id))) as claims from app.profile where email = 'app-admin-super@example.com';
                            claims
@@ -47,8 +47,8 @@ postgres=> select jsonb_pretty(to_jsonb(app_fn.current_profile_claims(id))) as c
 ```
 These claims - particularly the permissions - are then used anywhere in the application to expose functionality in the UI, and to enforce it in the database.
 
-## user_metadata
-These actions change individual user claims, and effect the update of auth.user.raw_user_meta_data field in supabase.
+## app_fn.current_profile_claims => raw_user_meta_data
+These actions change individual user claims, and effect the update of ```auth.user.raw_user_meta_data``` field in supabase.
 
 - User license assignment
 - User blocked

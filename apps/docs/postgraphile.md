@@ -25,10 +25,10 @@ As of this writing, this is how postgraphile is integrated with nuxt in this sta
 
 Postgraphile v5 is currently in beta.  
 
-The key point here is that the ***grafserv h3*** plugin is exposed by postgraphile, and actually handles things at the nitro level using h3 helpers.
+The key point here is that the ```grafserv h3``` plugin is exposed by postgraphile, and actually handles things at the nitro level using h3 helpers.
 
 Special thanks to [benjie](https://github.com/benjie/) for offering to implement this vital component.  And to [dodobibi](https://github.com/Dodobibi) for the (upcoming) nuxt module.
 
-Refer to https://postgraphile.org/postgraphile/next/config to understand the accompanying ***graphile.config.ts*** file.
+Refer to https://postgraphile.org/postgraphile/next/config to understand the accompanying ```graphile.config.ts``` file.
 
 Currently, subscriptions do not work. This will be remedied by upcoming postgraphile and nuxt releases, but as of now there are a couple of pull requests that are necessary.

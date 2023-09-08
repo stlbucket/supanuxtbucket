@@ -3,6 +3,7 @@ Core Techs:
 - [Supabase](https://www.supabase.com)
 - [Nuxt](https://nuxtjs.com)
 - [Postgraphile](https://postgraphile.org/)
+- [Nuxt Graphql Client](https://nuxt-graphql-client.web.app/)
 
 This starter repo is intended to provide a quick-start scenario for building MVPs that that can be quickly deployed to Supabase and the related ecosystem.
 

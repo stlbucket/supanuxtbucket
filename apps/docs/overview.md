@@ -4,9 +4,10 @@ Core Techs:
 - [Nuxt](https://nuxtjs.com)
 - [Postgraphile](https://postgraphile.org/)
 - [Nuxt UI Labs](https://ui.nuxtlabs.com/getting-started)
+- [Nuxt Graphql Client](https://nuxt-graphql-client.web.app/)
 
 ## Goals
-This repo is intended to illustrate a quick-start scenario for building MVPs that that can be easily deployed to Supabase and the related ecosystem.
+This repo is intended to illustrate a quick-start scenario for building MVPs that can be easily deployed to Supabase and the related ecosystem.
 
 Minimal UI styling, with simple straightforward usage of Nuxt UI Labs component library and basic Tailwind tweaks.  It should be relatively painless to swap in a different library as desired.
 
@@ -16,8 +17,8 @@ Multi-tenancy support that includes the ability for individuals to work in many 
 
 The problem space is loosely defined as an incident management scenario, where group discussion and ad-hoc todo list tools are included with additional functionality to build a custom solution.
 
-## Notes
-The messaging feature is very minimal and not real-time enabled.  Ways to accomplish this could include:
-- [supabase realtime](https://supabase.com/docs/guides/realtime)
-- [postgraphile subscriptions](https://postgraphile.org/postgraphile/next/subscriptions/)
-- [soketi](https://soketi.app/) - or other third-party solutions
+## Afew relevant threads
+- [could_supabase_rls_used_for_complex_authorization](https://www.reddit.com/r/Supabase/comments/15nem7t/could_supabase_rls_used_for_complex_authorization/)
+- [is_supabase_rls_enough_for_an_mvp](https://www.reddit.com/r/Supabase/comments/151xp3w/is_supabase_rls_enough_for_an_mvp/)
+- [is_supabase_capable_of_multi_tenancy](https://www.reddit.com/r/Supabase/comments/165kbqs/is_supabase_capable_of_multi_tenancy/)
+- [how_would_one_set_up_supabase_with_multitenant](https://www.reddit.com/r/Supabase/comments/zauwim/how_would_one_set_up_supabase_with_multitenant/)
