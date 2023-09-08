@@ -45,13 +45,13 @@ postgres=> select jsonb_pretty(to_jsonb(app_fn.current_profile_claims(id))) as c
      "actual_resident_id": null                            +
 }
 ```
-These claims - particularly the permissions - are then used anywhere in the application to expose functionality in the UI, and to enforce it in the database.
+These claims - particularly the permissions - are then used anywhere in the application to expose functionality in the UI, and to enforce access control in the database.
 
 ## app_fn.current_profile_claims => raw_user_meta_data
-These actions change individual user claims, and effect the update of ```auth.user.raw_user_meta_data``` field in supabase.
+Some actions change individual user claims, and effect the update of ```auth.user.raw_user_meta_data``` field in supabase, including:
 
 - User license assignment
-- User blocked
+- User blocked/unblocked
 - User changes tenant
 - Support user enters/exits support mode for a tenant
 

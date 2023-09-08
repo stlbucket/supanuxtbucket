@@ -7,6 +7,6 @@ You can login as any of the listed users.  This process leverages the Supabase I
 
 The intention is that this component and demo data will be removed as your project moves toward a real scenario.
 
-Additionally, a more robust auth integration is left to the developer.
+A more robust auth integration is left to the developer, if desired.
 
 Try logging in as different users.  The most interesting is **app-admin-super@example.com**

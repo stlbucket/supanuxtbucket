@@ -3,7 +3,7 @@ import * as todo from './db.todo'
 import * as msg from './db.msg'
 import * as inc from './db.inc'
 
-// THIS SHOULD BE COMING FROM UI NUXT LABS, BUT NOT SURE HOW RIGHT NOW
+// THIS SHOULD BE COMING FROM UI NUXT, BUT NOT SURE HOW RIGHT NOW
 export interface IUSelectOption {
   name: string
   value: string
@@ -14,7 +14,7 @@ declare global {
   type USelectOption = IUSelectOption
 }
 
-// APP
+// ----------------------------------------------------------------- APP
 export interface IApplication extends app.AppApplication {
   licenseTypes?: ILicenseType[]
 }
@@ -87,7 +87,7 @@ declare global {
   type NewTenantInfo = INewTenantInfo
 }
 
-// TODO
+// ----------------------------------------------------------------- TODO
 export interface ITodoResident extends todo.TodoTodoResident {
 
 }
@@ -104,7 +104,7 @@ declare global {
   type Todo = ITodo
 }
 
-// MSG
+// ----------------------------------------------------------------- MSG
 export interface ITopic extends msg.MsgTopic {}
 export interface IMessage extends msg.MsgMessage {}
 export interface ISubscriber extends msg.MsgSubscriber {}
@@ -115,7 +115,7 @@ declare global {
   type Subscriber = ISubscriber
 }
 
-// INC
+// ----------------------------------------------------------------- INC
 export interface IIncident extends inc.IncIncident {}
 export interface ILocation extends inc.IncLocation {}
 
