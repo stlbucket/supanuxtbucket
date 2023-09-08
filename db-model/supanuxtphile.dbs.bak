@@ -756,24 +756,28 @@ AS $function$
 	<layout name="all" id="Layout_55" show_relation="columns" >
 		<entity schema="app" name="app_settings" color="EEF7EC" x="288" y="1072" />
 		<entity schema="app" name="application" color="EEF7EC" x="432" y="880" />
+		<entity schema="inc" name="inc_resident" color="E6B3CC" x="976" y="656" />
+		<entity schema="inc" name="inc_tenant" color="E6B3CC" x="960" y="544" />
+		<entity schema="inc" name="incident" color="E6B3CC" x="1200" y="608" />
 		<entity schema="app" name="license" color="EEF7EC" x="48" y="432" />
 		<entity schema="app" name="license_pack" color="EEF7EC" x="400" y="512" />
 		<entity schema="app" name="license_pack_license_type" color="EEF7EC" x="368" y="704" />
 		<entity schema="app" name="license_type" color="EEF7EC" x="80" y="704" />
 		<entity schema="app" name="license_type_permission" color="EEF7EC" x="64" y="912" />
-		<entity schema="msg" name="message" color="CCB3FF" x="1344" y="1232" />
-		<entity schema="msg" name="msg_resident" color="CCB3FF" x="944" y="1088" />
-		<entity schema="msg" name="msg_tenant" color="CCB3FF" x="944" y="976" />
+		<entity schema="inc" name="location" color="E6B3CC" x="1504" y="576" />
+		<entity schema="msg" name="message" color="CCB3FF" x="1360" y="1232" />
+		<entity schema="msg" name="msg_resident" color="CCB3FF" x="960" y="1088" />
+		<entity schema="msg" name="msg_tenant" color="CCB3FF" x="960" y="976" />
 		<entity schema="app" name="permission" color="EEF7EC" x="64" y="1088" />
 		<entity schema="app" name="profile" color="EEF7EC" x="656" y="1024" />
 		<entity schema="app" name="resident" color="EEF7EC" x="640" y="592" />
-		<entity schema="msg" name="subscriber" color="CCB3FF" x="1360" y="976" />
+		<entity schema="msg" name="subscriber" color="CCB3FF" x="1376" y="976" />
 		<entity schema="app" name="tenant" color="EEF7EC" x="688" y="304" />
 		<entity schema="app" name="tenant_subscription" color="EEF7EC" x="416" y="256" />
 		<entity schema="todo" name="todo" color="FFFF99" x="1200" y="80" />
 		<entity schema="todo" name="todo_resident" color="FFFF99" x="960" y="320" />
 		<entity schema="todo" name="todo_tenant" color="FFFF99" x="960" y="192" />
-		<entity schema="msg" name="topic" color="CCB3FF" x="944" y="1296" />
+		<entity schema="msg" name="topic" color="CCB3FF" x="960" y="1296" />
 		<entity schema="auth" name="users" color="3986C1" x="688" y="1392" />
 		<group name="app" color="EEF7EC" >
 			<entity schema="app" name="resident" />
@@ -803,6 +807,12 @@ AS $function$
 			<entity schema="msg" name="subscriber" />
 			<entity schema="msg" name="topic" />
 			<entity schema="msg" name="message" />
+		</group>
+		<group name="inc" color="E6B3CC" >
+			<entity schema="inc" name="inc_resident" />
+			<entity schema="inc" name="inc_tenant" />
+			<entity schema="inc" name="incident" />
+			<entity schema="inc" name="location" />
 		</group>
 	</layout>
 	<layout name="app" id="Layout_1b6b" show_relation="columns" >
