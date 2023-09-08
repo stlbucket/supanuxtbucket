@@ -3,17 +3,17 @@ Core Techs:
 - [Supabase](https://www.supabase.com)
 - [Nuxt](https://nuxtjs.com)
 - [Postgraphile](https://postgraphile.org/)
-- [Nuxt UI Labs](https://ui.nuxtlabs.com/getting-started)
+- [Nuxt UI](https://ui.nuxtlabs.com/getting-started)
 - [Nuxt Graphql Client](https://nuxt-graphql-client.web.app/)
 
 ## Goals
 This repo is intended to illustrate a quick-start scenario for building MVPs that can be easily deployed to Supabase and the related ecosystem.
 
-Minimal UI styling, with simple straightforward usage of Nuxt UI Labs component library and basic Tailwind tweaks.  It should be relatively painless to swap in a different library as desired.
+Minimal UI styling, with simple straightforward usage of Nuxt UI component library and basic Tailwind tweaks.  It should be relatively painless to swap in a different library as desired.
 
 A schema-based, modular approach to database design meant to be scalable in the short term, and ready for refactoring should major services need to be split off in the future.
 
-Multi-tenancy support that includes the ability for individuals to work in many contexts, with varying permission levels depending on tenant residency.  This is really the core functionality of this repository.  Todo, messaging and incidents could be removed with no impact.
+Multi-tenancy support that includes the ability for individuals to work in many contexts, with varying permission levels depending on tenant residency.  **This is really the core functionality of this repository**.  Todo, messaging and incidents could be removed with no impact.
 
 The problem space is loosely defined as an incident management scenario, where group discussion and ad-hoc todo list tools are included with additional functionality to build a custom solution.
 

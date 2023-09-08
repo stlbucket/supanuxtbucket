@@ -27,7 +27,7 @@ Postgraphile v5 is currently in beta.
 
 The key point here is that the ```grafserv h3``` plugin is exposed by postgraphile, and actually handles things at the nitro level using h3 helpers.
 
-Special thanks to [benjie](https://github.com/benjie/) for offering to implement this vital component.  And to [dodobibi](https://github.com/Dodobibi) for the (upcoming) nuxt module.
+Special thanks to [benjie](https://github.com/benjie/) for offering to implement this vital component and to [dodobibi](https://github.com/Dodobibi) for the (upcoming) nuxt module.
 
 Refer to https://postgraphile.org/postgraphile/next/config to understand the accompanying ```graphile.config.ts``` file.
 

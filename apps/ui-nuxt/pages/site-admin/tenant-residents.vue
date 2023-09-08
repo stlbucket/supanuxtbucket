@@ -3,7 +3,6 @@
       <template #header>
         <div class="flex justify-between">
           <div class="flex text-2xl">TENANT RESIDENTS</div>
-          <div class="flex text-xs">Invitees may not yet be actual users</div>
         </div>
       </template>
       <div class="flex flex-col">
