@@ -6,7 +6,9 @@ This issue is on the current roadmap for postgraphile, and should be resolved in
 
 Docker-based deployment environments such as Cloud Run etc. are a straightforward way to deploy for now.
 ## Realtime
-Currently, graphql subscriptions do not work, but they will as soon as both Nuxt and Postgraphile release a couple of bug-fixes and pull-requests each.  All parts of this have been tested here: https://github.com/Dodobibi/postgraphile-nuxt and are planned to be evolved into a nuxt module.
+Currently, graphql subscriptions do not work, but they will as soon as both Nuxt and Postgraphile release a couple of bug-fixes and pull-requests.
+
+This has all been tested here: https://github.com/Dodobibi/postgraphile-nuxt and it is planned to be evolved into a nuxt module.
 
 The messaging (and maybe todo) features of this repository will be updated with this functionality when it is available.
 

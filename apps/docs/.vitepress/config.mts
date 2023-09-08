@@ -18,7 +18,7 @@ export default {
           { text: 'Credentials Flow', link: '/credentials-flow' },
           { text: 'Typescript', link: '/typescript' },
           { text: 'Installing an Application', link: '/installing-an-application'},
-          { text: 'Shortcomings', link: '/shortcomings' },
+          { text: 'Caveats', link: '/caveats' },
           {
             text: 'Schemas',
             link: '/schemas/index.schema',
