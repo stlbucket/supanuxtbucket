@@ -9,7 +9,7 @@
                 <UButton 
                   v-if="todoTree.status?.toString().toUpperCase() === 'COMPLETE'"
                   icon="i-heroicons-check"
-                  size="sm"
+                  size="xs"
                   color="green"
                   square
                   variant="solid"
@@ -19,7 +19,7 @@
                 <UButton
                   v-if="todoTree.status?.toString().toUpperCase() === 'INCOMPLETE'"
                   icon="none"
-                  size="sm"
+                  size="xs"
                   color="yellow"
                   square variant="outline"
                   :title="Boolean(todoTree.isTemplate) ? 'This is a template so no action can be taken' : 'Close'"
@@ -31,7 +31,7 @@
                 <UButton 
                   v-if="todoTree.status?.toString().toUpperCase() === 'COMPLETE'" 
                   icon="i-heroicons-check"
-                  size="sm"
+                  size="xs"
                   color="green"
                   square
                   variant="solid"
@@ -41,7 +41,7 @@
                 />
                 <UButton
                   v-if="todoTree.status?.toString().toUpperCase() === 'INCOMPLETE'"
-                  size="sm"
+                  size="xs"
                   color="yellow"
                   square 
                   variant="outline"
@@ -60,7 +60,7 @@
               <TodoModal :todo="todoTree" @updated="handleUpdated"/>
               <UButton 
                 icon="i-heroicons-minus-circle" 
-                size="sm" 
+                size="xs" 
                 color="red" 
                 square 
                 variant="solid" 
@@ -265,6 +265,7 @@
   })
 
   const buttonName = computed(() => {
-    return `${todoTree.value?.type?.toString().split('').at(0)}: ${ todoTree.value?.name}`
+    return todoTree.value?.name
+    // return `${todoTree.value?.type?.toString().split('').at(0)}: ${ todoTree.value?.name}`
   })
 </script>

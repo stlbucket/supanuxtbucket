@@ -1,5 +1,6 @@
 export default defineAppConfig({
   ui: {
+    icons: ['heroicons'],
     primary: 'green',
     gray: 'stone',
     card: {
