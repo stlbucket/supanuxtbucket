@@ -1,78 +1,73 @@
 <template>
   <div v-if="todoTree" class="flex flex-col grow">
-    <div class="flex justify-start min-w-max border-2 rounded-md border-stone-400 grow ml-10">
-      <div class="flex flex-col gap-3 align-items-center m-2 basis-1/10">
-        <div class="flex gap-1">
-          <div class="flex flex-col gap-1 w-30 p-1">
-            <div class="flex justify-around gap-1">
-              <div v-if="todoTree.type.toString().toUpperCase() === 'TASK'" class="flex">
-                <UButton 
-                  v-if="todoTree.status?.toString().toUpperCase() === 'COMPLETE'"
-                  icon="i-heroicons-check"
-                  size="xs"
-                  color="green"
-                  square
-                  variant="solid"
-                  title="Reopen"
-                  @click="onReopened"
-                />
-                <UButton
-                  v-if="todoTree.status?.toString().toUpperCase() === 'INCOMPLETE'"
-                  icon="none"
-                  size="xs"
-                  color="yellow"
-                  square variant="outline"
-                  :title="Boolean(todoTree.isTemplate) ? 'This is a template so no action can be taken' : 'Close'"
-                  @click="onClosed"
-                  :disabled="Boolean(todoTree.isTemplate)"
-                />
-              </div>
-              <div v-else class="flex">
-                <UButton 
-                  v-if="todoTree.status?.toString().toUpperCase() === 'COMPLETE'" 
-                  icon="i-heroicons-check"
-                  size="xs"
-                  color="green"
-                  square
-                  variant="solid"
-                  title="Reopen"
-                  @click="onReopened"
-                  disabled
-                />
-                <UButton
-                  v-if="todoTree.status?.toString().toUpperCase() === 'INCOMPLETE'"
-                  size="xs"
-                  color="yellow"
-                  square 
-                  variant="outline"
-                  title="Close"
-                  @click="onClosed"
-                  disabled
-                >{{ completionRatio }}</UButton>
-              </div>
-              <TodoModal 
-                v-if="detailed"
-                @updated="onAddSubtask" 
-                :parent-todo="todoTree"
-              />
-            </div>
-            <div v-if="detailed" class="flex gap-1">
-              <TodoModal :todo="todoTree" @updated="handleUpdated"/>
-              <UButton 
-                icon="i-heroicons-minus-circle" 
-                size="xs" 
-                color="red" 
-                square 
-                variant="solid" 
-                title="Delete" 
-                @click="onDelete"
-              />
-            </div>
-            </div>
-        </div>
-      </div>
-      <div class="flex flex-1 flex-col m-2 flex-grow-2 gap-1">
-        <div class="text-xl flex bg-cyan-950">
+    <div class="flex justify-start min-w-max border-2 rounded-md border-black grow ml-10">
+      <div class="flex flex-1 flex-col m-2 flex-grow-2">
+        <div class="text-xl flex gap-1">
+          <div v-if="String(todoTree.type) === 'TASK'" class="flex ">
+            <UButton 
+              v-if="todoTree.status?.toString().toUpperCase() === 'COMPLETE'"
+              icon="i-heroicons-check"
+              size="xs"
+              color="green"
+              square
+              variant="solid"
+              title="Reopen"
+              @click="onReopened"
+            />
+            <UButton
+              v-if="todoTree.status?.toString().toUpperCase() === 'INCOMPLETE'"
+              icon="none"
+              size="xs"
+              color="yellow"
+              square variant="outline"
+              :title="Boolean(todoTree.isTemplate) ? 'This is a template so no action can be taken' : 'Close'"
+              @click="onClosed"
+              :disabled="Boolean(todoTree.isTemplate)"
+            />
+          </div>
+          <div v-else class="flex">
+            <UButton
+              v-if="todoTree.status?.toString().toUpperCase() === 'COMPLETE'" 
+              icon="i-heroicons-check"
+              size="xs"
+              color="green"
+              square
+              variant="solid"
+              title="Reopen"
+              @click="onReopened"
+              disabled
+            />
+            <UButton
+              v-if="todoTree.status?.toString().toUpperCase() === 'INCOMPLETE'"
+              size="xs"
+              color="yellow"
+              square 
+              variant="outline"
+              title="Close"
+              @click="onClosed"
+              disabled
+            >{{ completionRatio }}</UButton>
+          </div>
+          <UButton 
+            v-if="String(todoTree.type) === 'MILESTONE'"
+            :icon="expansionIcon"
+            size="xs"
+            color="white" 
+            square 
+            variant="solid" 
+            :title="expansionTitle" 
+            @click="onToggleExpansion"
+          />
+          <UButton 
+            v-if="String(todoTree.type) === 'MILESTONE' && !expanded"
+            icon="i-heroicons-chevron-double-down"
+            size="xs"
+            color="white" 
+            square 
+            variant="solid" 
+            title="Expand All Children"
+            @click="onExpandAllChildren"
+          />
           <UButton
             class="flex grow"
             @click="handleSelectTodo"
@@ -80,16 +75,34 @@
             :title="todoTree.description"
           >{{ buttonName }}</UButton>
         </div>
-        <div class="flex flex-1 gap-2 grow-0" v-if="detailed">
+        <div class="flex gap-1" v-if="detailed">
+          <TodoModal 
+            @updated="onAddSubtask" 
+            :parent-todo="todoTree"
+          />
+          <UButton
+            v-if="String(todoTree.type) === 'TASK'"
+            icon="i-heroicons-minus-circle"
+            size="xs"
+            color="white" 
+            square 
+            variant="solid" 
+            title="Delete" 
+            @click="onDelete"
+          />
+          <TodoModal 
+            @updated="onAddSubtask" 
+            :todo="todoTree"
+          />
           <TodoAssign :todo="todoTree" @assigned="handleAssigned" />
           <div>{{ todoTree.owner?.displayName }}</div>
         </div>
       </div>
     </div>
-    <div v-if="todoTree.hiddenChildren?.totalCount ?? 0 > 0" class="flex justify-start min-w-max grow ml-10 hover:cursor-pointer" @click="onLoadSubtree">
+    <div v-if="showLoadChildren" class="flex justify-start min-w-max grow ml-10 hover:cursor-pointer" @click="onLoadSubtree">
       Load {{ todoTree.hiddenChildren?.totalCount ?? 0 }} children...
     </div>
-    <div v-if="todoTree.children?.length ?? 0 > 0" class="ml-3">
+    <div v-if="showChildren" class="ml-3">
       <TodoTree 
         v-for="c in todoTree.children" 
         :todo-id="c.id.toString()"
@@ -99,18 +112,18 @@
         @updated="handleChildUpdated"
         @subtask-added="handleAddSubtask"
         @deleted="handleDelete"
+        :expand-all="expandAllChildren"
       />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  // import { Todo } from 'db-types';
-
   const props = withDefaults(defineProps<{
     todoId: string,
     subTree?: Todo,
-    treeLevel?: number
+    treeLevel?: number,
+    expandAll?: boolean
   }>(), {
     treeLevel: 0
   })
@@ -125,6 +138,8 @@
 
   const todoTree: Ref<Todo | undefined> = ref()
   const detailed = ref(false)
+  const expanded = ref(false)
+  const expandAllChildren = ref(false)
 
   const shallowMerge = (todo: Todo) => {
 
@@ -160,6 +175,8 @@
     } else {
       todoTree.value = props.subTree
     }
+    expanded.value = !!props.expandAll
+    expandAllChildren.value = !!props.expandAll
   }
   initializeData()
 
@@ -244,16 +261,6 @@
   const primaryButtonColor = computed(()=>{
     const type = String(todoTree.value?.type)
     return type === 'MILESTONE' ? 'white' : 'black'
-
-    // if (todoTree.value) {
-    //   switch (todoTree.value.type.toString().toUpperCase()) {
-    //     case 'MILESTONE':
-    //       return 'white'
-    //     case 'TASK':
-    //       return 'black'
-    //   }
-    //   return `teal`
-    // }
   })
 
   const completionRatio = computed(() => {
@@ -266,6 +273,37 @@
 
   const buttonName = computed(() => {
     return todoTree.value?.name
-    // return `${todoTree.value?.type?.toString().split('').at(0)}: ${ todoTree.value?.name}`
+  })
+
+  const showChildren = computed(() => {
+    return expanded.value && ((todoTree.value?.children?.length ?? 0) > 0)
+  })
+  const showLoadChildren = computed(() => {
+    return todoTree.value?.hiddenChildren?.totalCount ?? 0 > 0
+  })
+
+  const onExpandAllChildren = async () => {
+    expanded.value = true
+    expandAllChildren.value = true
+  }
+  const onToggleExpansion = async () => {
+    expanded.value = !(expanded.value)
+    if (!expanded.value) {
+      expandAllChildren.value = false
+    }
+  }
+  const expansionIcon = computed(() => {
+    return `${expanded.value ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'}`
+  })
+  const expansionTitle = computed(() => {
+    return `${expanded.value ? 'Collapse' : 'Expand'}`
+  })
+  watch(()=>{ 
+    return props.expandAll
+  }, ()=>{
+    alert(props.expandAll)
+    expanded.value = props.expandAll
+    alert(expanded.value)
+    expandAllChildren.value = props.expandAll
   })
 </script>

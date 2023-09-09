@@ -1,10 +1,10 @@
 <template>
-  <UButton v-if="todo" icon="i-heroicons-pencil" size="sm" color="blue" square variant="solid" title="Edit Todo"  @click="showModal = true"/>
-  <UButton v-else icon="i-heroicons-plus-circle" size="sm" color="sky" square variant="solid" :title="addButtonTitle"  @click="showModal = true"/>
+  <UButton v-if="todo" icon="i-heroicons-pencil" size="xs" color="white"  title="Edit Todo"  @click="showModal = true"/>
+  <UButton v-else icon="i-heroicons-plus-circle" size="xs" color="white" :title="addButtonTitle"  @click="showModal = true"/>
   <UModal v-model="showModal">
     <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
       <template #header>
-        Edit Todo
+        {{ `${parentTodo ? 'Add Subtask' : 'Edit Todo'}` }}
       </template>
       <div class="flex flex-col gap-3">
         <UFormGroup name="name" label="Name">

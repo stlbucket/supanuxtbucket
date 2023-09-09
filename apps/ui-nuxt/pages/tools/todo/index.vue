@@ -12,13 +12,17 @@
         </div>
       </div>
     </template>
-    <div class="flex flex-col gap-1">
-      <TodoTask v-for="t in todos" :todo="t" 
-        @updated="loadData" 
-        @deleted="loadData"
-        @selected="handleSelected"
-      ></TodoTask>
-    </div>
+    <UTable
+      :rows="todos"
+      :columns="[
+        { key:'name', label: 'Name' },
+        { key:'status', label: 'Status' }
+      ]"
+    >
+      <template #name-data="{row}">
+        <NuxtLink :to="`/tools/todo/${row.id}`">{{ row.name }}</NuxtLink>
+      </template>
+    </UTable>
   </UCard>
 </template>
 
