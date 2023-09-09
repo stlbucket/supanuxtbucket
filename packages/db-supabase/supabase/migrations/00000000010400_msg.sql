@@ -25,7 +25,7 @@ create table msg.msg_tenant (
 );
 
 create table msg.msg_resident (
-  id uuid not null references app.resident(id) primary key
+  resident_id uuid not null references app.resident(id) primary key
   ,tenant_id uuid not null references msg.msg_tenant(tenant_id)
   ,display_name citext not null
 );
@@ -51,7 +51,7 @@ create table msg.message (
   status msg.message_status not null default 'sent',
   topic_id uuid not null references msg.topic(id),
   content citext not null,
-  posted_by_msg_resident_id uuid not null references msg.msg_resident(id),
+  posted_by_msg_resident_id uuid not null references msg.msg_resident(resident_id),
   tags text[] not null default '{}'::text[]
 );
 ALTER TABLE ONLY msg.message
@@ -65,7 +65,7 @@ create table msg.subscriber (
   created_at timestamptz not null default current_timestamp,
   status msg.subscriber_status not null default 'active',
   topic_id uuid not null references msg.topic(id),
-  msg_resident_id uuid not null references msg.msg_resident(id),
+  msg_resident_id uuid not null references msg.msg_resident(resident_id),
   last_read timestamptz not null default current_timestamp
 );
 ALTER TABLE ONLY msg.subscriber

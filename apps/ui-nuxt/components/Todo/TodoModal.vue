@@ -8,7 +8,7 @@
       </template>
       <div class="flex flex-col gap-3">
         <UFormGroup name="name" label="Name">
-          <UInput placeholder="name your todo" v-model="formData.name" type="text"/>
+          <UInput placeholder="name your todo" v-model="formData.name" type="text"  data-1p-ignore/>
         </UFormGroup>
         <UFormGroup name="description" label="Description">
           <UTextarea placeholder="describe your todo" v-model="formData.description" type="text" class="flex"/>

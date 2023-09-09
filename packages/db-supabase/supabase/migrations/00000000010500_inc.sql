@@ -55,7 +55,7 @@ create table inc.inc_location (
   id uuid NOT NULL DEFAULT gen_random_uuid() primary key,
   tenant_id uuid not null references inc.inc_tenant(tenant_id),
   incident_id uuid not null references inc.incident(id),
-  location_id uuid not null references loc.location(id) unique,
+  location_id uuid not null references loc.location(id),
   name text not null
 );
 

@@ -24,11 +24,11 @@ CREATE OR REPLACE FUNCTION msg_fn.ensure_msg_resident(
     end if;
 -- raise exception '_msg_tenant: %', _msg_tenant;
 
-    select * into _msg_resident from msg.msg_resident where id = _resident_id;
-    if _msg_resident.id is null then
+    select * into _msg_resident from msg.msg_resident where resident_id = _resident_id;
+    if _msg_resident.resident_id is null then
 -- raise exception '_msg_resident: %', _msg_resident;
 
-      insert into msg.msg_resident(id, display_name, tenant_id)
+      insert into msg.msg_resident(resident_id, display_name, tenant_id)
         select id, display_name, tenant_id
         from app.resident 
         where id = _resident_id 
@@ -179,7 +179,7 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_message(
       select
         _topic.tenant_id
         ,_message_info.topic_id
-        ,_msg_resident.id
+        ,_msg_resident.resident_id
         ,_message_info.content
         ,coalesce(_message_info.tags, '{}')
       returning *

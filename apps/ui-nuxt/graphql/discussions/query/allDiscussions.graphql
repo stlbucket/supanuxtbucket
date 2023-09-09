@@ -8,7 +8,7 @@ query AllDiscussions {
         id
         status
         msgResident {
-          id
+          residentId
           displayName
         }
       }

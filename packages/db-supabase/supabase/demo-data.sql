@@ -174,7 +174,7 @@
   select msg_fn.upsert_subscriber(
     row(
       t.id
-      ,mu.id
+      ,mu.resident_id
     )
   )
   from msg.topic t
@@ -188,7 +188,7 @@
       ,('tacos are yummy...')::citext
       ,null
     )
-    ,mu.id
+    ,mu.resident_id
   )
   from msg.topic t
   join msg.msg_resident mu on mu.tenant_id = t.tenant_id

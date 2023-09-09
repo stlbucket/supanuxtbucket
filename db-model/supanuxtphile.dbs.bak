@@ -427,6 +427,27 @@ AS $function$
 		<udt name="incident_status" udt_java_type="12" udt_precision="NONE" >
 			<udt_script><![CDATA[CREATE TYPE ${schema}.${name} AS ENUM ( 'open', 'closed' , 'pending' , 'deleted'  )]]></udt_script>
 		</udt>
+		<table name="inc_location" >
+			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
+				<defo><![CDATA[gen_random_uuid()]]></defo>
+			</column>
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="incident_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="location_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="name" type="text" decimal="0" jt="12" mandatory="y" />
+			<index name="inc_location_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="inc_location_tenant_id_fkey" to_schema="inc" to_table="inc_tenant" >
+				<fk_column name="tenant_id" pk="tenant_id" />
+			</fk>
+			<fk name="inc_location_incident_id_fkey" to_schema="inc" to_table="incident" >
+				<fk_column name="incident_id" pk="id" />
+			</fk>
+			<fk name="inc_location_location_id_fkey" to_schema="loc" to_table="location" >
+				<fk_column name="location_id" pk="id" />
+			</fk>
+		</table>
 		<table name="inc_resident" >
 			<column name="resident_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
 			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
@@ -494,12 +515,38 @@ AS $function$
 				<fk_column name="topic_id" pk="id" />
 			</fk>
 		</table>
+	</schema>
+	<schema name="loc" >
+		<table name="loc_resident" >
+			<column name="resident_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="display_name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<index name="loc_resident_pkey" unique="PRIMARY_KEY" >
+				<column name="resident_id" />
+			</index>
+			<fk name="loc_resident_tenant_id_fkey" to_schema="loc" to_table="loc_tenant" >
+				<fk_column name="tenant_id" pk="tenant_id" />
+			</fk>
+			<fk name="loc_resident_resident_id_fkey" to_schema="app" to_table="resident" >
+				<fk_column name="resident_id" pk="id" />
+			</fk>
+		</table>
+		<table name="loc_tenant" >
+			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="name" type="citext" decimal="0" jt="12" mandatory="y" />
+			<index name="loc_tenant_pkey" unique="PRIMARY_KEY" >
+				<column name="tenant_id" />
+			</index>
+			<fk name="loc_tenant_tenant_id_fkey" to_schema="app" to_table="tenant" >
+				<fk_column name="tenant_id" pk="id" />
+			</fk>
+		</table>
 		<table name="location" >
 			<column name="id" type="uuid" decimal="0" jt="1111" mandatory="y" >
 				<defo><![CDATA[gen_random_uuid()]]></defo>
 			</column>
 			<column name="tenant_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
-			<column name="incident_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
+			<column name="resident_id" type="uuid" decimal="0" jt="1111" mandatory="y" />
 			<column name="name" type="text" decimal="0" jt="12" />
 			<column name="address1" type="text" decimal="0" jt="12" />
 			<column name="address2" type="text" decimal="0" jt="12" />
@@ -512,15 +559,11 @@ AS $function$
 			<index name="location_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
-			<index name="location_incident_id_name_key" unique="UNIQUE_KEY" >
-				<column name="incident_id" />
-				<column name="name" />
-			</index>
-			<fk name="location_tenant_id_fkey" to_schema="inc" to_table="inc_tenant" >
-				<fk_column name="tenant_id" pk="tenant_id" />
+			<fk name="location_resident_id_fkey" to_schema="loc" to_table="loc_resident" >
+				<fk_column name="resident_id" pk="resident_id" />
 			</fk>
-			<fk name="location_incident_id_fkey" to_schema="inc" to_table="incident" >
-				<fk_column name="incident_id" pk="id" />
+			<fk name="location_tenant_id_fkey" to_schema="loc" to_table="loc_tenant" >
+				<fk_column name="tenant_id" pk="tenant_id" />
 			</fk>
 		</table>
 	</schema>
@@ -756,6 +799,7 @@ AS $function$
 	<layout name="all" id="Layout_55" show_relation="columns" >
 		<entity schema="app" name="app_settings" color="EEF7EC" x="288" y="1072" />
 		<entity schema="app" name="application" color="EEF7EC" x="432" y="880" />
+		<entity schema="inc" name="inc_location" color="E6B3CC" x="1456" y="624" />
 		<entity schema="inc" name="inc_resident" color="E6B3CC" x="976" y="656" />
 		<entity schema="inc" name="inc_tenant" color="E6B3CC" x="960" y="544" />
 		<entity schema="inc" name="incident" color="E6B3CC" x="1200" y="608" />
@@ -764,7 +808,9 @@ AS $function$
 		<entity schema="app" name="license_pack_license_type" color="EEF7EC" x="368" y="704" />
 		<entity schema="app" name="license_type" color="EEF7EC" x="80" y="704" />
 		<entity schema="app" name="license_type_permission" color="EEF7EC" x="64" y="912" />
-		<entity schema="inc" name="location" color="E6B3CC" x="1504" y="576" />
+		<entity schema="loc" name="loc_resident" color="B3E6E6" x="1632" y="80" />
+		<entity schema="loc" name="loc_tenant" color="B3E6E6" x="1776" y="80" />
+		<entity schema="loc" name="location" color="B3E6E6" x="1904" y="80" />
 		<entity schema="msg" name="message" color="CCB3FF" x="1360" y="1232" />
 		<entity schema="msg" name="msg_resident" color="CCB3FF" x="960" y="1088" />
 		<entity schema="msg" name="msg_tenant" color="CCB3FF" x="960" y="976" />
@@ -812,7 +858,12 @@ AS $function$
 			<entity schema="inc" name="inc_resident" />
 			<entity schema="inc" name="inc_tenant" />
 			<entity schema="inc" name="incident" />
-			<entity schema="inc" name="location" />
+			<entity schema="inc" name="inc_location" />
+		</group>
+		<group name="loc" color="B3E6E6" >
+			<entity schema="loc" name="loc_resident" />
+			<entity schema="loc" name="loc_tenant" />
+			<entity schema="loc" name="location" />
 		</group>
 	</layout>
 	<layout name="app" id="Layout_1b6b" show_relation="columns" >
@@ -851,20 +902,28 @@ AS $function$
 		<entity schema="inc" name="inc_resident" color="E6B3CC" x="288" y="80" />
 		<entity schema="inc" name="inc_tenant" color="E6B3CC" x="48" y="80" />
 		<entity schema="inc" name="incident" color="E6B3CC" x="240" y="288" />
-		<entity schema="inc" name="location" color="E6B3CC" x="48" y="288" />
 		<group name="inc" color="E6B3CC" >
 			<entity schema="inc" name="incident" />
 			<entity schema="inc" name="inc_tenant" />
 			<entity schema="inc" name="inc_resident" />
-			<entity schema="inc" name="location" />
+		</group>
+	</layout>
+	<layout name="loc" id="Layout_1945" show_relation="columns" >
+		<entity schema="loc" name="loc_resident" color="B3E6E6" x="48" y="80" />
+		<entity schema="loc" name="loc_tenant" color="B3E6E6" x="272" y="80" />
+		<entity schema="loc" name="location" color="B3E6E6" x="272" y="272" />
+		<group name="Group_" color="B3E6E6" >
+			<entity schema="loc" name="loc_resident" />
+			<entity schema="loc" name="loc_tenant" />
+			<entity schema="loc" name="location" />
 		</group>
 	</layout>
 	<layout name="msg" id="Layout_21c" show_relation="columns" >
-		<entity schema="msg" name="message" color="CCB3FF" x="48" y="288" />
-		<entity schema="msg" name="msg_resident" color="CCB3FF" x="528" y="80" />
-		<entity schema="msg" name="msg_tenant" color="CCB3FF" x="288" y="80" />
-		<entity schema="msg" name="subscriber" color="CCB3FF" x="752" y="352" />
-		<entity schema="msg" name="topic" color="CCB3FF" x="432" y="256" />
+		<entity schema="msg" name="message" color="CCB3FF" x="368" y="80" />
+		<entity schema="msg" name="msg_resident" color="CCB3FF" x="48" y="208" />
+		<entity schema="msg" name="msg_tenant" color="CCB3FF" x="64" y="96" />
+		<entity schema="msg" name="subscriber" color="CCB3FF" x="64" y="352" />
+		<entity schema="msg" name="topic" color="CCB3FF" x="416" y="352" />
 		<group name="msg" color="CCB3FF" >
 			<entity schema="msg" name="msg_tenant" />
 			<entity schema="msg" name="msg_resident" />

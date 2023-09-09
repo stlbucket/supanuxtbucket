@@ -11,7 +11,7 @@ query DiscussionById(
       status
       lastRead
       msgResident {
-        id
+        residentId
         displayName
       }
     }
@@ -21,7 +21,7 @@ query DiscussionById(
       status
       content
       postedBy: postedByMsgResident {
-        id
+        residentId
         displayName
       }
     }

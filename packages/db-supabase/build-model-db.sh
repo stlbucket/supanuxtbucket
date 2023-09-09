@@ -8,4 +8,5 @@ psql -h 0.0.0.0 -U postgres -d snb -f ./supabase/migrations/00000000010220_app.s
 psql -h 0.0.0.0 -U postgres -d snb -f ./supabase/migrations/00000000010230_app_fn_types.sql
 psql -h 0.0.0.0 -U postgres -d snb -f ./supabase/migrations/00000000010300_todo.sql
 psql -h 0.0.0.0 -U postgres -d snb -f ./supabase/migrations/00000000010400_msg.sql
+psql -h 0.0.0.0 -U postgres -d snb -f ./supabase/migrations/00000000010450_loc.sql
 psql -h 0.0.0.0 -U postgres -d snb -f ./supabase/migrations/00000000010500_inc.sql
