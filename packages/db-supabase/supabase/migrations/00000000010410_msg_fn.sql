@@ -1,3 +1,25 @@
+----------------------------------- handle_update_profile ---  NO API
+create or replace function msg_fn.handle_update_profile()
+  returns trigger
+  language plpgsql
+  security definer
+  as $$
+  DECLARE
+    _claims jsonb;
+  begin
+    update msg.msg_resident set
+      display_name = new.display_name
+    where resident_id in (
+      select id from app.resident where profile_id = new.id
+    );
+
+    return new;
+  end;
+  $$;
+  -- trigger the function every time a user is created
+create or replace trigger msg_on_app_profile_updated
+  after update on app.profile
+  for each row execute procedure msg_fn.handle_update_profile();
 -------------------------------------- ensure_msg_resident
 CREATE OR REPLACE FUNCTION msg_fn.ensure_msg_resident(
     _resident_id uuid

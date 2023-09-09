@@ -1,3 +1,25 @@
+----------------------------------- handle_update_profile ---  NO API
+create or replace function loc_fn.handle_update_profile()
+  returns trigger
+  language plpgsql
+  security definer
+  as $$
+  DECLARE
+    _claims jsonb;
+  begin
+    update loc.loc_resident set
+      display_name = new.display_name
+    where resident_id in (
+      select id from app.resident where profile_id = new.id
+    );
+
+    return new;
+  end;
+  $$;
+  -- trigger the function every time a user is created
+create or replace trigger loc_on_app_profile_updated
+  after update on app.profile
+  for each row execute procedure loc_fn.handle_update_profile();
 -------------------------------------- ensure_loc_resident
 CREATE OR REPLACE FUNCTION loc_fn.ensure_loc_resident(
     _resident_id uuid

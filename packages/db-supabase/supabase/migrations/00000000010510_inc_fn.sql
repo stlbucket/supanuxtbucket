@@ -1,3 +1,25 @@
+----------------------------------- handle_update_profile ---  NO API
+create or replace function inc_fn.handle_update_profile()
+  returns trigger
+  language plpgsql
+  security definer
+  as $$
+  DECLARE
+    _claims jsonb;
+  begin
+    update inc.inc_resident set
+      display_name = new.display_name
+    where resident_id in (
+      select id from app.resident where profile_id = new.id
+    );
+
+    return new;
+  end;
+  $$;
+  -- trigger the function every time a user is created
+create or replace trigger inc_on_app_profile_updated
+  after update on app.profile
+  for each row execute procedure inc_fn.handle_update_profile();
 ----------------------------------- install_incidents_application ---  NO API
 CREATE OR REPLACE FUNCTION inc_fn.install_incidents_application()
   RETURNS app.application

@@ -169,24 +169,6 @@ CREATE OR REPLACE FUNCTION app_fn.update_profile(
 
     perform app_fn.configure_user_metadata(_profile.id);
 
-    update msg.msg_resident set 
-      display_name = _display_name
-    where resident_id in (select id from app.resident where profile_id = _profile_id)
-    ;
-    update loc.loc_resident set 
-      display_name = _display_name
-    where resident_id in (select id from app.resident where profile_id = _profile_id)
-    ;
-    update inc.inc_resident set 
-      display_name = _display_name
-    where resident_id in (select id from app.resident where profile_id = _profile_id)
-    ;
-    update todo.todo_resident set 
-      display_name = _display_name
-    where resident_id in (select id from app.resident where profile_id = _profile_id)
-    ;
-
-
     return _profile;
   end;
   $function$

@@ -6,6 +6,29 @@ create schema if not exists todo_api;
 create schema if not exists todo_fn;
 
 -------------------------------------------------------------------------------- todo-functions
+----------------------------------- handle_update_profile ---  NO API
+create or replace function todo_fn.handle_update_profile()
+  returns trigger
+  language plpgsql
+  security definer
+  as $$
+  DECLARE
+    _claims jsonb;
+  begin
+    update todo.todo_resident set
+      display_name = new.display_name
+    where resident_id in (
+      select id from app.resident where profile_id = new.id
+    );
+
+    return new;
+  end;
+  $$;
+  -- trigger the function every time a user is created
+create or replace trigger todo_on_app_profile_updated
+  after update on app.profile
+  for each row execute procedure todo_fn.handle_update_profile();
+
 -------------------------------------- ensure_todo_resident
 CREATE OR REPLACE FUNCTION todo_fn.ensure_todo_resident(
     _resident_id uuid
