@@ -78,7 +78,7 @@
             @click="handleSelectTodo"
             :color="primaryButtonColor"
             :title="todoTree.description"
-          >{{ todoTree.type?.toString().split('').at(0) }}: {{ todoTree.name }}</UButton>
+          >{{ buttonName }}</UButton>
         </div>
         <div class="flex flex-1 gap-2 grow-0" v-if="detailed">
           <TodoAssign :todo="todoTree" @assigned="handleAssigned" />
@@ -197,6 +197,10 @@
         result.createTodo.todo
       ]
       todoTree.value.children = children
+      // @ts-ignore
+      todoTree.value.status = 'INCOMPLETE'
+      // @ts-ignore
+      todoTree.value.type = 'MILESTONE'
       emit('subtaskAdded', todoTree.value)
     }
   }
@@ -238,15 +242,18 @@
     detailed.value = !detailed.value
   }
   const primaryButtonColor = computed(()=>{
-    if (todoTree.value) {
-      switch (todoTree.value.type.toString().toUpperCase()) {
-        case 'MILESTONE':
-          return 'white'
-        case 'TASK':
-          return 'black'
-      }
-      return `teal`
-    }
+    const type = String(todoTree.value?.type)
+    return type === 'MILESTONE' ? 'white' : 'black'
+
+    // if (todoTree.value) {
+    //   switch (todoTree.value.type.toString().toUpperCase()) {
+    //     case 'MILESTONE':
+    //       return 'white'
+    //     case 'TASK':
+    //       return 'black'
+    //   }
+    //   return `teal`
+    // }
   })
 
   const completionRatio = computed(() => {
@@ -255,5 +262,9 @@
       const totalCount = (todoTree.value.children || []).length
       return `${complete}/${totalCount}`
     }
+  })
+
+  const buttonName = computed(() => {
+    return `${todoTree.value?.type?.toString().split('').at(0)}: ${ todoTree.value?.name}`
   })
 </script>
