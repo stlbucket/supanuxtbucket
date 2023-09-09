@@ -1,6 +1,6 @@
 <template>
   <div v-if="!supUser" class="flex">
-    <UInput placeholder="Your Email address" v-model="email"></UInput>
+    <UInput placeholder="Your Email address" v-model="email" data-1p-ignore></UInput>
     <UButton @click="handleLogin">Send Magic Link</UButton>
   </div>
   <div v-else class="flex grow items-end justify-around gap-2">

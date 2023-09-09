@@ -11,7 +11,7 @@
           <UInput placeholder="name your todo" v-model="formData.name" type="text"  data-1p-ignore/>
         </UFormGroup>
         <UFormGroup name="description" label="Description">
-          <UTextarea placeholder="describe your todo" v-model="formData.description" type="text" class="flex"/>
+          <UTextarea placeholder="describe your todo" v-model="formData.description" type="text" class="flex" data-1p-ignore/>
         </UFormGroup>
       </div>
       <template #footer>

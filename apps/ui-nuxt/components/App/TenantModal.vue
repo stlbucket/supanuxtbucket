@@ -7,10 +7,10 @@
       </template>
       <div class="flex flex-col gap-2">
         <UFormGroup name="name" label="Name">
-          <UInput placeholder="name" v-model="formData.name" type="text" class="flex"/>
+          <UInput placeholder="name" v-model="formData.name" type="text" class="flex" data-1p-ignore/>
         </UFormGroup>
         <UFormGroup name="email" label="Admin Email">
-          <UInput placeholder="admin email" v-model="formData.email" type="text" class="flex"/>
+          <UInput placeholder="admin email" v-model="formData.email" type="text" class="flex" data-1p-ignore/>
         </UFormGroup>
       </div>
       <template #footer>

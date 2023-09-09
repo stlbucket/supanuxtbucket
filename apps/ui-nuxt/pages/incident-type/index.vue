@@ -6,7 +6,7 @@
         <IncidentModal @new="onNewIncident" />
       </div>
       <div>
-        <UInput v-model="searchTerm" />
+        <UInput v-model="searchTerm" data-1p-ignore />
       </div>
     </template>
     <UTable

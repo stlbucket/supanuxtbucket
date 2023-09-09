@@ -7,7 +7,7 @@
       </template>
       <div class="flex flex-col gap-2">
         <UFormGroup name="name" label="Name">
-          <UInput placeholder="name" v-model="formData.name" type="text" class="flex"/>
+          <UInput placeholder="name" v-model="formData.name" type="text" class="flex" data-1p-ignore/>
         </UFormGroup>
         <UFormGroup name="description" label="Description" class="min-h-[200px]">
           <UTextarea placeholder="description" v-model="formData.description" type="text" class="flex"/>

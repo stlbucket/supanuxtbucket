@@ -8,7 +8,7 @@
         </div>
         <div class="flex flex-col">
           <div class="text-xs">SEARCH TERM</div>
-          <UInput v-model="searchTerm" />
+          <UInput v-model="searchTerm" data-1p-ignore />
         </div>
       </div>
     </template>

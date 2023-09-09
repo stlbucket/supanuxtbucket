@@ -7,7 +7,7 @@
       </div>
     </template>
     <div>
-      <UInput v-model="searchTerm" />
+      <UInput v-model="searchTerm" data-1p-ignore />
     </div>
     <UTable
       :rows="profiles"

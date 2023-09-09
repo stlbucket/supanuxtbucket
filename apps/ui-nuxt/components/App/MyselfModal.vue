@@ -8,10 +8,10 @@
       </template>
       <UFormGroup name="profile" label="Profile">
         <div class="flex flex-col gap-3">
-          <UInput placeholder="display name" v-model="formData.displayName" type="text" class="flex"/>
-          <UInput placeholder="first name" v-model="formData.firstName" type="text" class="flex"/>
-          <UInput placeholder="last name" v-model="formData.lastName" type="text" class="flex"/>
-          <UInput placeholder="phone" v-model="formData.phone" type="text" class="flex"/>
+          <UInput placeholder="display name" v-model="formData.displayName" type="text" class="flex" data-1p-ignore/>
+          <UInput placeholder="first name" v-model="formData.firstName" type="text" class="flex" data-1p-ignore/>
+          <UInput placeholder="last name" v-model="formData.lastName" type="text" class="flex" data-1p-ignore/>
+          <UInput placeholder="phone" v-model="formData.phone" type="text" class="flex" data-1p-ignore/>
         </div>
       </UFormGroup>
       <template #footer>
