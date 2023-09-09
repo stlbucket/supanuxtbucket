@@ -51,6 +51,3 @@
     selectedLocations.value = props.preSelected || []
   })
 </script>
-
-
-<!-- const {data,error} = await useFetch('https://geocode.maps.co/search?street=400+Broad+St&city=Seattle&state=WA&postalcode=98109&country=US') -->

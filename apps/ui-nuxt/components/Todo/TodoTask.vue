@@ -108,9 +108,9 @@
   const primaryButtonColor = computed(()=>{
     switch (props.todo.type.toString().toUpperCase()) {
       case 'MILESTONE':
-        return 'fuchsia'
+        return 'white'
       case 'TASK':
-        return 'teal'
+        return 'black'
     }
     return `fuchsia`
   })

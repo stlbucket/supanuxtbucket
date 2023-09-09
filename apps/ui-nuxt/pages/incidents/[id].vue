@@ -33,6 +33,8 @@
             <template #attachments="{ item }">
               <p>ATTACHMENTS - documents, photos</p>
               <p>videos might be a stretch</p>
+              <hr>
+              <a target="_blank" href="https://supabase.com/docs/guides/storage">Supabase Storage Guide</a>
             </template>
           </UTabs>          
         </div>

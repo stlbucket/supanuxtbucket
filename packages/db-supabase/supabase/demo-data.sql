@@ -132,15 +132,7 @@
             _incident := inc_fn.create_incident(
               _incident_info => row(
                 aut.display_name||' Demo Incident'::citext
-                ,'This is a demo incident.  A long-winded way of saying
-                      
-                that we want to see
-
-                what happens when we put a lot of text in here. Blah blah blah
-                blah blahblah blahblah blahblah blahblah blahblah
-                
-                blahblah blahblah blahblah blahblah blahblah blah
-                '::citext
+                ,'picking up trash'::citext
                 ,aut.display_name||'-demo'::citext
                 ,'{}'::citext[]
                 ,false::boolean
@@ -197,9 +189,9 @@
 ------------------------------- TODO DEMO DATA
     select todo_fn.create_todo(
       _resident_id => id::uuid
-      ,_name => ('TODO: '||display_name)::citext
+      ,_name => ('TODO EXAMPLE: '||display_name)::citext
       ,_options => row(
-        'a todo just for demos'::citext
+        'picking up trash'::citext
         ,null
         ,false
       )::todo_fn.create_todo_options
@@ -208,85 +200,176 @@
 
       select todo_fn.create_todo(
         _resident_id => resident_id::uuid
-        ,_name => 'This is a subtask'::citext
+        ,_name => 'Get Supplies'::citext
         ,_options => row(
-          'it''s a tree, really....'::citext
+          'get-supplies'::citext
           ,id::uuid
           ,false
         )::todo_fn.create_todo_options
       ) from todo.todo
-      -- where description = 'a todo just for demos'::citext
+      where description = 'picking up trash'::citext
       ;
+        select todo_fn.create_todo(
+          _resident_id => resident_id::uuid
+          ,_name => 'Trash Bags'::citext
+          ,_options => row(
+            ''::citext
+            ,id::uuid
+            ,false
+          )::todo_fn.create_todo_options
+        ) from todo.todo
+        where description = 'get-supplies'::citext
+        ;
+        select todo_fn.create_todo(
+          _resident_id => resident_id::uuid
+          ,_name => 'Gloves'::citext
+          ,_options => row(
+            ''::citext
+            ,id::uuid
+            ,false
+          )::todo_fn.create_todo_options
+        ) from todo.todo
+        where description = 'get-supplies'::citext
+        ;
+        select todo_fn.create_todo(
+          _resident_id => resident_id::uuid
+          ,_name => 'Beer'::citext
+          ,_options => row(
+            ''::citext
+            ,id::uuid
+            ,false
+          )::todo_fn.create_todo_options
+        ) from todo.todo
+        where description = 'get-supplies'::citext
+        ;
 
       select todo_fn.create_todo(
         _resident_id => resident_id::uuid
-        ,_name => 'Subtask milestone'::citext
+        ,_name => 'Schedule dumpster'::citext
         ,_options => row(
-          'treeeeeedom,  treeedom!!!!'::citext
+          'dumpster'::citext
           ,id::uuid
           ,false
         )::todo_fn.create_todo_options
       ) from todo.todo
-      -- where description = 'a todo just for demos'::citext
+      where description = 'picking up trash'::citext
       ;
-
         select todo_fn.create_todo(
           _resident_id => resident_id::uuid
-          ,_name => 'Subtask milestone submilestask'::citext
+          ,_name => 'Call trash company'::citext
           ,_options => row(
-            'the tree tops hear...'::citext
+            '555.555.5555'::citext
             ,id::uuid
             ,false
           )::todo_fn.create_todo_options
         ) from todo.todo
-        where description = 'treeeeeedom,  treeedom!!!!'::citext
+        where description = 'dumpster'::citext
         ;
-
         select todo_fn.create_todo(
           _resident_id => resident_id::uuid
-          ,_name => 'Subtask milestone submilestone'::citext
+          ,_name => 'Call city for permission'::citext
           ,_options => row(
-            'treeeeeeeeally....'::citext
+            '555.555.5555'::citext
             ,id::uuid
             ,false
           )::todo_fn.create_todo_options
         ) from todo.todo
-        where description = 'treeeeeedom,  treeedom!!!!'::citext
+        where description = 'dumpster'::citext
         ;
 
-          select todo_fn.create_todo(
-            _resident_id => resident_id::uuid
-            ,_name => 'getting deep'::citext
-            ,_options => row(
-              'whoa....'::citext
-              ,id::uuid
-              ,false
-            )::todo_fn.create_todo_options
-          ) from todo.todo
-          where description = 'treeeeeeeeally....'::citext
-        ;
+-- ------------------------------- TODO DEMO DATA
+--     select todo_fn.create_todo(
+--       _resident_id => id::uuid
+--       ,_name => ('TODO: '||display_name)::citext
+--       ,_options => row(
+--         'a todo just for demos'::citext
+--         ,null
+--         ,false
+--       )::todo_fn.create_todo_options
+--     ) from app.resident
+--     ;
 
-          select todo_fn.create_todo(
-            _resident_id => resident_id::uuid
-            ,_name => 'deep milestone'::citext
-            ,_options => row(
-              'always more stuff'::citext
-              ,id::uuid
-              ,false
-            )::todo_fn.create_todo_options
-          ) from todo.todo
-          where description = 'treeeeeeeeally....'::citext
-        ;
+--       select todo_fn.create_todo(
+--         _resident_id => resident_id::uuid
+--         ,_name => 'This is a subtask'::citext
+--         ,_options => row(
+--           'it''s a tree, really....'::citext
+--           ,id::uuid
+--           ,false
+--         )::todo_fn.create_todo_options
+--       ) from todo.todo
+--       -- where description = 'a todo just for demos'::citext
+--       ;
 
-          select todo_fn.create_todo(
-            _resident_id => resident_id::uuid
-            ,_name => 'deep task gotta expand for it'::citext
-            ,_options => row(
-              'turtles all the way down'::citext
-              ,id::uuid
-              ,false
-            )::todo_fn.create_todo_options
-          ) from todo.todo
-          where description = 'always more stuff'::citext
-          ;
+--       select todo_fn.create_todo(
+--         _resident_id => resident_id::uuid
+--         ,_name => 'Subtask milestone'::citext
+--         ,_options => row(
+--           'treeeeeedom,  treeedom!!!!'::citext
+--           ,id::uuid
+--           ,false
+--         )::todo_fn.create_todo_options
+--       ) from todo.todo
+--       -- where description = 'a todo just for demos'::citext
+--       ;
+
+--         select todo_fn.create_todo(
+--           _resident_id => resident_id::uuid
+--           ,_name => 'Subtask milestone submilestask'::citext
+--           ,_options => row(
+--             'the tree tops hear...'::citext
+--             ,id::uuid
+--             ,false
+--           )::todo_fn.create_todo_options
+--         ) from todo.todo
+--         where description = 'treeeeeedom,  treeedom!!!!'::citext
+--         ;
+
+--         select todo_fn.create_todo(
+--           _resident_id => resident_id::uuid
+--           ,_name => 'Subtask milestone submilestone'::citext
+--           ,_options => row(
+--             'treeeeeeeeally....'::citext
+--             ,id::uuid
+--             ,false
+--           )::todo_fn.create_todo_options
+--         ) from todo.todo
+--         where description = 'treeeeeedom,  treeedom!!!!'::citext
+--         ;
+
+--           select todo_fn.create_todo(
+--             _resident_id => resident_id::uuid
+--             ,_name => 'getting deep'::citext
+--             ,_options => row(
+--               'whoa....'::citext
+--               ,id::uuid
+--               ,false
+--             )::todo_fn.create_todo_options
+--           ) from todo.todo
+--           where description = 'treeeeeeeeally....'::citext
+--         ;
+
+--           select todo_fn.create_todo(
+--             _resident_id => resident_id::uuid
+--             ,_name => 'deep milestone'::citext
+--             ,_options => row(
+--               'always more stuff'::citext
+--               ,id::uuid
+--               ,false
+--             )::todo_fn.create_todo_options
+--           ) from todo.todo
+--           where description = 'treeeeeeeeally....'::citext
+--         ;
+
+--           select todo_fn.create_todo(
+--             _resident_id => resident_id::uuid
+--             ,_name => 'deep task gotta expand for it'::citext
+--             ,_options => row(
+--               'turtles all the way down'::citext
+--               ,id::uuid
+--               ,false
+--             )::todo_fn.create_todo_options
+--           ) from todo.todo
+--           where description = 'always more stuff'::citext
+--           ;
 

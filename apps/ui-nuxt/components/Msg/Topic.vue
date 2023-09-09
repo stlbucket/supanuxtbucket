@@ -27,7 +27,7 @@
           <div class="flex flex-col w-3/4 gap-0.5">
             <div class="flex text-sm font-bold">{{ m.postedBy.displayName }}</div>
             <div class="flex text-xs italic">{{ useFormatDateTimeString(m.createdAt) }}</div>
-            <div :class="m.display.content"><pre>{{ m.content }}</pre></div>
+            <div :class="m.display.content">{{ m.content }}</div>
           </div>
         </div>
       </div>

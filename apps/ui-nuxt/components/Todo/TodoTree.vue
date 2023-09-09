@@ -7,7 +7,7 @@
             <div class="flex justify-around gap-1">
               <div v-if="todoTree.type.toString().toUpperCase() === 'TASK'" class="flex">
                 <UButton 
-                  v-if="todoTree.status?.toString().toUpperCase() === 'COMPLETE'" 
+                  v-if="todoTree.status?.toString().toUpperCase() === 'COMPLETE'"
                   icon="i-heroicons-check"
                   size="sm"
                   color="green"
@@ -77,6 +77,7 @@
             class="flex grow"
             @click="handleSelectTodo"
             :color="primaryButtonColor"
+            :title="todoTree.description"
           >{{ todoTree.type?.toString().split('').at(0) }}: {{ todoTree.name }}</UButton>
         </div>
         <div class="flex flex-1 gap-2 grow-0" v-if="detailed">
@@ -240,9 +241,9 @@
     if (todoTree.value) {
       switch (todoTree.value.type.toString().toUpperCase()) {
         case 'MILESTONE':
-          return 'fuchsia'
+          return 'white'
         case 'TASK':
-          return 'teal'
+          return 'black'
       }
       return `teal`
     }
