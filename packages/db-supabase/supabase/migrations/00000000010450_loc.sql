@@ -3,6 +3,7 @@ create schema if not exists loc_api;
 create schema if not exists loc_fn;
 
 create type loc_fn.location_info as (
+  id uuid,
   name text,
   address1 text,
   address2 text,

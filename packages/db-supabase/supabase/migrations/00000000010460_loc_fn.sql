@@ -68,6 +68,7 @@ CREATE OR REPLACE FUNCTION loc_fn.create_location(
     _retval loc.location;
   BEGIN
     _loc_resident := loc_fn.ensure_loc_resident(_resident_id);
+    raise notice 'after: %', _loc_resident.tenant_id;
 
     insert into loc.location(
       tenant_id,
@@ -94,6 +95,7 @@ CREATE OR REPLACE FUNCTION loc_fn.create_location(
       _location_info.lat,
       _location_info.lon
     )
+    returning * into _retval
     ;
 
     return _retval;

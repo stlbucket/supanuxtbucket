@@ -24,7 +24,11 @@
               />
             </template>
             <template #locations="{ item }">
-              <LocationList :locations="incident.locations" />
+              <LocationList 
+                :locations="incident.incLocations.map((l:any) => l.location)"
+                @location-selected="onLocationSelected"
+                :pre-selected="incident.incLocations.map((l:any) => l.location)"
+              />
             </template>
             <template #attachments="{ item }">
               <p>ATTACHMENTS - documents, photos</p>
@@ -34,7 +38,7 @@
         </div>
         <div class="flex min-w-[30%] min-h-[300px] max-h-[300px] grow z-1">
           <MarkerMap 
-            :locations="incident.locations"
+            :locations="selectedLocations"
           />
         </div>
       </div>
@@ -66,6 +70,7 @@
   const route = useRoute()
   const incident = ref()
   const selectedStatus = ref()
+  const selectedLocations: Ref<IncLocation[]> = ref([])
 
   const tabItems = ref([
     {
@@ -88,6 +93,7 @@
     })
     incident.value = result.incident
     selectedStatus.value = incident.value.status
+    selectedLocations.value = incident.value.incLocations.map((l: any) => l.location)
   }
   loadData()  
 
@@ -136,4 +142,9 @@
     })
     navigateTo('/incidents')
   }
-  </script>
+
+  const onLocationSelected = async (locations: IncLocation[]) => {
+    selectedLocations.value = locations
+  }
+
+</script>

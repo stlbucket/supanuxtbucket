@@ -30,9 +30,10 @@
 
 <script lang="ts" setup>
   const props = defineProps<{
-    locations: IncLocation[]
+    locations: IncLocation[],
+    preSelected: IncLocation[]
   }>()
-  const selectedLocations = ref([])
+  const selectedLocations: Ref<IncLocation[]> = ref([])
   
   const emit = defineEmits<{
     (e: 'locationSelected', locations: IncLocation[]): void
@@ -44,6 +45,10 @@
 
   watch(()=>selectedLocations.value, ()=>{
     emit('locationSelected', selectedLocations.value)
+  })
+  
+  onMounted(()=>{
+    selectedLocations.value = props.preSelected || []
   })
 </script>
 

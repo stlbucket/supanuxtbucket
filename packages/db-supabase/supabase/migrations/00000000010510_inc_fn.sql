@@ -175,8 +175,11 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
 
     foreach _location_info in array(coalesce(_incident_info.locations, '{}'::loc_fn.location_info[]))
     loop
+      _location_info.name = coalesce(_location_info.name, _incident.name);
+
       perform inc_fn.create_incident_location(
         _incident.id
+        ,_resident_id
         ,_location_info
       );
     end loop;
@@ -491,6 +494,7 @@ CREATE OR REPLACE FUNCTION inc_api.create_incident_location(
   BEGIN
     _retval := inc_fn.create_incident_location(
       _incident_id
+      ,auth_ext.resident_id()
       ,_location_info
     );
     return _retval;
@@ -499,6 +503,7 @@ CREATE OR REPLACE FUNCTION inc_api.create_incident_location(
 
 CREATE OR REPLACE FUNCTION inc_fn.create_incident_location(
     _incident_id uuid
+    ,_resident_id uuid
     ,_location_info loc_fn.location_info
   )
   RETURNS inc.inc_location
@@ -512,13 +517,20 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident_location(
     _location loc.location;
   BEGIN
     select * into _incident from inc.incident where id = _incident_id;
-    select * into _inc_location from inc.inc_location where incident_id = _incident.id and name = _location_info.name;
+
+    if _location_info.id is not null then
+      select * into _inc_location from inc.inc_location where incident_id = _incident.id and location_id = _location_info.id;
+
+    else
+      _location := loc_fn.create_location(_location_info, _resident_id);
+      _location_info.id = _location.id;
+    end if;
+
 
     if _inc_location.id is not null then
       return _inc_location;
     end if;
 
-    _location := loc_fn.create_location(_location_info, _incident.tenant_id);
 
     insert into inc.inc_location(
       location_id,
@@ -526,10 +538,10 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident_location(
       tenant_id,
       name
     ) values (
-      _location.id,
+      _location_info.id,
       _incident.id,
       _incident.tenant_id,
-      _location_info.name
+      coalesce(_location.name, _incident.name)
     )
     returning * into _inc_location
     ;
