@@ -4,12 +4,14 @@
       <UButton @click="onAddLocation">Add Location</UButton>
     </div>
     <UTable
-      :rows="incident.locations"
+      :rows="locations"
       :columns="[
         {key: 'name', label: 'Name'},
         {key: 'loc', label: 'Location'},
         {key: 'action'}
       ]"
+      selectable
+      v-model="selectedLocations"
     >
       <template #loc-data="{ row }">
         <UPopover mode="hover">
@@ -28,10 +30,21 @@
 
 <script lang="ts" setup>
   const props = defineProps<{
-    incident: Incident
+    locations: IncLocation[]
+  }>()
+  const selectedLocations = ref([])
+  
+  const emit = defineEmits<{
+    (e: 'locationSelected', locations: IncLocation[]): void
   }>()
 
-  // const onAddLocation = async
+  const onAddLocation = async () => {
+    alert('not implemented')
+  }
+
+  watch(()=>selectedLocations.value, ()=>{
+    emit('locationSelected', selectedLocations.value)
+  })
 </script>
 
 

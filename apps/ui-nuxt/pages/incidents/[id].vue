@@ -24,7 +24,7 @@
               />
             </template>
             <template #locations="{ item }">
-              <IncidentLocations :incident="incident" />
+              <LocationList :locations="incident.locations" />
             </template>
             <template #attachments="{ item }">
               <p>ATTACHMENTS - documents, photos</p>

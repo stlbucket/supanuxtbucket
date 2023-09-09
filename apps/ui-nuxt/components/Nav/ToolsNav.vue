@@ -33,10 +33,10 @@
         permissionKey: ['p:discussions']
       },
       {
-        label: 'Maps',
-        icon: 'i-heroicons-user-group',
+        label: 'Locations',
+        icon: 'i-heroicons-globe-americas',
         to: '/tools/maps',
-        title: 'Maps',
+        title: 'Locations',
         // permissionKey: ['p:maps']
       }
     ]

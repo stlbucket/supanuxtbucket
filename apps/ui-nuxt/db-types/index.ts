@@ -127,7 +127,6 @@ export interface IIncidentInfo {
   locations: ILocation[]
 }
 
-
 declare global {
   type Incident = IIncident
   type IncidentInfo = IIncidentInfo

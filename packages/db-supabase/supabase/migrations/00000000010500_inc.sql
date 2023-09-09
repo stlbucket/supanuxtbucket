@@ -10,25 +10,13 @@ create type inc.incident_status as enum (
   ,'deleted'
 );
 
-create type inc_fn.location_info as (
-  name text,
-  address1 text,
-  address2 text,
-  city text,
-  state text,
-  postalCode text,
-  country text,
-  lat text,
-  lon text
-);
-
 create type inc_fn.incident_info as (
   name citext
   ,description citext
   ,identifier citext
   ,tags citext[]
   ,is_template boolean
-  ,locations inc_fn.location_info[]
+  ,locations loc_fn.location_info[]
 );
 create type inc_fn.search_incidents_options as (
   search_term citext
@@ -63,20 +51,12 @@ create table inc.incident (
   is_template boolean not null default false
 );
 
-create table inc.location (
+create table inc.inc_location (
   id uuid NOT NULL DEFAULT gen_random_uuid() primary key,
   tenant_id uuid not null references inc.inc_tenant(tenant_id),
   incident_id uuid not null references inc.incident(id),
-  name text,
-  address1 text,
-  address2 text,
-  city text,
-  state text,
-  postalCode text,
-  country text,
-  lat text,
-  lon text,
-  unique(incident_id, name)
+  location_id uuid not null references loc.location(id) unique,
+  name text not null
 );
 
 create unique index idx_uq_incident_identifier on inc.incident(tenant_id, identifier) where is_template = false;
