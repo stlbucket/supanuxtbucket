@@ -24,7 +24,7 @@ export interface MsgMessage {
 }
 
 export interface MsgMsgResident {
-  id: string;
+  residentId: string;
   tenantId: string;
   displayName: string;
 }

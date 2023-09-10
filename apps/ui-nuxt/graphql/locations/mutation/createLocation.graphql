@@ -1,0 +1,25 @@
+mutation CreateLocation(
+  $name: String!
+  $description: String
+  $tags: [String]
+  $isTemplate: Boolean
+) {
+	createLocation(input: {
+    _locationInfo: {
+      name: $name
+      description: $description
+      tags: $tags
+      isTemplate: $isTemplate
+    }    
+  }) {
+    location {
+      id
+      name
+      description
+      status
+      todoId
+      topicId
+      isTemplate
+    }
+  }
+}

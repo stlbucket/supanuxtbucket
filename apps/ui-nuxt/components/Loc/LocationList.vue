@@ -1,7 +1,9 @@
 <template>
   <div class="flex flex-col grow">
     <div>
-      <UButton @click="onAddLocation">Add Location</UButton>
+      <LocationModal
+        @new="onNewLocation"
+      ></LocationModal>
     </div>
     <UTable
       :rows="locations"
@@ -30,17 +32,17 @@
 
 <script lang="ts" setup>
   const props = defineProps<{
-    locations: IncLocation[],
-    preSelected: IncLocation[]
+    locations: ALocation[],
+    preSelected: ALocation[]
   }>()
-  const selectedLocations: Ref<IncLocation[]> = ref([])
+  const selectedLocations: Ref<ALocation[]> = ref([])
   
   const emit = defineEmits<{
-    (e: 'locationSelected', locations: IncLocation[]): void
+    (e: 'locationSelected', locations: ALocation[]): void
   }>()
 
-  const onAddLocation = async () => {
-    alert('not implemented')
+  const onNewLocation = async (locationInfo: LocationInfo) => {
+    alert(JSON.stringify(locationInfo,null,2))
   }
 
   watch(()=>selectedLocations.value, ()=>{

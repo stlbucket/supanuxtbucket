@@ -2,6 +2,7 @@ import * as app from './db.app'
 import * as todo from './db.todo'
 import * as msg from './db.msg'
 import * as inc from './db.inc'
+import * as loc from './db.loc'
 
 // THIS SHOULD BE COMING FROM UI NUXT, BUT NOT SURE HOW RIGHT NOW
 export interface IUSelectOption {
@@ -117,7 +118,6 @@ declare global {
 
 // ----------------------------------------------------------------- INC
 export interface IIncident extends inc.IncIncident {}
-export interface ILocation extends inc.IncLocation {}
 
 export interface IIncidentInfo {
   id?: string
@@ -130,5 +130,25 @@ export interface IIncidentInfo {
 declare global {
   type Incident = IIncident
   type IncidentInfo = IIncidentInfo
-  type IncLocation = ILocation
+}
+
+// ----------------------------------------------------------------- LOC
+export interface ILocation extends loc.LocLocation {}
+
+export interface ILocationInfo {
+  id?: string
+  name?: string
+  address1?: string
+  address2?: string
+  city?: string
+  state?: string
+  postalcode?: string
+  country?: string
+  lat?: string
+  lon?: string
+}
+
+declare global {
+  type ALocation = ILocation
+  type LocationInfo = ILocationInfo
 }

@@ -37,9 +37,9 @@
         @click="onCloseDetail"
       />
       <div
-        class="flex bg-ash-grey-700 ml-5 px-2 rounded items-center"
+        class="flex ml-5 px-2 rounded items-center bg-ash-grey-500"
         @onclick="onSelected"
-        :title="todoTree.description || ''"
+        :title="`TASK  ${todoTree.description || todoTree.name}`"
       >
         <div class="text-sm">{{ todoTree.name }}</div>
       </div>

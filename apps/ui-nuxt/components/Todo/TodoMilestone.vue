@@ -47,9 +47,9 @@
           @click="onCloseDetail"
         />
         <div
-          class="flex grow ml-5 rounded items-center"
+          :class="`flex ml-5 px-2 rounded items-center bg-ash-grey-${mainDivBgClass}`"
           @onclick="onSelected"
-          :title="todoTree.description || ''"
+          :title="`MILESTONE  ${todoTree.description || todoTree.name}`"
         >
           <div class="text-sm">{{ todoTree.name }}</div>
         </div>
@@ -57,6 +57,8 @@
 </template>
 
 <script lang="ts" setup>
+import { TodoTree } from '#build/components';
+
   const props = defineProps<{
     todoTree: Todo
     expanded: boolean
@@ -102,6 +104,10 @@
     const complete = (props.todoTree.children || []).filter((t:Todo) => t.status.toString().toUpperCase() === 'COMPLETE').length
     const totalCount = (props.todoTree.children || []).length
     return `${complete}/${totalCount}`
+  })
+
+  const mainDivBgClass = computed(() => {
+    return props.todoTree.parentTodoId ? '700' : '900'
   })
 
 </script>

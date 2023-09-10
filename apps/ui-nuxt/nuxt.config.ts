@@ -109,6 +109,10 @@ export default defineNuxtConfig({
         "path": "~/components/Inc",
         "global": true
       },
+      {
+        "path": "~/components/Loc",
+        "global": true
+      },
       "~/components"
     ]
   },
@@ -121,15 +125,15 @@ export default defineNuxtConfig({
         extend: {
           colors: {
             'ash-grey': {
-              100: '#B9C7CB',
-              200: '#ADBEC2',
-              300: '#A1B4BA',
-              400: '#95ACB1',
-              500: '#8AA3A8',
-              600: '#7E9AA0',
-              700: '#729097',
-              800: '#68868D',
-              900: '#5F7B81',
+              100: '#B9C8CB',
+              200: '#A1B6BA',
+              300: '#8AA3A8',
+              400: '#729197',
+              500: '#5F7B81',
+              600: '#4E656A',
+              700: '#3D4E52',
+              800: '#2B383B',
+              900: '#1A2223',
             },
           }
         }

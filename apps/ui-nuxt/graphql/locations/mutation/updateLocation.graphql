@@ -1,0 +1,25 @@
+mutation UpdateLocation(
+  $locationId: UUID!
+  $name: String!
+  $description: String
+) {
+	updateLocation(input: {
+    _locationId: $locationId
+    _name: $name
+    _description: $description
+    
+  }) {
+    location {
+      id
+      name
+      address1
+      address2
+      city
+      state
+      country
+      postalcode
+      lat
+      lon
+    }
+  }
+}
