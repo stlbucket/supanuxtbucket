@@ -1,10 +1,12 @@
 <template>
   <UCard>
     <template #header>
-      <div class="flex justify-between">
-        <div>ADDRESS BOOK</div>
-        <UButton @click="onLeave" v-if="abUsers.length">Leave</UButton>
-        <UButton @click="onJoin" v-else>Join</UButton>
+      <div class="flex flex-col gap-2">
+        <div class="flex justify-between">
+          <div>ADDRESS BOOK</div>
+          <UButton @click="onLeave" v-if="abUsers.length">Leave</UButton>
+          <UButton @click="onJoin" v-else>Join</UButton>
+        </div>
       </div>
     </template>
     <UTable
@@ -25,6 +27,12 @@
         {{ row.fullName }}
       </template>
     </UTable>
+    <template #footer>
+      <div class="text-xs flex p-1">If you join the address book, you will be visible to others who have also joined; and they to you.</div>
+      <div class="text-xs flex p-1">This is just a helper for finding and inviting other members and could perhaps be refactored to a full application with more advanced features.</div>
+      <div class="text-xs flex p-1">You can still invite user via email even if they are not published here.</div>
+      <div class="text-xs flex p-1">Only app-admin users can invite other users.</div>
+    </template>
   </UCard>
 </template>
 

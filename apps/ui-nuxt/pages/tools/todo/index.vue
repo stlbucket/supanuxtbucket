@@ -16,11 +16,15 @@
       :rows="todos"
       :columns="[
         { key:'name', label: 'Name' },
-        { key:'status', label: 'Status' }
+        { key:'status', label: 'Status' },
+        { key:'assigned-to', label: 'Assigned To'}
       ]"
     >
-      <template #name-data="{row}">
+    <template #name-data="{row}">
         <NuxtLink :to="`/tools/todo/${row.id}`">{{ row.name }}</NuxtLink>
+      </template>
+      <template #assigned-to-data="{row}">
+        {{ row.resident.displayName }}
       </template>
     </UTable>
   </UCard>

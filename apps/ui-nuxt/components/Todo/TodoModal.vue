@@ -4,7 +4,7 @@
   <UModal v-model="showModal">
     <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
       <template #header>
-        {{ `${parentTodo ? 'Add Subtask' : 'Edit Todo'}` }}
+        {{ `${parentTodo ? 'Add Subtask' : `${todo ? 'Edit Todo' : 'New Todo'}`}` }}
       </template>
       <div class="flex flex-col gap-3">
         <UFormGroup name="name" label="Name">

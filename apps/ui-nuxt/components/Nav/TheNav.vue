@@ -28,7 +28,7 @@
         <div v-if="!navCollapsed">Admin</div>
         <TenantAdminNav />    
       </div>
-      <div v-if="showNav.siteAdmin" class="flex grow">
+      <div v-if="showNav.siteAdmin">
         <div v-if="!navCollapsed">Site Admin</div>
         <SiteAdminNav />    
       </div>

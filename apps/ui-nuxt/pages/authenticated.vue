@@ -1,6 +1,6 @@
 <template>
-  <div class="text-4xl">LOGGING IN</div>
-  <pre>{{ JSON.stringify(session,null,2) }}</pre>
+  <div class="text-4xl">LOGGING IN...</div>
+  <!-- <pre>{{ JSON.stringify(session,null,2) }}</pre> -->
 </template>
 
 <script lang="ts" setup>
