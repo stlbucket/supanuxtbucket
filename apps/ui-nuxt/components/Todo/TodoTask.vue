@@ -37,11 +37,11 @@
         @click="onCloseDetail"
       />
       <div
-        class="flex grow bg-tahiti-700"
+        class="flex bg-ash-grey-700 ml-5 px-2 rounded items-center"
         @onclick="onSelected"
         :title="todoTree.description || ''"
       >
-        {{ todoTree.name }}
+        <div class="text-sm">{{ todoTree.name }}</div>
       </div>
     </div>
 </template>

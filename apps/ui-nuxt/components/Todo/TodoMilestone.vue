@@ -5,6 +5,7 @@
           :color="`${String(todoTree.status) === 'COMPLETE' ? 'green' : 'yellow'}`"
           :title="`${completionRatio} subtasks completed`"
           disabled
+          class="disabled:cursor-default"
         >{{ completionRatio }}</UButton>
         <UButton 
           :icon="expansionIcon"
@@ -46,18 +47,12 @@
           @click="onCloseDetail"
         />
         <div
-          class="flex grow"
+          class="flex grow ml-5 rounded items-center"
           @onclick="onSelected"
           :title="todoTree.description || ''"
         >
-          {{ todoTree.name }}
+          <div class="text-sm">{{ todoTree.name }}</div>
         </div>
-        <!-- <UButton
-          class="flex grow"
-          @click="onSelected"
-          color="white"
-          :title="todoTree.description"
-        >{{ todoTree.name }}</UButton> -->
       </div>
 </template>
 
