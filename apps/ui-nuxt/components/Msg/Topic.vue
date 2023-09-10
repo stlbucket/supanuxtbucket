@@ -1,11 +1,7 @@
 <template>
   <UCard v-if="topic" class="flex flex-col grow">
     <template #header>
-      <div class="flex justify-between">
-        <div class="text-2xl">{{ title || topic.name }}</div>
-        <div class="flex justify-start gap-5">
-        </div>
-      </div>
+      <div class="text-2xl flex justify-center">{{ title || topic.name }}</div>
     </template>
     <div class="flex flex-col gap-1.5">
       <div class="flex gap-1">

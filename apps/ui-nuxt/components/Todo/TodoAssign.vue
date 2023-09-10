@@ -1,5 +1,5 @@
 <template>
-  <UButton icon="i-heroicons-user" size="2xs" square variant="outline" title="Close" @click="handleBeginAssign"/>
+  <UButton icon="i-heroicons-user" size="xs" color="white"  title="Close" @click="handleBeginAssign"/>
   <UModal v-model="showModal">
     <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
       <template #header>
@@ -11,7 +11,7 @@
         </UFormGroup>
       </div>
       <template #footer>
-        <div class="buttons">
+        <div class="flex gap-1">
           <UButton @click="showModal = false">Cancel</UButton>
           <UButton @click="handleSave">Save</UButton>
         </div>

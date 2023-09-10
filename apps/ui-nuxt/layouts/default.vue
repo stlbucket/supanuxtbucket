@@ -1,10 +1,10 @@
 <template>
   <menu-bar></menu-bar>
-  <div class="app-row">
-    <div class="app-nav">
+  <div class="flex items-star items-stretch">
+    <div class="flex flex-col">
       <TheNav />
     </div>
-    <div class="app-content">
+    <div class="flex flex-col grow">
       <slot />      
     </div>
   </div>

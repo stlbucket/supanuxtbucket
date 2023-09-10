@@ -15,7 +15,7 @@
         </div>
       </UFormGroup>
       <template #footer>
-        <div class="buttons">
+        <div class="flex gap-1">
           <UButton @click="showModal = false">Cancel</UButton>
           <UButton @click="handleSave" :disabled="saveDisabled">Save</UButton>
         </div>

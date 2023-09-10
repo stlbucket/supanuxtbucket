@@ -1,9 +1,14 @@
 <template>
   <UCard v-if="incident">
     <template #header>
+      <div class="flex gap-5">
+        <div class="text-2xl">THIS IS HAPPENING:</div>
+        <div class="text-2xl">{{ incident.name }}</div>
+      </div>
+    </template>
+    <UCard>
       <div class="flex gap-2">
         <div class="flex flex-col gap-1.5 max-w-[50%] min-w-[50%] min-h-[300px] max-h-[300px]">
-          <div class="text-2xl">{{ incident.name }}</div>
           <UTabs 
             :items="tabItems" 
             :ui="{
@@ -43,28 +48,32 @@
             :locations="selectedLocations"
           />
         </div>
-      </div>
-    </template>
+      </div>        
+    </UCard>
     <div class="flex grow">
-      <div class="flex grow max-w-[50%] overflow-hidden flex-col">
-        <MsgTopic
-          class="flex grow"
-          :topicId="incident.topic.id"
-          title="Group Discussion"
-        />
+        <div class="flex grow max-w-[50%] overflow-hidden flex-col">
+          <UCard>
+            <MsgTopic
+              class="flex grow"
+              :topicId="incident.topic.id"
+              title="GROUP DISCUSSION"
+            />
+          </UCard>
+        </div>
+        <div class="flex grow max-w-[50%] overflow-hidden flex-col">
+          <UCard>
+            <UCard>
+              <template #header>
+                <div class="text-2xl flex justify-center">TASKS</div>
+              </template>
+              <TodoTree 
+                :todoId="incident.todo.id" 
+                :treeLevel="0"
+              />
+            </UCard>
+          </UCard>
+        </div>      
       </div>
-      <div class="flex grow max-w-[50%] overflow-hidden flex-col">
-        <UCard>
-          <template #header>
-            <div class="text-2xl">Tasks for this Incident</div>
-          </template>
-          <TodoTree 
-            :todoId="incident.todo.id" 
-            :treeLevel="0"
-          />
-        </UCard>
-      </div>
-    </div>
   </UCard>
 </template>
 
@@ -77,15 +86,15 @@
   const tabItems = ref([
     {
       slot: 'detail',
-      label: 'Detail',
+      label: 'DETAIL',
     }, 
     {
       slot: 'locations',
-      label: 'Locations',
+      label: 'LOCATIONS',
     }, 
     {
       slot: 'attachments',
-      label: 'Attachments',
+      label: 'ATTACHMENTS',
     }
   ])
   

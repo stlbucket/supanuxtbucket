@@ -1,53 +1,41 @@
 <template>
   <div v-if="todoTree" class="flex flex-col grow">
     <div class="flex justify-start min-w-max border-2 rounded-md border-black grow ml-10">
-      <div class="flex flex-1 flex-col m-2 flex-grow-2">
+      <div class="flex flex-1 flex-col m-2 flex-grow-2 gap-1">
         <div class="text-xl flex gap-1">
-          <div v-if="String(todoTree.type) === 'TASK'" class="flex ">
-            <UButton 
-              v-if="todoTree.status?.toString().toUpperCase() === 'COMPLETE'"
-              icon="i-heroicons-check"
-              size="xs"
-              color="green"
-              square
-              variant="solid"
-              title="Reopen"
-              @click="onReopened"
-            />
-            <UButton
-              v-if="todoTree.status?.toString().toUpperCase() === 'INCOMPLETE'"
-              icon="none"
-              size="xs"
-              color="yellow"
-              square variant="outline"
-              :title="Boolean(todoTree.isTemplate) ? 'This is a template so no action can be taken' : 'Close'"
-              @click="onClosed"
-              :disabled="Boolean(todoTree.isTemplate)"
-            />
-          </div>
-          <div v-else class="flex">
-            <UButton
-              v-if="todoTree.status?.toString().toUpperCase() === 'COMPLETE'" 
-              icon="i-heroicons-check"
-              size="xs"
-              color="green"
-              square
-              variant="solid"
-              title="Reopen"
-              @click="onReopened"
-              disabled
-            />
-            <UButton
-              v-if="todoTree.status?.toString().toUpperCase() === 'INCOMPLETE'"
-              size="xs"
-              color="yellow"
-              square 
-              variant="outline"
-              title="Close"
-              @click="onClosed"
-              disabled
-            >{{ completionRatio }}</UButton>
-          </div>
+          <UButton 
+            v-if="String(todoTree.type) === 'TASK' && String(todoTree.status) === 'COMPLETE'"
+            icon="i-heroicons-check"
+            size="xs"
+            title="Reopen"
+            @click="onReopened"
+          />
+          <UButton
+            v-if="String(todoTree.type) === 'TASK' && String(todoTree.status) === 'INCOMPLETE'"
+            icon="none"
+            size="xs"
+            color="yellow"
+            :title="Boolean(todoTree.isTemplate) ? 'This is a template so no action can be taken' : 'Close'"
+            @click="onClosed"
+            :disabled="Boolean(todoTree.isTemplate)"
+          />
+          <UButton
+            v-if="String(todoTree.type) === 'MILESTONE' && String(todoTree.status) === 'COMPLETE'" 
+            icon="i-heroicons-check"
+            size="xs"
+            color="green"
+            title="Reopen"
+            @click="onReopened"
+            disabled
+          />
+          <UButton
+            v-if="String(todoTree.type) === 'MILESTONE' && String(todoTree.status) === 'INCOMPLETE'"
+            size="xs"
+            color="yellow"
+            title="Close"
+            @click="onClosed"
+            disabled
+          >{{ completionRatio }}</UButton>
           <UButton 
             v-if="String(todoTree.type) === 'MILESTONE'"
             :icon="expansionIcon"
@@ -116,6 +104,7 @@
       />
     </div>
   </div>
+
 </template>
 
 <script lang="ts" setup>
@@ -125,7 +114,8 @@
     treeLevel?: number,
     expandAll?: boolean
   }>(), {
-    treeLevel: 0
+    treeLevel: 0,
+    expandAll: true
   })
 
   const emit = defineEmits<{

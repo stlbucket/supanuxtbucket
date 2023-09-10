@@ -1,5 +1,7 @@
 <template>
-  <UCard>
+  <UCard
+    class="flex grow flex-col"
+  >
     <template #header>
       <UButton
         :icon="`${navCollapsed ? 'i-heroicons-arrow-right-on-rectangle' : 'i-heroicons-arrow-left-on-rectangle'}`"
@@ -9,25 +11,27 @@
         @click="onToggleCollapsed"
       />
     </template>
-    <div v-if="showNav.incidents">
-      <div v-if="!navCollapsed">Incidents</div>
-      <IncidentsNav />
-    </div>
-    <div v-if="showNav.tools">
-      <div v-if="!navCollapsed">Tools</div>
-      <ToolsNav />
-    </div>
-    <div v-if="showNav.incidentsAdmin">
-      <div v-if="!navCollapsed">Incidents Admin</div>
-      <IncidentsAdminNav />
-    </div>
-    <div v-if="showNav.tenantAdmin">
-      <div v-if="!navCollapsed">Admin</div>
-      <TenantAdminNav />    
-    </div>
-    <div v-if="showNav.siteAdmin">
-      <div v-if="!navCollapsed">Site Admin</div>
-      <SiteAdminNav />    
+    <div class="flex flex-col grow">
+      <div v-if="showNav.incidents">
+        <div v-if="!navCollapsed">Incidents</div>
+        <IncidentsNav />
+      </div>
+      <div v-if="showNav.tools">
+        <div v-if="!navCollapsed">Tools</div>
+        <ToolsNav />
+      </div>
+      <div v-if="showNav.incidentsAdmin">
+        <div v-if="!navCollapsed">Incidents Admin</div>
+        <IncidentsAdminNav />
+      </div>
+      <div v-if="showNav.tenantAdmin">
+        <div v-if="!navCollapsed">Admin</div>
+        <TenantAdminNav />    
+      </div>
+      <div v-if="showNav.siteAdmin" class="flex grow">
+        <div v-if="!navCollapsed">Site Admin</div>
+        <SiteAdminNav />    
+      </div>
     </div>
   </UCard>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <UButton v-if="todo" icon="i-heroicons-pencil" size="xs" color="white"  title="Edit Todo"  @click="showModal = true"/>
+  <UButton v-if="todo" icon="i-heroicons-pencil" size="xs" color="white" title="Edit Todo"  @click="showModal = true"/>
   <UButton v-else icon="i-heroicons-plus-circle" size="xs" color="white" :title="addButtonTitle"  @click="showModal = true"/>
   <UModal v-model="showModal">
     <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
@@ -15,7 +15,7 @@
         </UFormGroup>
       </div>
       <template #footer>
-        <div class="buttons">
+        <div class="flex gap-1">
           <UButton @click="showModal = false">Cancel</UButton>
           <UButton @click="handleSave" :disabled="saveTodoDisabled">Save</UButton>
         </div>
