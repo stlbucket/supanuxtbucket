@@ -3,20 +3,26 @@
     <div class="flex justify-start min-w-max border-2 rounded-md border-black grow ml-10">
       <div class="flex flex-1 flex-col m-2 flex-grow-2 gap-1">
         <TodoMilestone 
-          :todo-tree="todoTree" 
           v-if="String(todoTree.type) === 'MILESTONE'"
+          :todo-tree="todoTree" 
           :expanded="expanded"
+          :detailed="detailed"
           @selected="onSelected"
           @toggle-expansion="onToggleExpansion"
           @expand-all-children="onExpandAllChildren"
+          @open-detail="onSelected"
+          @close-detail="onSelected"
         />
         <TodoTask 
-          :todo-tree="todoTree" 
           v-if="String(todoTree.type) === 'TASK'"
+          :todo-tree="todoTree" 
+          :detailed="detailed"
           @selected="onSelected"
           @subtask-added="onSubtaskAdded"
           @closed="onClosed"
           @reopened="onReopened"
+          @open-detail="onSelected"
+          @close-detail="onSelected"
         />
         <div class="flex gap-1" v-if="detailed">
           <TodoModal 

@@ -1,20 +1,9 @@
 <template>
     <div class="text-xl flex gap-1">
-      <UButton
-          v-if="String(todoTree.status) === 'COMPLETE'" 
-          icon="i-heroicons-check"
-          size="xs"
-          color="green"
-          title="Reopen"
-          @click="onReopened"
-          disabled
-        />
         <UButton
-          v-if="String(todoTree.status) === 'INCOMPLETE'"
           size="xs"
-          color="yellow"
-          title="Close"
-          @click="onClosed"
+          :color="`${String(todoTree.status) === 'COMPLETE' ? 'green' : 'yellow'}`"
+          :title="`${completionRatio} subtasks completed`"
           disabled
         >{{ completionRatio }}</UButton>
         <UButton 
@@ -36,12 +25,39 @@
           title="Expand All Children"
           @click="onExpandAllChildren"
         />
-        <UButton
+        <UButton 
+          v-if="!detailed"
+          icon="i-heroicons-arrows-pointing-out"
+          size="xs"
+          color="white" 
+          square 
+          variant="solid" 
+          title="Open Detail"
+          @click="onOpenDetail"
+        />
+        <UButton 
+          v-if="detailed"
+          icon="i-heroicons-arrows-pointing-in"
+          size="xs"
+          color="white" 
+          square 
+          variant="solid" 
+          title="Close Detail"
+          @click="onCloseDetail"
+        />
+        <div
+          class="flex grow"
+          @onclick="onSelected"
+          :title="todoTree.description || ''"
+        >
+          {{ todoTree.name }}
+        </div>
+        <!-- <UButton
           class="flex grow"
           @click="onSelected"
           color="white"
           :title="todoTree.description"
-        >{{ todoTree.name }}</UButton>
+        >{{ todoTree.name }}</UButton> -->
       </div>
 </template>
 
@@ -49,20 +65,23 @@
   const props = defineProps<{
     todoTree: Todo
     expanded: boolean
+    detailed: boolean
   }>()
 
   const emit = defineEmits<{
     (e: 'selected', todo: Todo): void
     (e: 'toggleExpansion', todo: Todo): void
     (e: 'expandAllChildren', todo: Todo): void
+    (e: 'openDetail', todo: Todo): void
+    (e: 'closeDetail', todo: Todo): void
   }>()
 
-  const onReopened = async () => {
-    emit('reopened', props.todoTree)
+  const onOpenDetail = async () => {
+    emit('openDetail', props.todoTree)
   }
 
-  const onClosed = async () => {
-    emit('closed', props.todoTree)
+  const onCloseDetail = async () => {
+    emit('closeDetail', props.todoTree)
   }
 
   const onSelected = async () => {
