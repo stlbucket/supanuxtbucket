@@ -38,8 +38,11 @@ create table todo.todo_resident (
 create table if not exists todo.todo (
   id uuid NOT NULL DEFAULT gen_random_uuid() primary key
   ,parent_todo_id uuid null references todo.todo(id)
+  ,root_todo_id uuid not null references todo.todo(id)
   ,tenant_id uuid not null references todo.todo_tenant(tenant_id)
   ,resident_id uuid null references todo.todo_resident(resident_id)
+  ,location_id uuid null references loc.location(id)
+  ,topic_id uuid not null references msg.topic(id)
   ,created_at timestamptz not null default current_timestamp
   ,updated_at timestamptz not null default current_timestamp
   ,name citext not null
@@ -56,3 +59,4 @@ create table if not exists todo.todo (
  create index idx_todo_todo_tenant_id on todo.todo(tenant_id);
  create index idx_todo_todo_resident_id on todo.todo(resident_id);
  create index idx_todo_todo_parent_todo_id on todo.todo(parent_todo_id);
+ create index idx_todo_todo_root_todo_id on todo.todo(root_todo_id);

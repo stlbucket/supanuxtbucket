@@ -97,7 +97,8 @@
       _lat numeric(20,14);
       _lon numeric(20,14);
       _location loc.location;
-      _incident inc.incident;
+      -- _incident inc.incident;
+      _todo todo.todo;
     BEGIN
       -- roughly the seattle area --
       _max_lat := 47.66538735632654;
@@ -129,34 +130,6 @@
               )::loc_fn.location_info
             );
 
-            _incident := inc_fn.create_incident(
-              _incident_info => row(
-                ('Trash Pickup '||(_users->_i->>'last_name'))::citext
-                ,'picking up trash'::citext
-                ,aut.display_name||'-demo'::citext
-                ,'{}'::citext[]
-                ,false::boolean
-                ,row(
-                  _location.id,
-                  'Space Needle',
-                  'Space Needle',
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null
-                )::loc_fn.location_info
-              )::inc_fn.incident_info
-              ,_resident_id => aut.id::uuid
-            )
-            from app.resident aut
-            where tenant_id = _tenant.id
-            order by random()
-            limit 1
-            ;
-
         end loop;
       end loop;
     END $$;
@@ -185,16 +158,43 @@
   ;
 
 ------------------------------- TODO DEMO DATA
-    select todo_fn.create_todo(
-      _resident_id => id::uuid
-      ,_name => ('TODO EXAMPLE: '||display_name)::citext
-      ,_options => row(
-        'picking up trash'::citext
-        ,null
-        ,false
-      )::todo_fn.create_todo_options
-    ) from app.resident
-    ;
+    -- select todo_fn.create_todo(
+    --   _resident_id => id::uuid
+    --   ,_name => ('TODO EXAMPLE: '||display_name)::citext
+    --   ,_options => row(
+    --     'picking up trash'::citext
+    --     ,null
+    --     ,'{}'::citext[]
+    --     ,false
+    --     ,null
+    --   )::todo_fn.create_todo_options
+    -- ) from app.resident
+    -- ;
+
+      select todo_fn.create_todo(
+        _resident_id => (select id from app.resident where tenant_id = l.tenant_id order by random() limit 1)
+        ,_name => ('Trash Pickup '||l.name)::citext
+        ,_options => row(
+          'picking up trash'::citext
+          ,null
+          ,'{}'::citext[]
+          ,false
+          ,row(
+            l.id,
+            '',
+            '',
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          )::loc_fn.location_info
+        )::todo_fn.create_todo_options
+      ) 
+      from loc.location l
+      ;
 
       select todo_fn.create_todo(
         _resident_id => resident_id::uuid
@@ -202,7 +202,9 @@
         ,_options => row(
           'get-supplies'::citext
           ,id::uuid
+          ,'{}'::citext[]
           ,false
+          ,null
         )::todo_fn.create_todo_options
       ) from todo.todo
       where description = 'picking up trash'::citext
@@ -213,7 +215,9 @@
           ,_options => row(
             ''::citext
             ,id::uuid
+            ,'{}'::citext[]
             ,false
+            ,null
           )::todo_fn.create_todo_options
         ) from todo.todo
         where description = 'get-supplies'::citext
@@ -224,7 +228,9 @@
           ,_options => row(
             ''::citext
             ,id::uuid
+            ,'{}'::citext[]
             ,false
+            ,null
           )::todo_fn.create_todo_options
         ) from todo.todo
         where description = 'get-supplies'::citext
@@ -235,7 +241,9 @@
           ,_options => row(
             ''::citext
             ,id::uuid
+            ,'{}'::citext[]
             ,false
+            ,null
           )::todo_fn.create_todo_options
         ) from todo.todo
         where description = 'get-supplies'::citext
@@ -247,7 +255,9 @@
         ,_options => row(
           'dumpster'::citext
           ,id::uuid
+          ,'{}'::citext[]
           ,false
+          ,null
         )::todo_fn.create_todo_options
       ) from todo.todo
       where description = 'picking up trash'::citext
@@ -258,7 +268,9 @@
           ,_options => row(
             '555.555.5555'::citext
             ,id::uuid
+            ,'{}'::citext[]
             ,false
+            ,null
           )::todo_fn.create_todo_options
         ) from todo.todo
         where description = 'dumpster'::citext
@@ -269,7 +281,9 @@
           ,_options => row(
             '555.555.5555'::citext
             ,id::uuid
+            ,'{}'::citext[]
             ,false
+            ,null
           )::todo_fn.create_todo_options
         ) from todo.todo
         where description = 'dumpster'::citext

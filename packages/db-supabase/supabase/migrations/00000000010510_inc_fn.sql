@@ -139,8 +139,8 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
   DECLARE
     _inc_resident inc.inc_resident;
     _incident inc.incident;
-    _topic msg.topic;
     _todo todo.todo;
+    _topic msg.topic;
     _location_info loc_fn.location_info;
     _location loc.location;
   BEGIN
