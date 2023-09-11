@@ -142,6 +142,7 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
     _topic msg.topic;
     _todo todo.todo;
     _location_info loc_fn.location_info;
+    _location loc.location;
   BEGIN
     _inc_resident := inc_fn.ensure_inc_resident(_resident_id);
 
@@ -170,12 +171,23 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
         ,_inc_resident.resident_id::uuid
       );
 
+      _location_info := _incident_info.location;
+      if _location_info.id is null then
+        _location_info.name = coalesce(_location_info.name, _incident_info.name||' location');
+        _location := loc_fn.create_location(
+          _location_info
+          ,_resident_id
+        );
+      else
+        select * into _location from loc.location where id = _location_info.id;
+      end if;
 
       insert into inc.incident(
         tenant_id
         ,created_by_resident_id
         ,todo_id
         ,topic_id
+        ,location_id
         ,name
         ,description
         ,identifier
@@ -186,6 +198,7 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
         ,_inc_resident.resident_id
         ,_todo.id
         ,_topic.id
+        ,_location.id
         ,_incident_info.name
         ,_incident_info.description
         ,_incident_info.identifier
@@ -195,16 +208,6 @@ CREATE OR REPLACE FUNCTION inc_fn.create_incident(
       returning * into _incident;
     end if;
 
-    foreach _location_info in array(coalesce(_incident_info.locations, '{}'::loc_fn.location_info[]))
-    loop
-      _location_info.name = coalesce(_location_info.name, _incident.name);
-
-      perform inc_fn.create_incident_location(
-        _incident.id
-        ,_resident_id
-        ,_location_info
-      );
-    end loop;
 
     return _incident;
   end;
@@ -325,13 +328,12 @@ CREATE OR REPLACE FUNCTION inc_fn.delete_incident(_incident_id uuid)
   BEGIN
     select * into _incident from inc.incident where id = _incident_id;
 
-    perform inc_fn.delete_incident_location(id) from inc.inc_location where incident_id = _incident.id;
-    
     delete from inc.incident where id = _incident_id;
 
+    perform loc_fn.delete_location(_incident.location_id);
     perform todo_fn.delete_todo(_incident.todo_id);
     perform msg_fn.delete_topic(_incident.topic_id);
-
+    
     return true;
   end;
   $$;
@@ -501,109 +503,3 @@ CREATE OR REPLACE FUNCTION inc_fn.clone_incident_template(
   end;
   $function$
   ;
----------------------------------------------- create_incident_location
-CREATE OR REPLACE FUNCTION inc_api.create_incident_location(
-    _incident_id uuid
-    ,_location_info loc_fn.location_info
-  )
-  RETURNS inc.inc_location
-  LANGUAGE plpgsql
-  VOLATILE
-  SECURITY INVOKER
-  AS $$
-  DECLARE
-    _retval inc.incident;
-  BEGIN
-    _retval := inc_fn.create_incident_location(
-      _incident_id
-      ,auth_ext.resident_id()
-      ,_location_info
-    );
-    return _retval;
-  end;
-  $$;
-
-CREATE OR REPLACE FUNCTION inc_fn.create_incident_location(
-    _incident_id uuid
-    ,_resident_id uuid
-    ,_location_info loc_fn.location_info
-  )
-  RETURNS inc.inc_location
-  LANGUAGE plpgsql
-  VOLATILE
-  SECURITY INVOKER
-  AS $$
-  DECLARE
-    _incident inc.incident;
-    _inc_location inc.inc_location;
-    _location loc.location;
-  BEGIN
-    select * into _incident from inc.incident where id = _incident_id;
-
-    if _location_info.id is not null then
-      select * into _inc_location from inc.inc_location where incident_id = _incident.id and location_id = _location_info.id;
-
-    else
-      _location := loc_fn.create_location(_location_info, _resident_id);
-      _location_info.id = _location.id;
-    end if;
-
-
-    if _inc_location.id is not null then
-      return _inc_location;
-    end if;
-
-
-    insert into inc.inc_location(
-      location_id,
-      incident_id,
-      tenant_id,
-      name
-    ) values (
-      _location_info.id,
-      _incident.id,
-      _incident.tenant_id,
-      coalesce(_location.name, _incident.name)
-    )
-    returning * into _inc_location
-    ;
-
-    return _inc_location;
-  end;
-  $$;
----------------------------------------------- delete_incident_location
-CREATE OR REPLACE FUNCTION inc_api.delete_incident_location(_id uuid)
-  RETURNS boolean
-  LANGUAGE plpgsql
-  VOLATILE
-  SECURITY INVOKER
-  AS $$
-  DECLARE
-    _retval boolean;
-  BEGIN
-    _retval := inc_fn.delete_incident_location(_id);
-    return _retval;
-  end;
-  $$;
-
-CREATE OR REPLACE FUNCTION inc_fn.delete_incident_location(_id uuid)
-  RETURNS boolean
-  LANGUAGE plpgsql
-  VOLATILE
-  SECURITY INVOKER
-  AS $$
-  DECLARE
-    _inc_location_count integer;
-  BEGIN
-    with i as (select * from inc.inc_location where id = _id)
-    select count(*) into _inc_location_count from inc.inc_location where location_id = i.location_id;
-
-    delete from inc.inc_location where id = _id;
-
-    if _inc_location_count = 1 then
-      delete from loc.location where id = _inc_location.location_id;
-    end if;
-
-    return true;
-  end;
-  $$;

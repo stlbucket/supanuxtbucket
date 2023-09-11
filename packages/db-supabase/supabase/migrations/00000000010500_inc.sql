@@ -16,7 +16,7 @@ create type inc_fn.incident_info as (
   ,identifier citext
   ,tags citext[]
   ,is_template boolean
-  ,locations loc_fn.location_info[]
+  ,location loc_fn.location_info
 );
 create type inc_fn.search_incidents_options as (
   search_term citext
@@ -41,6 +41,7 @@ create table inc.incident (
   tenant_id uuid not null references inc.inc_tenant(tenant_id),
   todo_id uuid not null references todo.todo(id),
   topic_id uuid not null references msg.topic(id),
+  location_id uuid null references loc.location(id),
   created_by_resident_id uuid not null references inc.inc_resident(resident_id),
   created_at timestamptz not null default current_timestamp,
   name citext not null,
@@ -49,14 +50,6 @@ create table inc.incident (
   status inc.incident_status not null default 'open',
   tags citext[] not null default '{}'::citext[],
   is_template boolean not null default false
-);
-
-create table inc.inc_location (
-  id uuid NOT NULL DEFAULT gen_random_uuid() primary key,
-  tenant_id uuid not null references inc.inc_tenant(tenant_id),
-  incident_id uuid not null references inc.incident(id),
-  location_id uuid not null references loc.location(id),
-  name text not null
 );
 
 create unique index idx_uq_incident_identifier on inc.incident(tenant_id, identifier) where is_template = false;

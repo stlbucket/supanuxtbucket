@@ -3,6 +3,7 @@
     <div>
       <LocationModal
         @new-location="onNewLocation"
+        v-if="showNew"
       ></LocationModal>
     </div>
     <UTable
@@ -14,6 +15,9 @@
       ]"
       selectable
       v-model="selectedLocations"
+      :ui="{
+        thead: `${showHeaders ? '' : 'hidden'}`
+      }"
     >
     <template #name-data="{ row }">
         <UPopover mode="hover">
@@ -36,23 +40,34 @@
           :location="row"
           @update-location="onUpdateLocation"
         ></LocationModal>
-        <UButton>Delete</UButton>
+        <UButton
+          v-if="showDelete"
+          @click="onDeleteLocation(row)"
+        >Delete</UButton>
       </template>
     </UTable>
   </div>
 </template>
 
 <script lang="ts" setup>
-  const props = defineProps<{
+  const props = withDefaults(defineProps<{
     locations: ALocation[],
-    preSelected: ALocation[]
-  }>()
+    preSelected: ALocation[],
+    showHeaders?: boolean,
+    showNew?: boolean,
+    showDelete?: boolean
+  }>(), {
+    showHeaders: true,
+    showNew: true,
+    showDelete: true
+  })
   const selectedLocations: Ref<ALocation[]> = ref([])
   
   const emit = defineEmits<{
     (e: 'locationSelected', locations: ALocation[]): void
     (e: 'newLocation', LocationInfo: LocationInfo): void,
     (e: 'updateLocation', LocationInfo: LocationInfo): void    
+    (e: 'deleteLocation', LocationInfo: LocationInfo): void        
   }>()
 
   const onNewLocation = async (locationInfo: LocationInfo) => {
@@ -60,6 +75,12 @@
   }
 
   const onUpdateLocation = async (locationInfo: LocationInfo) => {
+    emit('updateLocation', locationInfo)
+  }
+
+  const onDeleteLocation = async (locationInfo: LocationInfo) => {
+    const result = confirm('Are you sure you want to delete?')
+    
     emit('updateLocation', locationInfo)
   }
 

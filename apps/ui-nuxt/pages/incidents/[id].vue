@@ -30,9 +30,14 @@
             </template>
             <template #locations="{ item }">
               <LocationList 
-                :locations="incident.incLocations.map((l:any) => l.location)"
+                :locations="[incident.location]"
+                :pre-selected="[incident.location]"
                 @location-selected="onLocationSelected"
-                :pre-selected="incident.incLocations.map((l:any) => l.location)"
+                @update-location="onUpdateLocation"
+                @new-location="onNewLocation"
+                :show-headers="false"
+                :show-new="false"
+                :show-delete="false"
               />
             </template>
             <template #attachments="{ item }">
@@ -81,7 +86,7 @@
   const route = useRoute()
   const incident = ref()
   const selectedStatus = ref()
-  const selectedLocations: Ref<IncLocation[]> = ref([])
+  const selectedLocations: Ref<ALocation[]> = ref([])
 
   const tabItems = ref([
     {
@@ -104,7 +109,7 @@
     })
     incident.value = result.incident
     selectedStatus.value = incident.value.status
-    selectedLocations.value = incident.value.incLocations.map((l: any) => l.location)
+    selectedLocations.value = [incident.value.location]
   }
   loadData()  
 
@@ -154,8 +159,20 @@
     navigateTo('/incidents')
   }
 
-  const onLocationSelected = async (locations: IncLocation[]) => {
+  const onLocationSelected = async (locations: ALocation[]) => {
     selectedLocations.value = locations
+  }
+  const onNewLocation = async(locationInfo: LocationInfo) => {
+    const result = await GqlCreateLocation({
+      locationInfo: locationInfo
+    })
+    await loadData()
+  }
+  const onUpdateLocation = async(locationInfo: LocationInfo) => {
+    const result = await GqlUpdateLocation({
+      locationInfo: locationInfo
+    })
+    await loadData()
   }
 
 </script>

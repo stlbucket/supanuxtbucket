@@ -131,25 +131,23 @@
 
             _incident := inc_fn.create_incident(
               _incident_info => row(
-                aut.display_name||' Demo Incident'::citext
+                ('Trash Pickup '||(_users->_i->>'last_name'))::citext
                 ,'picking up trash'::citext
                 ,aut.display_name||'-demo'::citext
                 ,'{}'::citext[]
                 ,false::boolean
-                ,array[
-                  row(
-                    _location.id,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-                  )
-                ]::loc_fn.location_info[]
+                ,row(
+                  _location.id,
+                  'Space Needle',
+                  'Space Needle',
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                )::loc_fn.location_info
               )::inc_fn.incident_info
               ,_resident_id => aut.id::uuid
             )

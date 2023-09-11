@@ -17,20 +17,17 @@ query IncidentById(
       id
       name
     }
-    incLocations: incLocationsList {
+    location {
+      id
       name
-      location {
-        id
-        name
-        address1
-        address2
-        city
-        state
-        country
-        postalCode
-        lat
-        lon        
-      }
+      address1
+      address2
+      city
+      state
+      country
+      postalCode
+      lat
+      lon        
     }
   }
 }
