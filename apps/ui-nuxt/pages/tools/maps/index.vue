@@ -5,6 +5,8 @@
         :locations="locations" 
         @locationSelected="onLocationSelected" 
         :preSelected="[]"
+        @new-location="onNewLocation"
+        @update-location="onUpdateLocation"
       />
     </div>
     <div class="flex min-w-[30%] min-h-[300px] max-h-[300px] grow z-1">
@@ -28,5 +30,19 @@
 
   const onLocationSelected = async (locations: ALocation[]) => {
     markedLocations.value = locations
+  }
+
+  const onNewLocation = async(locationInfo: LocationInfo) => {
+    const result = await GqlCreateLocation({
+      locationInfo: locationInfo
+    })
+    await loadData()
+  }
+
+  const onUpdateLocation = async(locationInfo: LocationInfo) => {
+    const result = await GqlUpdateLocation({
+      locationInfo: locationInfo
+    })
+    await loadData()
   }
 </script>

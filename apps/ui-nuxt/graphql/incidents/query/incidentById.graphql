@@ -27,7 +27,7 @@ query IncidentById(
         city
         state
         country
-        postalcode
+        postalCode
         lat
         lon        
       }

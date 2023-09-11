@@ -9,7 +9,7 @@ create type loc_fn.location_info as (
   address2 text,
   city text,
   state text,
-  postalCode text,
+  postal_code text,
   country text,
   lat text,
   lon text
@@ -40,7 +40,7 @@ create table loc.location (
   address2 text,
   city text,
   state text,
-  postalCode text,
+  postal_code text,
   country text,
   lat text,
   lon text

@@ -13,7 +13,7 @@ export interface LocLocation {
   address2: string | null;
   city: string | null;
   state: string | null;
-  postalcode: string | null;
+  postalCode: string | null;
   country: string | null;
   lat: string | null;
   lon: string | null;

@@ -100,7 +100,7 @@ CREATE OR REPLACE FUNCTION loc_fn.create_location(
       address2,
       city,
       state,
-      postalCode,
+      postal_code,
       country,
       lat,
       lon
@@ -112,7 +112,7 @@ CREATE OR REPLACE FUNCTION loc_fn.create_location(
       _location_info.address2,
       _location_info.city,
       _location_info.state,
-      _location_info.postalCode,
+      _location_info.postal_code,
       _location_info.country,
       _location_info.lat,
       _location_info.lon
@@ -148,5 +148,57 @@ CREATE OR REPLACE FUNCTION loc_fn.delete_location(_location_id uuid)
   BEGIN
     delete from loc.location where id = _location_id;
     return true;
+  end;
+  $$;
+---------------------------------------------- update_location
+CREATE OR REPLACE FUNCTION loc_api.update_location(
+    _location_info loc_fn.location_info
+  )
+  RETURNS loc.location
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $$
+  DECLARE
+    _retval loc.location;
+  BEGIN
+    _retval := loc_fn.update_location(
+      _location_info
+    );
+    return _retval;
+  end;
+  $$;
+
+CREATE OR REPLACE FUNCTION loc_fn.update_location(
+    _location_info loc_fn.location_info
+  )
+  RETURNS loc.location
+  LANGUAGE plpgsql
+  VOLATILE
+  SECURITY INVOKER
+  AS $$
+  DECLARE
+    _loc_resident loc.loc_resident;
+    _retval loc.location;
+  BEGIN
+    if _location_info.id is null then
+      raise exception '30041: LOCATION ID REQUIRED FOR UPDATE';
+    end if;
+
+    update loc.location set
+      name = _location_info.name,
+      address1 = _location_info.address1,
+      address2 = _location_info.address2,
+      city = _location_info.city,
+      state = _location_info.state,
+      postal_code = _location_info.postal_code,
+      country = _location_info.country,
+      lat = _location_info.lat,
+      lon = _location_info.lon
+    where id = _location_info.id
+    returning * into _retval
+    ;
+
+    return _retval;
   end;
   $$;

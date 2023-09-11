@@ -73,7 +73,7 @@
           perform app_fn.invite_user(
             _tenant_id => _tenant.id::uuid
             ,_email => ('user-'||(_user_info->>'email'))::citext
-            ,_assignment_scope => 'admin'::app.license_type_assignment_scope
+            ,_assignment_scope => 'user'::app.license_type_assignment_scope
           );
         end loop;
       end loop;

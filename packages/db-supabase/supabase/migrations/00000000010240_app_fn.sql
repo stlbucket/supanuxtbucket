@@ -119,39 +119,26 @@ CREATE OR REPLACE FUNCTION app_fn.install_anchor_application()
           row(
             'app-user'::citext
             ,'App User'::citext
-            ,'{"p:app-user"}'::citext[]
+            ,'{"p:app-user","p:todo","p:discussions"}'::citext[]
             ,'user'::app.license_type_assignment_scope
           )::app_fn.license_type_info
           ,row(
             'app-admin'::citext
             ,'App Admin'::citext
-            ,'{"p:app-admin"}'::citext[]
+            ,'{"p:app-admin","p:todo","p:todo-admin","p:discussions","p:discussions-admin"}'::citext[]
             ,'admin'::app.license_type_assignment_scope
           )::app_fn.license_type_info
           ,row(
             'app-admin-super'::citext
             ,'App Super Admin'::citext
-            ,'{"p:app-admin-super","p:app-admin","p:app-admin-support"}'::citext[]
-            -- ,'{"p:app-admin-super","p:app-admin-support"}'::citext[]
+            ,'{"p:app-admin-super","p:app-admin","p:app-admin-support","p:todo","p:todo-admin","p:discussions","p:discussions-admin"}'::citext[]
             ,'superadmin'::app.license_type_assignment_scope
           )::app_fn.license_type_info
           ,row(
             'app-admin-support'::citext
             ,'App Support Admin'::citext
-            ,'{"p:app-admin-support"}'::citext[]
+            ,'{"p:app-admin-support","p:todo","p:todo-admin","p:discussions","p:discussions-admin"}'::citext[]
             ,'support'::app.license_type_assignment_scope
-          )::app_fn.license_type_info
-          ,row(
-            'app-todo'::citext
-            ,'Todo'::citext
-            ,'{"p:todo"}'::citext[]
-            ,'all'::app.license_type_assignment_scope
-          )::app_fn.license_type_info
-          ,row(
-            'app-discussions'::citext
-            ,'Discussions'::citext
-            ,'{"p:discussions"}'::citext[]
-            ,'all'::app.license_type_assignment_scope
           )::app_fn.license_type_info
           ,row(
             'app-address-book'::citext
@@ -194,18 +181,6 @@ CREATE OR REPLACE FUNCTION app_fn.install_anchor_application()
               )::app_fn.license_pack_license_type_info
               ,row(
                 'app-admin'::citext
-                ,0::integer
-                ,'none'::app.expiration_interval_type
-                ,0::integer
-              )::app_fn.license_pack_license_type_info
-              ,row(
-                'app-todo'::citext
-                ,0::integer
-                ,'none'::app.expiration_interval_type
-                ,0::integer
-              )::app_fn.license_pack_license_type_info
-              ,row(
-                'app-discussions'::citext
                 ,0::integer
                 ,'none'::app.expiration_interval_type
                 ,0::integer

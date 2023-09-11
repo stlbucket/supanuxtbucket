@@ -2,7 +2,7 @@
   <div class="flex flex-col grow">
     <div>
       <LocationModal
-        @new="onNewLocation"
+        @new-location="onNewLocation"
       ></LocationModal>
     </div>
     <UTable
@@ -15,6 +15,14 @@
       selectable
       v-model="selectedLocations"
     >
+    <template #name-data="{ row }">
+        <UPopover mode="hover">
+          {{ row.name }}
+          <template #panel>
+            <pre>{{ JSON.stringify(row,null,2) }}</pre>
+          </template>
+        </UPopover>        
+      </template>
       <template #loc-data="{ row }">
         <UPopover mode="hover">
           {{ row.address1 }}
@@ -24,6 +32,10 @@
         </UPopover>        
       </template>
       <template #action-data="{ row }">
+        <LocationModal
+          :location="row"
+          @update-location="onUpdateLocation"
+        ></LocationModal>
         <UButton>Delete</UButton>
       </template>
     </UTable>
@@ -39,10 +51,16 @@
   
   const emit = defineEmits<{
     (e: 'locationSelected', locations: ALocation[]): void
+    (e: 'newLocation', LocationInfo: LocationInfo): void,
+    (e: 'updateLocation', LocationInfo: LocationInfo): void    
   }>()
 
   const onNewLocation = async (locationInfo: LocationInfo) => {
-    alert(JSON.stringify(locationInfo,null,2))
+    emit('newLocation', locationInfo)
+  }
+
+  const onUpdateLocation = async (locationInfo: LocationInfo) => {
+    emit('updateLocation', locationInfo)
   }
 
   watch(()=>selectedLocations.value, ()=>{

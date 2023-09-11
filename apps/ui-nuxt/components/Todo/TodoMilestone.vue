@@ -17,7 +17,7 @@
           @click="onToggleExpansion"
         />
         <UButton 
-          v-if="!expanded"
+          v-if="!expandedAllChildren"
           icon="i-heroicons-chevron-double-down"
           size="xs"
           color="white" 
@@ -62,6 +62,7 @@ import { TodoTree } from '#build/components';
   const props = defineProps<{
     todoTree: Todo
     expanded: boolean
+    expandedAllChildren: boolean
     detailed: boolean
   }>()
 
@@ -109,5 +110,4 @@ import { TodoTree } from '#build/components';
   const mainDivBgClass = computed(() => {
     return props.todoTree.parentTodoId ? '700' : '900'
   })
-
 </script>

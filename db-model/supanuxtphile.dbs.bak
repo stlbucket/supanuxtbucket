@@ -552,7 +552,7 @@ AS $function$
 			<column name="address2" type="text" decimal="0" jt="12" />
 			<column name="city" type="text" decimal="0" jt="12" />
 			<column name="state" type="text" decimal="0" jt="12" />
-			<column name="postalcode" type="text" decimal="0" jt="12" />
+			<column name="postal_code" type="text" decimal="0" jt="12" />
 			<column name="country" type="text" decimal="0" jt="12" />
 			<column name="lat" type="text" decimal="0" jt="12" />
 			<column name="lon" type="text" decimal="0" jt="12" />

@@ -12,8 +12,12 @@
         name="OpenStreetMap"
         
       />
-        <l-marker v-for="l in locs" 
-          :lat-lng="l.coordinates" 
+        <l-marker v-for="(l, i) in preppedLocations" 
+          :name="l.name"
+          :lat-lng="l.coordinates"
+          :options="{
+            title: l.name
+          }"
           draggable
           @update:latLng="onUpdateMarker"
         />
@@ -22,33 +26,47 @@
 </template>
 
 <script lang="ts" setup>
-  // import { ref } from 'vue'
-  const props = defineProps<{
-    locations?: IncLocation[]
-  }>()
+  const props = withDefaults(defineProps<{
+    locations?: ALocation[]
+    initialZoom?: number
+    defaultCoordinates?: number[]
+  }>(), {
+    locations: [],
+    initialZoom: 10,
+    defaultCoordinates: [47.633120756692605, -122.3486675513685]
+  })
 
-  const zoom = ref(10)
+  const zoom = ref(props.initialZoom)
 
-  const locs = computed(() => {
-    return (props.locations || []).map(l => {
-      return {
+  const preppedLocations = ref([])
+
+  const prepLocation = (l: ALocation) => {
+    return {
         ...l,
         coordinates: [Number(l.lat), Number(l.lon)]
       }
-    })
-  })
+  }
 
   onMounted(()=> {
-    console.log(JSON.stringify(locs.value,null,2))
+    preppedLocations.value = props.locations.map(l => prepLocation(l))
   })
 
+  watch(
+    ()=>props.locations, 
+    ()=>{
+      preppedLocations.value = props.locations.map(l => prepLocation(l))
+    },
+    {deep: true}
+  )
+
   const focusCenter = computed(() => {
-    if (locs.value.length > 0) {
-      const lat = (locs.value.reduce((s,l) => { return s+l.coordinates[0]}, 0))/locs.value.length
-      const lon = (locs.value.reduce((s,l) => { return s+l.coordinates[1]}, 0))/locs.value.length
-      return [lat,lon]
+    const locs = preppedLocations.value
+    if (locs.length > 0) {
+      const lat = (locs.reduce((s,l) => { return s+l.coordinates[0]}, 0))/locs.length
+      const lon = (locs.reduce((s,l) => { return s+l.coordinates[1]}, 0))/locs.length
+      return Number(lat) && Number(lon) ? [lat,lon] : props.defaultCoordinates
     } else {
-      return [47.6205131, -122.34930359883187]
+      return props.defaultCoordinates
     }
   })
 

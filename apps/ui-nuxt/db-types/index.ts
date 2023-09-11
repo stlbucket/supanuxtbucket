@@ -15,6 +15,11 @@ declare global {
   type USelectOption = IUSelectOption
 }
 
+// OTHER ARBITRARY TYPE DEFS
+declare global {
+  export type Coordinates = number[]
+}
+
 // ----------------------------------------------------------------- APP
 export interface IApplication extends app.AppApplication {
   licenseTypes?: ILicenseType[]
@@ -142,7 +147,7 @@ export interface ILocationInfo {
   address2?: string
   city?: string
   state?: string
-  postalcode?: string
+  postalCode?: string
   country?: string
   lat?: string
   lon?: string

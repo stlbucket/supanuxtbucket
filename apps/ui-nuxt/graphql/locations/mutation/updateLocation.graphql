@@ -1,13 +1,8 @@
 mutation UpdateLocation(
-  $locationId: UUID!
-  $name: String!
-  $description: String
+  $locationInfo: LocationInfoInput!
 ) {
 	updateLocation(input: {
-    _locationId: $locationId
-    _name: $name
-    _description: $description
-    
+    _locationInfo: $locationInfo
   }) {
     location {
       id
@@ -17,7 +12,7 @@ mutation UpdateLocation(
       city
       state
       country
-      postalcode
+      postalCode
       lat
       lon
     }

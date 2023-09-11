@@ -1,25 +1,25 @@
 mutation CreateLocation(
-  $name: String!
-  $description: String
-  $tags: [String]
-  $isTemplate: Boolean
+  $locationInfo: LocationInfoInput!
 ) {
 	createLocation(input: {
-    _locationInfo: {
-      name: $name
-      description: $description
-      tags: $tags
-      isTemplate: $isTemplate
-    }    
+    _locationInfo: $locationInfo
   }) {
     location {
       id
+      resident {
+        displayName
+        residentId
+      }
+      tenantId
       name
-      description
-      status
-      todoId
-      topicId
-      isTemplate
+      address1
+      address2
+      city
+      state
+      postalCode
+      country
+      lat
+      lon
     }
   }
 }

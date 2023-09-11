@@ -6,6 +6,7 @@
           v-if="String(todoTree.type) === 'MILESTONE'"
           :todo-tree="todoTree" 
           :expanded="expanded"
+          :expanded-all-children="expandAllChildren"
           :detailed="detailed"
           @selected="onSelected"
           @toggle-expansion="onToggleExpansion"
@@ -58,6 +59,7 @@
         :sub-tree="c" 
         :tree-level="(treeLevel + 1)"
         :expand-all="expandAllChildren"
+        :expanded-all-children="expandAllChildren"
         @updated="handleChildUpdated"
         @subtask-added="handleChildAddSubtask"
         @deleted="handleChildDelete"
@@ -126,6 +128,8 @@
     expandAllChildren.value = !!props.expandAll
   }
   initializeData()
+
+  watch(()=>props.expandAll, ()=>{ expanded.value = true })
 
   // HANDLERS FOR ALL TODOS
   const onAddSubtask = async (todo: Todo) => {

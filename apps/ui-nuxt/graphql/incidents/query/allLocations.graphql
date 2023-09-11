@@ -8,7 +8,7 @@ query AllLocations {
       city
       state
       country
-      postalcode
+      postalCode
       lat
       lon
     }

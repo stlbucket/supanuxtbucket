@@ -14,7 +14,7 @@ query SearchLocations(
       city
       state
       country
-      postalcode
+      postalCode
       lat
       lon
     }
