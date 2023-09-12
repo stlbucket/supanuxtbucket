@@ -3,110 +3,96 @@
     <template #header>
       <div class="flex justify-between">
         <div class="flex gap-5">
-          <div class="text-2xl">THIS IS HAPPENING:</div>
+          <div class="text-2xl">WE HEART TODO:</div>
           <div class="text-2xl">{{ todoTree.name }}</div>
         </div>
         <div class="flex gap-5">
           <NuxtLink v-if="todoTree.parentTodoId" :to="`/tools/todo/${todoTree.parentTodoId}`">To Parent</NuxtLink>
-          <NuxtLink v-if="todoTree.rootTodoId" :to="`/tools/todo/${todoTree.rootTodoId}`">Back to Project</NuxtLink>
+          <NuxtLink v-if="todoTree.parentTodoId" :to="`/tools/todo/${todoTree.rootTodoId}`">Back to Project</NuxtLink>
         </div>
       </div>
     </template>
-    <UCard>
-      <div class="flex gap-2">
-        <div class="flex max-w-[50%] min-w-[50%]">
-          <UTabs 
-            :items="tabItems" 
-            :ui="{
-              container: 'flex flex-col grow w-full',
-              base: 'focus:outline-none flex flex-col grow',
-              wrapper: 'flex flex-col grow space-y-2'
-            }"
-          >
-            <template #detail="{ item }">
-              <div class="flex flex-col gap-2">
-                <TodoDetail
-                  :todo="todoTree"
-                  @make-template="onMakeTemplate"
-                  @clone-template="onCloneTemplate"
-                  @delete="onDelete"
-                />
-                <MsgTopic
-                  class="flex grow"
-                  :topicId="todoTree.topicId"
-                  title="GROUP DISCUSSION"
-                />
-              </div>
-            </template>
-            <template #map="{ item }">
-              <div class="flex flex-col gap-2 grow min-h-[600px]">
-                <UCard>
-                  <template #header>
-                    <div>LOCATIONS</div>
-                  </template>
-                  <LocationList 
-                    :locations="todoTree.location ? [todoTree.location] : []"
-                    :pre-selected="todoTree.location ? [todoTree.location] : []"
-                    @location-selected="onLocationSelected"
-                    @update-location="onUpdateLocation"
-                    :show-new="false"
-                    :show-delete="false"
-                    :show-headers="false"
-                  />
-                </UCard>
-                <div class="flex grow">
-                  <MarkerMap 
-                    :locations="selectedLocations"
-                  />
-                </div>
-              </div>
-            </template>
-          </UTabs>          
-        </div>
-        <div class="flex grow flex-col gap-2">
-          <!-- <UCard>
-            <template #header>
-              <div>LOCATIONS</div>
-            </template>
-            <LocationList 
-              :locations="todoTree.location ? [todoTree.location] : []"
-              :pre-selected="todoTree.location ? [todoTree.location] : []"
-              @location-selected="onLocationSelected"
-              @update-location="onUpdateLocation"
-              :show-new="false"
-              :show-delete="false"
-            />
-          </UCard> -->
-          <UTable
-            :rows="[]"
-            :ui="{
-              thead: 'hidden'
-            }"
-          >
-            <template #empty-state>
+    <div class="flex gap-2">
+      <div class="flex max-w-[50%] min-w-[50%]">
+        <UTabs 
+          :items="tabItems" 
+          :ui="{
+            container: 'flex flex-col grow w-full',
+            base: 'focus:outline-none flex flex-col grow',
+            wrapper: 'flex flex-col grow space-y-2'
+          }"
+        >
+          <template #detail="{ item }">
+            <div class="flex flex-col gap-2">
+              <TodoDetail
+                :todo="todoTree"
+                @make-template="onMakeTemplate"
+                @clone-template="onCloneTemplate"
+                @delete="onDelete"
+              />
               <UCard>
                 <template #header>
-                  <div>ATTACHMENTS</div>
+                  <div class="flex justify-center">TASKS</div>
                 </template>
-                <div class="flex justify-between">
-                  <UButton label="Add an attachment" @click="onAddAttachment" />
-                  <div class="text-xs"><a target="_blank" href="https://supabase.com/docs/guides/storage">Supabase Storage Guide</a></div>
-                </div>
+                <TodoTree 
+                  :todo-id="todoTree.id"
+                  :tree-level="0"
+                />
               </UCard>
-            </template>
-          </UTable>
-          <UCard>
-            <template #header>
-              <div class="text-2xl flex justify-center">TASKS</div>
-            </template>
-            <TodoTree 
-              :todo-id="todoTree.id"
-              :tree-level="0"
-            />
-          </UCard>
-        </div>      
-      </div>        
-    </UCard>
+            </div>
+          </template>
+          <template #map="{ item }">
+            <div class="flex flex-col gap-2 grow min-h-[600px]">
+              <UCard>
+                <template #header>
+                  <div class="flex justify-center">LOCATIONS</div>
+                </template>
+                <LocationList 
+                  :locations="todoTree.location ? [todoTree.location] : []"
+                  :pre-selected="todoTree.location ? [todoTree.location] : []"
+                  @location-selected="onLocationSelected"
+                  @update-location="onUpdateLocation"
+                  :show-new="false"
+                  :show-delete="false"
+                  :show-headers="false"
+                />
+              </UCard>
+              <div class="flex grow">
+                <MarkerMap 
+                  :locations="selectedLocations"
+                />
+              </div>
+            </div>
+          </template>
+        </UTabs>          
+      </div>
+      <div class="flex grow flex-col gap-2">
+        <UTable
+          :rows="[]"
+          :ui="{
+            thead: 'hidden'
+          }"
+        >
+          <template #empty-state>
+            <UCard>
+              <template #header>
+                <div class="flex justify-center">ATTACHMENTS</div>
+              </template>
+              <div class="flex justify-between">
+                <UButton label="Add an attachment" @click="onAddAttachment" />
+                <div class="text-xs"><a target="_blank" href="https://supabase.com/docs/guides/storage">Supabase Storage Guide</a></div>
+              </div>
+            </UCard>
+          </template>
+        </UTable>
+        <div class="flex grow">
+          <MsgTopic
+            :topicId="todoTree.topicId"
+            title="GROUP DISCUSSION"
+          />
+        </div>
+      </div>      
+    </div>        
   </UCard>
 </template>
 

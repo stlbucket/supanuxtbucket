@@ -49,8 +49,7 @@
         <div
           :class="`flex ml-5 px-2 rounded items-center bg-ash-grey-${mainDivBgClass}`"
           @onclick="onSelected"
-          :titles="`MILESTONE  ${todoTree.description || todoTree.name}`"
-          :title="JSON.stringify(todoTree,null,2)"
+          :title="`MILESTONE  ${todoTree.description || todoTree.name}`"
         >
           <NuxtLink :to="`/tools/todo/${todoTree.id}`"><div class="text-sm">{{ todoTree.name }}</div></NuxtLink>          
         </div>

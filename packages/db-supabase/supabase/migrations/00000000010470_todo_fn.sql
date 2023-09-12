@@ -124,7 +124,7 @@ CREATE OR REPLACE FUNCTION todo_fn.create_todo(
       row(
         null::uuid
         ,_name||' topic'::citext
-        ,''::citext
+        ,null::citext
         ,null::msg.topic_status
       )::msg_fn.topic_info
       ,_todo_resident.resident_id::uuid

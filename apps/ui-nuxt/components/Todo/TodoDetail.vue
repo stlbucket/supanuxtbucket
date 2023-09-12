@@ -29,38 +29,6 @@
       />
     </div>
   </UCard>
-  <!-- <div class="flex flex-col grow p-2 gap-2">
-    <div class="flex justify-between">
-      <div class="flex justify-start gap-10">
-        <div class="flex gap-2">
-          <TodoModal
-            :todo="todo"
-            @updated="onUpdated"
-          />
-          <UButton color="red" @click="onDelete">Delete</UButton>                
-        </div>
-        <div class="flex" v-if="!todo.isTemplate">
-          <UButton v-if="String(todo.status) === 'OPEN'" color="yellow" @click="onClose">Close</UButton>
-          <UButton v-if="String(todo.status) === 'CLOSED'" color="yellow" @click="onOpen">Reopen</UButton>
-        </div>
-      </div>
-      <div class="flex" v-if="!todo.isTemplate">
-        <UButton color="blue" @click="onMakeTemplate" v-if="showMakeTemplate">Make Template</UButton>
-      </div>
-      <div class="flex" v-if="todo.isTemplate">
-        <UButton color="blue" @click="onNewTodo">New Todo</UButton>
-      </div>
-    </div>
-    <div class="flex grow">
-      <UTextarea
-        :model-value="description"
-        disabled
-        :ui="{
-          wrapper: 'flex grow'
-        }"
-      />
-    </div>
-  </div> -->
 </template>
 
 <script lang="ts" setup>
