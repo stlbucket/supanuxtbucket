@@ -41,7 +41,7 @@
         @onclick="onSelected"
         :title="`TASK  ${todoTree.description || todoTree.name}`"
       >
-        <div class="text-sm">{{ todoTree.name }}</div>
+        <NuxtLink :to="`/tools/todo/${todoTree.id}`"><div class="text-sm">{{ todoTree.name }}</div></NuxtLink>          
       </div>
     </div>
 </template>

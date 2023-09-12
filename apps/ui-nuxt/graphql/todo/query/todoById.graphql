@@ -10,7 +10,21 @@ query TodoById(
     createdAt
     updatedAt
     parentTodoId
+    rootTodoId
     isTemplate
+    topicId
+    location {
+      id
+      name
+      address1
+      address2
+      city
+      state
+      postalCode
+      country
+      lat
+      lon
+    }
     owner: resident {
       residentId
       displayName
@@ -24,7 +38,21 @@ query TodoById(
       createdAt
       updatedAt
       parentTodoId
+	    rootTodoId
       isTemplate
+      topicId
+      location {
+        id
+        name
+        address1
+        address2
+        city
+        state
+        postalCode
+        country
+        lat
+        lon
+      }
       owner: resident {
           residentId
           displayName
@@ -38,7 +66,21 @@ query TodoById(
         createdAt
         updatedAt
         parentTodoId
+        rootTodoId
         isTemplate
+        topicId
+        location {
+          id
+          name
+          address1
+          address2
+          city
+          state
+          postalCode
+          country
+          lat
+          lon
+        }
         owner: resident {
           residentId
           displayName
@@ -52,7 +94,20 @@ query TodoById(
           createdAt
           updatedAt
           parentTodoId
+          rootTodoId
           isTemplate
+          location {
+            id
+            name
+            address1
+            address2
+            city
+            state
+            postalCode
+            country
+            lat
+            lon
+          }
           owner: resident {
             residentId
             displayName

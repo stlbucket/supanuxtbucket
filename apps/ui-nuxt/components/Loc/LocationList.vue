@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col grow">
+  <div class="flex flex-col">
     <div>
       <LocationModal
         @new-location="onNewLocation"
