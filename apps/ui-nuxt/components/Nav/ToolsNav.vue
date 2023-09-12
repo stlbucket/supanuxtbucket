@@ -18,20 +18,20 @@
         title: 'Address Book',
         permissionKey: ['p:address-book']
       },
-      {
-        label: 'Todo',
-        icon: 'i-heroicons-clipboard-document-list',
-        to: '/tools/todo',
-        title: 'Todo',
-        permissionKey: ['p:todo']
-      },
-      {
-        label: 'Discussions',
-        icon: 'i-heroicons-user-group',
-        to: '/tools/discussions',
-        title: 'Discussions',
-        permissionKey: ['p:discussions']
-      },
+      // {
+      //   label: 'Todo',
+      //   icon: 'i-heroicons-clipboard-document-list',
+      //   to: '/tools/todo',
+      //   title: 'Todo',
+      //   permissionKey: ['p:todo']
+      // },
+      // {
+      //   label: 'Discussions',
+      //   icon: 'i-heroicons-user-group',
+      //   to: '/tools/discussions',
+      //   title: 'Discussions',
+      //   permissionKey: ['p:discussions']
+      // },
       {
         label: 'Locations',
         icon: 'i-heroicons-globe-americas',

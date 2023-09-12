@@ -1,6 +1,6 @@
-begin;
-  select inc_fn.install_incidents_application();
-commit;
+-- begin;
+--   select inc_fn.install_incidents_application();
+-- commit;
 
 ------------------------ CREATE ANCHOR TENANT AND SUPER ADMIN USER ---------------------------------------------
 --- change parameters as appropriate

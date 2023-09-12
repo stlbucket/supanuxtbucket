@@ -12,12 +12,12 @@
   const links = computed(() => {
     return [
       {
-        label: 'Incidents',
-        icon: 'i-heroicons-arrows-pointing-in',
-        to: '/incidents',
-        title: 'Incidents',
-        // permissionKey: ['p:incidents']
-      }
+        label: 'Todo',
+        icon: 'i-heroicons-clipboard-document-list',
+        to: '/tools/todo',
+        title: 'Todo',
+        permissionKey: ['p:todo']
+      },
     ]
       .map((l: any) => {
         return {

@@ -155,9 +155,7 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_message(
     _msg_resident msg.msg_resident;
     _topic msg.topic;
     _message msg.message;
-
-    -- v_event text = TG_ARGV[0];
-    -- v_sub text;
+    _subscriber msg.subscriber;
   BEGIN
     _msg_resident := msg_fn.ensure_msg_resident(_resident_id);
 
@@ -166,6 +164,11 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_message(
     from msg.topic 
     where _message_info.topic_id is not null 
     and id = _message_info.topic_id;
+
+    _subscriber := msg_fn.upsert_subscriber(row(
+      _topic.id
+      ,_msg_resident.resident_id
+    ));
 
     if _topic.id is null then
       _topic := msg_fn.upsert_topic(

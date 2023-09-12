@@ -17,9 +17,6 @@ SELECT schemas_are(ARRAY[
   ,'msg'
   ,'msg_fn'
   ,'msg_api'
-  ,'inc'
-  ,'inc_fn'
-  ,'inc_api'
   -- put your app here
 
   -- below here are supabase-specific schemas

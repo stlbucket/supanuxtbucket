@@ -1,18 +1,23 @@
 <template>
-  <div class="flex gap-2">
-    <div class="flex flex-col gap-1.5 max-w-[50%] min-w-[50%] min-h-[300px] max-h-[300px]">
-      <LocationList 
-        :locations="locations" 
-        @locationSelected="onLocationSelected" 
-        :preSelected="[]"
-        @new-location="onNewLocation"
-        @update-location="onUpdateLocation"
-      />
+  <UCard>
+    <template #header>
+      <div class="flex text-xl justify-center">LOCATIONS</div>
+    </template>
+    <div class="flex gap-2">
+      <div class="flex flex-col gap-1.5 max-w-[50%] min-w-[50%]">
+        <LocationList 
+          :locations="locations" 
+          @locationSelected="onLocationSelected" 
+          :preSelected="[]"
+          @new-location="onNewLocation"
+          @update-location="onUpdateLocation"
+        />
+      </div>
+      <div class="flex min-w-[30%] grow z-1">
+        <MarkerMap :locations="markedLocations" />
+      </div>
     </div>
-    <div class="flex min-w-[30%] min-h-[300px] max-h-[300px] grow z-1">
-      <MarkerMap :locations="markedLocations" />
-    </div>
-  </div>
+  </UCard>
 </template>
 
 <script lang="ts" setup>
