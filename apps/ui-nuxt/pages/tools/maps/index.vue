@@ -23,15 +23,6 @@
         @new-location="onNewLocation"
         @update-location="onUpdateLocation"
       />
-      <!-- <div class="flex bg-blue-300 overflow-hidden">
-        <LocationList 
-          :locations="locations" 
-          @locationSelected="onLocationSelected"
-          :preSelected="[]"
-          @new-location="onNewLocation"
-          @update-location="onUpdateLocation"
-        />
-      </div> -->
     </div>
   </UCard>
 </template>

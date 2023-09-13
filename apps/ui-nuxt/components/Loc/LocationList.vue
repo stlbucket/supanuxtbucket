@@ -53,6 +53,9 @@
           title="Expand All Children"
         ></UButton>
       </template>
+      <template #empty-state>
+        NO SELECTED LOCATIONS
+      </template>
     </UTable>
     <UTable
       :rows="locations.filter(l => selectedLocations.map(sl => sl.id).indexOf(l.id) === -1).slice(0,17)"

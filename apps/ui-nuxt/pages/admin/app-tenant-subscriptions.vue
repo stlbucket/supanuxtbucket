@@ -6,7 +6,7 @@
       <UCard>
         <div class="flex flex-col gap-2">
           <TenantSubscription
-            v-if="activeSubscriptions.length > 0"
+            v-if="activeSubscriptions.length > 0" 
             v-for="s in activeSubscriptions" 
             :subscription="s"
           />

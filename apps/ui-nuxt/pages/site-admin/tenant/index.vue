@@ -12,24 +12,12 @@
         <UInput v-model="searchTerm" data-1p-ignore />
       </div>
     </div>
-    <UTable
-      :rows="tenants"
-      :columns="[
-        {key: 'action'},
-        {key: 'name', label: 'Name', sortable: true},
-        {key: 'status', label: 'Status', sortable: true},
-        {key: 'type', label: 'Type', sortable: true},
-        {key: 'identifier', label: 'Identifier', sortable: true},
-      ]"
-      :sort="{ column: 'name', direction: 'asc' }"
-    >
-      <template #name-data="{ row }">
-        <NuxtLink :to="`/site-admin/tenant/${row.id}`">{{ row.name }}</NuxtLink>
-      </template>
-      <template #action-data="{ row }">
-        <UButton @click="onSupport(row)">Support</UButton>
-      </template>
-    </UTable>
+    <div class="hidden md:flex">
+      <TenantList :tenants="tenants" @support="onSupport"/>
+    </div>
+    <div class="flex md:hidden">
+      <TenantListSmall :tenants="tenants" @support="onSupport"/>
+    </div>
   </UCard>
 </template>
 

@@ -24,9 +24,6 @@
 </template>
 
 <script lang="ts" setup>
-  const props = defineProps<{
-  }>()
-
   const showModal = ref(false)
 
   const formData: Ref<NewTenantInfo> = ref({

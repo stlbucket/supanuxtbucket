@@ -14,19 +14,6 @@
       </div>
     </div>
   </div>
-  <!-- <UTable
-    :rows="residents"
-    :columns="columns"
-    :sort="{ column: 'tenantName', direction: 'asc' }"
-    :sortable="!disableSort"
-  >
-    <template #email-data="{ row }">
-      <NuxtLink :to="`/admin/app-tenant-residencies/${row.id}`">{{ row.email }}</NuxtLink>
-    </template>
-    <template #action-data="{ row }">
-        <UButton v-if="rowActionName" @click="handleRowAction(row)">{{rowActionName}}</UButton>
-      </template>
-  </UTable> -->
 </template>
 
 <script lang="ts" setup>
