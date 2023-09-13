@@ -7,11 +7,20 @@
       </div>
       <ResidentModal @new-resident="onNewResident"/>
     </template>
-    <ResidentsList 
-      :residents="residents"
-      show-display-name
-      show-email
-    />
+    <div class="hidden md:flex">
+      <ResidentsList 
+        :residents="residents"
+        show-display-name
+        show-email
+      />
+    </div>
+      <div class="flex md:hidden">
+        <ResidentsListSmall
+        :residents="residents"
+        show-display-name
+        show-email
+      />
+    </div>
   </UCard>
 </template>
 

@@ -9,13 +9,25 @@
         <div class="text-xs">SEARCH TERM</div>
         <UInput v-model="searchTerm" data-1p-ignore />
       </div>
-      <ResidentsList 
-        :residents="residents" 
-        @row-action="onRowAction" 
-        row-action-name="Support"
-        show-display-name
-        show-email
-      />
+      <div class="hidden md:flex">
+        <ResidentsList 
+          :residents="residents" 
+          @row-action="onRowAction" 
+          row-action-name="Support"
+          show-display-name
+          show-email
+        />
+      </div>
+      <div class="flex md:hidden">
+        <ResidentsListSmall
+          :residents="residents" 
+          @row-action="onRowAction" 
+          row-action-name="Support"
+          show-display-name
+          show-email
+        />
+      </div>
+
     </UCard>
 </template>
 

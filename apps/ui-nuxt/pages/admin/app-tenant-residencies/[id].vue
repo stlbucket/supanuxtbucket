@@ -7,7 +7,7 @@
     }"
   >
     <template #header>
-      <div class="flex justify-between">
+      <div class="flex flex-col justify-between md:flex-row">
         <div class="flex">
           <div class="text-2xl">Tenant Resident</div>
         </div>
@@ -17,7 +17,7 @@
         </div>
       </div>
     </template>
-    <div class="flex justify-around">
+    <div class="flex flex-col justify-around md:flex-row">
       <div class="flex flex-col gap-1 p-3">
         <div class="flex text-xs">Email</div>
         <div class="flex">{{ residency.email }}</div>
@@ -44,14 +44,6 @@
         />
       </div>
     </div>
-    <!-- <div class="flex">
-      <div class="flex">
-        <pre>{{ JSON.stringify(residency,null,2) }}</pre>
-      </div>
-      <div class="flex">
-        <pre>{{ JSON.stringify(subscriptions,null,2) }}</pre>
-      </div>
-    </div> -->
   </UCard>
 </template>
 
