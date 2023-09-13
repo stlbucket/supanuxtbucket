@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-col grow">
     <UTable
+      class="flex flex-col grow"
       :rows="selectedLocations"
       :columns="[
         {key: 'action'},
@@ -110,6 +111,9 @@
           variant="solid" 
           title="Expand All Children"
         ></UButton>
+      </template>
+      <template #empty-state>
+        <div class="flex justify-center">NO UNSELECTED LOCATIONS</div>
       </template>
     </UTable>
   </div>

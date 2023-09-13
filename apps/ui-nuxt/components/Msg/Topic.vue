@@ -1,5 +1,5 @@
 <template>
-  <UCard v-if="topic" class="flex flex-col grow">
+  <UCard v-if="topic"  class="flex flex-col grow">
     <template #header>
       <div class="flex justify-center">{{ title || topic.name }}</div>
     </template>

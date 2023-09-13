@@ -1,6 +1,6 @@
 <template>
   <div v-if="todoTree" class="flex flex-col grow">
-    <div class="flex justify-start min-w-max border-2 rounded-md border-black grow ml-10">
+    <div class="flex justify-start min-w-max border-2 rounded-md border-black grow">
       <div class="flex flex-1 flex-col m-2 flex-grow-2 gap-1">
         <TodoMilestone 
           v-if="String(todoTree.type) === 'MILESTONE'"

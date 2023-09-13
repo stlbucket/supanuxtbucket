@@ -1,98 +1,27 @@
 <template>
-  <UCard v-if="todoTree">
-    <template #header>
-      <div class="flex justify-between">
-        <div class="flex gap-5">
-          <div class="text-2xl">WE HEART TODO:</div>
-          <div class="text-2xl">{{ todoTree.name }}</div>
-        </div>
-        <div class="flex gap-5">
-          <NuxtLink v-if="todoTree.parentTodoId" :to="`/tools/todo/${todoTree.parentTodoId}`">To Parent</NuxtLink>
-          <NuxtLink v-if="todoTree.parentTodoId" :to="`/tools/todo/${todoTree.rootTodoId}`">Back to Project</NuxtLink>
-        </div>
-      </div>
-    </template>
-    <div class="flex gap-2">
-      <div class="flex max-w-[50%] min-w-[50%]">
-        <UTabs 
-          :items="tabItems" 
-          :ui="{
-            container: 'flex flex-col grow w-full',
-            base: 'focus:outline-none flex flex-col grow',
-            wrapper: 'flex flex-col grow space-y-2'
-          }"
-        >
-          <template #detail="{ item }">
-            <div class="flex flex-col gap-2">
-              <TodoDetail
-                :todo="todoTree"
-                @make-template="onMakeTemplate"
-                @clone-template="onCloneTemplate"
-                @delete="onDelete"
-              />
-              <UCard>
-                <template #header>
-                  <div class="flex justify-center">TASKS</div>
-                </template>
-                <TodoTree 
-                  :todo-id="todoTree.id"
-                  :tree-level="0"
-                />
-              </UCard>
-            </div>
-          </template>
-          <template #map="{ item }">
-            <div class="flex flex-col gap-2 grow min-h-[600px]">
-              <UCard>
-                <template #header>
-                  <div class="flex justify-center">LOCATIONS</div>
-                </template>
-                <LocationList 
-                  :locations="todoTree.location ? [todoTree.location] : []"
-                  :pre-selected="todoTree.location ? [todoTree.location] : []"
-                  @location-selected="onLocationSelected"
-                  @update-location="onUpdateLocation"
-                  :show-new="false"
-                  :show-delete="false"
-                  :show-headers="false"
-                />
-              </UCard>
-              <div class="flex grow">
-                <MarkerMap 
-                  :locations="selectedLocations"
-                />
-              </div>
-            </div>
-          </template>
-        </UTabs>          
-      </div>
-      <div class="flex grow flex-col gap-2">
-        <UTable
-          :rows="[]"
-          :ui="{
-            thead: 'hidden'
-          }"
-        >
-          <template #empty-state>
-            <UCard>
-              <template #header>
-                <div class="flex justify-center">ATTACHMENTS</div>
-              </template>
-              <div class="flex justify-between">
-                <UButton label="Add an attachment" @click="onAddAttachment" />
-                <div class="text-xs"><a target="_blank" href="https://supabase.com/docs/guides/storage">Supabase Storage Guide</a></div>
-              </div>
-            </UCard>
-          </template>
-        </UTable>
-        <div class="flex grow">
-          <MsgTopic
-            :topicId="todoTree.topicId"
-            title="GROUP DISCUSSION"
-          />
-        </div>
-      </div>      
-    </div>        
+  <UCard class="flex flex-col grow">
+    <div class="hidden md:flex grow">
+      <TodoDetail
+        v-if="todoTree" 
+        :todo-tree="todoTree" 
+        @new-location="onNewLocation"
+        @update-location="onUpdateLocation"
+        @clone-template="onCloneTemplate"
+        @make-template="onMakeTemplate"
+        @delete="onDelete"
+      />
+    </div>
+    <div class="flex md:hidden grow">
+      <TodoDetailSmall 
+        v-if="todoTree" 
+        :todo-tree="todoTree" 
+        @new-location="onNewLocation"
+        @update-location="onUpdateLocation"
+        @clone-template="onCloneTemplate"
+        @make-template="onMakeTemplate"
+        @delete="onDelete"
+      />
+    </div>
   </UCard>
 </template>
 
