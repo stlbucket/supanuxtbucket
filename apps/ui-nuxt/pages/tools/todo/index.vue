@@ -12,21 +12,12 @@
         </div>
       </div>
     </template>
-    <UTable
-      :rows="todos"
-      :columns="[
-        { key:'name', label: 'Name' },
-        { key:'status', label: 'Status' },
-        { key:'assigned-to', label: 'Assigned To'}
-      ]"
-    >
-    <template #name-data="{row}">
-        <NuxtLink :to="`/tools/todo/${row.id}`">{{ row.name }}</NuxtLink>
-      </template>
-      <template #assigned-to-data="{row}">
-        {{ row.resident.displayName }}
-      </template>
-    </UTable>
+    <div class="hidden md:flex">
+      <TodoList :todos="todos"/>
+    </div>
+    <div class="flex md:hidden">
+      <TodoListSmall :todos="todos"/>
+    </div>
   </UCard>
 </template>
 
@@ -51,13 +42,4 @@
     })
     await loadData()
   }
-
-  const handleSelected = async (todoId: string) => {
-    navigateTo(`/tools/todo/${todoId}`)
-  }
-
-  const appStore = useAppStateStore()
-  const loggedIn = computed(()=>{
-    return appStore.loggedIn
-  })
 </script>

@@ -107,7 +107,9 @@ export interface ITodo extends todo.TodoTodo {
 }
 
 declare global {
-  type Todo = ITodo
+  type Todo = extends ITodo {
+    resident: IResident
+  }
 }
 
 // ----------------------------------------------------------------- MSG
