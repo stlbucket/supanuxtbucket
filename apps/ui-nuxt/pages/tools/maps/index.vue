@@ -1,21 +1,37 @@
 <template>
-  <UCard>
+  <UCard
+    :ui="{
+
+    }"
+  >
     <template #header>
-      <div class="flex text-xl justify-center">LOCATIONS</div>
+      <div class="flex justify-between">
+        <div class="flex text-xl">LOCATIONS</div>
+        <LocationModal
+          @new-location="onNewLocation"
+        ></LocationModal>
+      </div>
     </template>
-    <div class="flex gap-2">
-      <div class="flex flex-col gap-1.5 max-w-[50%] min-w-[50%]">
+    <div class="flex gap-2 flex-col">
+      <div class="flex min-h-[300px]">
+        <MarkerMap :locations="markedLocations" />
+      </div>
+      <LocationList 
+        :locations="locations" 
+        @locationSelected="onLocationSelected"
+        :preSelected="[]"
+        @new-location="onNewLocation"
+        @update-location="onUpdateLocation"
+      />
+      <!-- <div class="flex bg-blue-300 overflow-hidden">
         <LocationList 
           :locations="locations" 
-          @locationSelected="onLocationSelected" 
+          @locationSelected="onLocationSelected"
           :preSelected="[]"
           @new-location="onNewLocation"
           @update-location="onUpdateLocation"
         />
-      </div>
-      <div class="flex min-w-[30%] grow z-1">
-        <MarkerMap :locations="markedLocations" />
-      </div>
+      </div> -->
     </div>
   </UCard>
 </template>
@@ -23,6 +39,7 @@
 <script lang="ts" setup>
   const locations: Ref<ALocation[]> = ref([])
   const markedLocations: Ref<ALocation[]> = ref([])
+  const appStateStore = useAppStateStore()
 
   const loadData = async () => {
     const result = await GqlAllLocations()
@@ -50,4 +67,8 @@
     })
     await loadData()
   }
+
+  const screenWidth = computed(() => {
+    return appStateStore.screenWidth - 20
+  })
 </script>

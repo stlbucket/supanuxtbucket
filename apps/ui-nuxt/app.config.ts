@@ -5,24 +5,24 @@ export default defineAppConfig({
     gray: 'stone',
     card: {
       "base": "overflow-hidden",
-      "background": "bg-white dark:bg-stone-900",
-      "divide": "divide-y divide-stone-200 dark:divide-stone-800",
-      "ring": "ring-1 ring-stone-200 dark:ring-stone-800",
+      "background": "bg-white dark:bg-gray-900",
+      "divide": "divide-y divide-gray-200 dark:divide-gray-800",
+      "ring": "ring-1 ring-gray-200 dark:ring-gray-800",
       "rounded": "rounded-lg",
       "shadow": "shadow",
       "body": {
         "base": "",
-        "background": "dark:bg-stone-700",
+        "background": "dark:bg-gray-700",
         "padding": "px-2 py-2 sm:p-6"
       },
       "header": {
         "base": "",
-        "background": "dark:bg-stone-700",
+        "background": "dark:bg-gray-700",
         "padding": "px-2 py-3 sm:px-6"
       },
       "footer": {
         "base": "",
-        "background": "dark:bg-stone-700",
+        "background": "dark:bg-gray-700",
         "padding": "px-2 py-2 sm:px-6"
       }
     },

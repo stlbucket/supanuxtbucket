@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-2">
-    <div class="flex">
+    <div class="flex flex-col md:flex-row">
       <div class="flex flex-col min-w-[50%]">
         <Myself />
       </div>

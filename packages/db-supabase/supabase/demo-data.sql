@@ -107,8 +107,8 @@
       _min_lon := -122.27920532226564;
 
       for _tenant in select * from app.tenant loop
-        _users := (to_json(http_get('https://random-data-api.com/api/v2/users?size=5&response_type=json'))->>'content')::jsonb;
-        for _i in 0..4 loop
+        _users := (to_json(http_get('https://random-data-api.com/api/v2/users?size=50&response_type=json'))->>'content')::jsonb;
+        for _i in 0..40 loop
             _address := _users->_i->'address';
   
             _lat = ((random()+_i/1e39)*(_max_lat-_min_lat))+_min_lat;

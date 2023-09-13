@@ -1,5 +1,9 @@
 <template>
-  <UContainer>
+  <UContainer
+    :ui="{
+      base: 'mx-auto'
+    }"
+  >
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

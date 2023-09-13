@@ -17,6 +17,10 @@ SELECT schemas_are(ARRAY[
   ,'msg'
   ,'msg_fn'
   ,'msg_api'
+  ,'loc'
+  ,'loc_api'
+  ,'loc_fn'
+  ,'wh'
   -- put your app here
 
   -- below here are supabase-specific schemas

@@ -90,6 +90,7 @@ CREATE OR REPLACE FUNCTION msg_fn.upsert_topic(
     _topic msg.topic;
     _topic_id uuid;
   BEGIN
+    raise notice '%', jsonb_pretty(to_jsonb(_topic_info));
     _msg_resident := msg_fn.ensure_msg_resident(_resident_id);
 
     _topic_id = coalesce(_topic_info.id, gen_random_uuid());

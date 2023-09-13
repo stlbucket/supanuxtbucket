@@ -1,5 +1,13 @@
 <template>
-  <UButton @click="showModal = true">{{ location ? 'Edit' : 'New' }}</UButton>
+  <UButton
+    @click="showModal = true"
+    :icon="`${location ? 'i-heroicons-pencil' : 'i-heroicons-plus-circle'}`"
+    size="xs"
+    color="white" 
+    square 
+    variant="solid" 
+    title="Expand All Children"
+  ></UButton>
   <UModal
     v-model="showModal"
     :ui="{

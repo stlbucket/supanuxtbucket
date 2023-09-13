@@ -83,7 +83,9 @@ CREATE OR REPLACE FUNCTION app_fn.assume_residency(_resident_id uuid, _email cit
     _resident app.resident;
   BEGIN
     select * into _resident from app.resident where id = _resident_id and email = _email;
-    -- raise exception '%', _resident;
+    if _resident.id is null then
+      raise exception '%, %, %', _resident_id, _email, _resident;
+    end if;
 
     if _resident.id is not null then
       update app.resident set 

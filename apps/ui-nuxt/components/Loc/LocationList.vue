@@ -1,25 +1,27 @@
 <template>
-  <div class="flex flex-col">
-    <div>
-      <LocationModal
-        @new-location="onNewLocation"
-        v-if="showNew"
-      ></LocationModal>
-    </div>
+  <div class="flex flex-col grow">
     <UTable
-      :rows="locations"
+      :rows="selectedLocations"
       :columns="[
+        {key: 'action'},
         {key: 'name', label: 'Name'},
         {key: 'loc', label: 'Location'},
-        {key: 'action'}
       ]"
       selectable
       v-model="selectedLocations"
       :ui="{
-        thead: `${showHeaders ? '' : 'hidden'}`
+        thead: `${showHeaders ? '' : 'hidden'} sticky`,
+        tbody: 'overflow-y-scroll',
+        // tbody: `divide-y divide-gray-200 dark:divide-gray-800 scroll-smooth`,
+        th: {
+          base: 'text-left rtl:text-right sticky'
+        },
+        td: {
+          size: 'text-xs'
+        }
       }"
     >
-    <template #name-data="{ row }">
+      <template #name-data="{ row }">
         <UPopover mode="hover">
           {{ row.name }}
           <template #panel>
@@ -43,13 +45,75 @@
         <UButton
           v-if="showDelete"
           @click="onDeleteLocation(row)"
-        >Delete</UButton>
+          icon="i-heroicons-x-mark"
+          size="xs"
+          color="white" 
+          square 
+          variant="solid" 
+          title="Expand All Children"
+        ></UButton>
+      </template>
+    </UTable>
+    <UTable
+      :rows="locations.filter(l => selectedLocations.map(sl => sl.id).indexOf(l.id) === -1).slice(0,17)"
+      :columns="[
+        {key: 'action'},
+        {key: 'name', label: 'Name'},
+        {key: 'loc', label: 'Location'},
+      ]"
+      selectable
+      v-model="selectedLocations"
+      :ui="{
+        // thead: `${showHeaders ? '' : 'hidden'} sticky`,
+        thead: `hidden`,
+        tbody: 'overflow-y-scroll',
+        // tbody: `divide-y divide-gray-200 dark:divide-gray-800 scroll-smooth`,
+        th: {
+          base: 'text-left rtl:text-right sticky'
+        },
+        td: {
+          size: 'text-xs'
+        }
+      }"
+    >
+      <template #name-data="{ row }">
+        <UPopover mode="hover">
+          {{ row.name }}
+          <template #panel>
+            <pre>{{ JSON.stringify(row,null,2) }}</pre>
+          </template>
+        </UPopover>        
+      </template>
+      <template #loc-data="{ row }">
+        <UPopover mode="hover">
+          {{ row.address1 }}
+          <template #panel>
+            <pre>{{ JSON.stringify(row,null,2) }}</pre>
+          </template>
+        </UPopover>        
+      </template>
+      <template #action-data="{ row }">
+        <LocationModal
+          :location="row"
+          @update-location="onUpdateLocation"
+        ></LocationModal>
+        <UButton
+          v-if="showDelete"
+          @click="onDeleteLocation(row)"
+          icon="i-heroicons-x-mark"
+          size="xs"
+          color="white" 
+          square 
+          variant="solid" 
+          title="Expand All Children"
+        ></UButton>
       </template>
     </UTable>
   </div>
 </template>
 
 <script lang="ts" setup>
+  const appStateStore = useAppStateStore()
   const props = withDefaults(defineProps<{
     locations: ALocation[],
     preSelected: ALocation[],
@@ -90,5 +154,14 @@
   
   onMounted(()=>{
     selectedLocations.value = props.preSelected || []
+  })
+
+
+  const useBreakpoint = (bp: string) => {
+    return typeof window !== 'undefined' && getComputedStyle(document.body).getPropertyValue(`--tw-${bp}`) !== 'false'
+  }
+
+  const currentBreakpoint = computed(() => {
+    return appStateStore.screenWidth
   })
 </script>

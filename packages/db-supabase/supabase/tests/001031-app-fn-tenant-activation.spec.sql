@@ -17,7 +17,7 @@ select isa_ok(
     ,:'_tenant_admin_email'::citext
   ))
   ,'app.tenant'
-  ,'should create an tenant'
+  ,'should create a tenant'
 );
 ------------------------------------------------------------------------
 ------------------------------------------------------------------------ create_supabase_user
@@ -80,10 +80,21 @@ select test_helpers.login_as_user(
     ,'app.tenant'
     ,'should deactivate app tenant'
   );
-  select is(
-    (select status from app.tenant where identifier = :'_identifier'::citext)
-    ,'inactive'::app.tenant_status
-  );
+  -- select is(
+  --   -- (select to_jsonb(t.*)from app.tenant t where identifier = :'_identifier'::citext)::jsonb
+  --   -- (select to_jsonb(t.*)from app.resident t where email = :'_superadmin_email'::citext)::jsonb
+  --   (select to_jsonb(t.*)from app_api.current_profile_claims() t)::jsonb
+  --   ,'{}'::jsonb
+  --   ,'tacos'
+  -- );
+-- select test_helpers.logout();
+  -- select is(
+  --   (select status from app.tenant where identifier = :'_identifier'::citext)
+  --   ,'inactive'::app.tenant_status
+  -- );
+-- select test_helpers.login_as_user(
+--   _email => :'_superadmin_email'::citext
+-- );
   select is(
     (select count(*) from app.resident where tenant_id = (select id from app.tenant where identifier = :'_identifier'::citext) and status = 'active')::integer
     ,0::integer

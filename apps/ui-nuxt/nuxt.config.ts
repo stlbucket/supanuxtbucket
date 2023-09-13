@@ -124,6 +124,7 @@ export default defineNuxtConfig({
       theme: {
         extend: {
           colors: {
+            'bermuda': '#78dcca',
             'ash-grey': {
               100: '#B9C8CB',
               200: '#A1B6BA',

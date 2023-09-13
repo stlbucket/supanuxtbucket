@@ -37,13 +37,14 @@ select test_helpers.login_as_user(
   _email => :'_superadmin_email'::citext
 );
 ------------------------------------ on first login, user will confirm resident (can be automatic), which sets resident to active
-select isa_ok(
-  app_api.assume_residency(
-    _resident_id => (select id from app.resident where email = :'_superadmin_email'::citext)
-  )
-  ,'app.resident'
-  ,'should assume the resident'
-);
+  select isa_ok(
+    app_fn.assume_residency(
+      _resident_id => (select id from app.resident where email = :'_superadmin_email'::citext)
+      ,_email => :'_superadmin_email'
+    )
+    ,'app.resident'
+    ,'should assume the resident'
+  );
 ------------------------------------ logout so we can evaluate data as postgres user
 select test_helpers.logout();
 ------------------------------------ login as anchor user

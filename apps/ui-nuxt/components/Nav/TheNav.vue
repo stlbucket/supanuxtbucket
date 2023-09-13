@@ -1,35 +1,35 @@
 <template>
-  <UCard
-    class="flex grow flex-col"
-  >
-    <!-- <template #header>
-      <UButton
-        :icon="`${navCollapsed ? 'i-heroicons-arrow-right-on-rectangle' : 'i-heroicons-arrow-left-on-rectangle'}`"
-        size="sm"
-        color="primary"
-        square variant="outline"
-        @click="onToggleCollapsed"
-      />
-    </template> -->
-    <div class="flex flex-col grow">
-      <div v-if="showNav.todo">
-        <div v-if="!navCollapsed">Todo</div>
-        <TodoNav />
-      </div>
-      <div v-if="showNav.tools">
-        <div v-if="!navCollapsed">Tools</div>
-        <ToolsNav />
-      </div>
-      <div v-if="showNav.tenantAdmin">
-        <div v-if="!navCollapsed">Admin</div>
-        <TenantAdminNav />    
-      </div>
-      <div v-if="showNav.siteAdmin">
-        <div v-if="!navCollapsed">Site Admin</div>
-        <SiteAdminNav />    
-      </div>
-    </div>
-  </UCard>
+    <USlideover 
+      :modelValue="!navCollapsed"
+      side="left"
+      :ui="{
+        width: 'w-screen max-w-[300px]'
+      }"
+    >
+      <UCard
+        class="flex grow flex-col"
+      >
+        <UButton @click="onToggleCollapsed">X</UButton>
+        <div class="flex flex-col grow">
+          <div v-if="showNav.todo">
+            <div v-if="!navCollapsed">Todo</div>
+            <TodoNav />
+          </div>
+          <div v-if="showNav.tools">
+            <div v-if="!navCollapsed">Tools</div>
+            <ToolsNav />
+          </div>
+          <div v-if="showNav.tenantAdmin">
+            <div v-if="!navCollapsed">Admin</div>
+            <TenantAdminNav />    
+          </div>
+          <div v-if="showNav.siteAdmin">
+            <div v-if="!navCollapsed">Site Admin</div>
+            <SiteAdminNav />    
+          </div>
+        </div>
+      </UCard>
+    </USlideover>
 </template>
 
 <script lang="ts" setup>

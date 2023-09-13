@@ -111,6 +111,10 @@ CREATE OR REPLACE FUNCTION todo_fn.create_todo(
     _retval todo.todo;
     _id uuid;
   BEGIN
+    if _name is null or length(_name) < 3 then
+      raise exception '30028: Todo name must be at least 3 characters';
+    end if;
+
     _todo_resident := todo_fn.ensure_todo_resident(_resident_id);
 
     _ordinal := 0;
@@ -123,7 +127,7 @@ CREATE OR REPLACE FUNCTION todo_fn.create_todo(
     _topic := msg_fn.upsert_topic(
       row(
         null::uuid
-        ,_name||' topic'::citext
+        ,(_name||' topic')::citext
         ,null::citext
         ,null::msg.topic_status
       )::msg_fn.topic_info

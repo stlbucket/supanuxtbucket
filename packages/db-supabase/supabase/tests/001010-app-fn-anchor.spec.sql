@@ -55,6 +55,12 @@ select is(
   ,1::integer
   ,'should be 1 auth.users'
 );
+------------------------------------
+select is(
+  (select status from app.resident where email = :'_superadmin_email'::citext)::app.resident_status
+  ,'invited'::app.resident_status
+  ,'resident should still be in status of invited'
+);
 ------------------------------------ login as anchor user
 select test_helpers.login_as_user(
   _email => :'_superadmin_email'::citext
@@ -62,8 +68,18 @@ select test_helpers.login_as_user(
 ------------------------------------
 select is(
   (select status from app.resident where email = :'_superadmin_email'::citext)::app.resident_status
-  ,'active'::app.resident_status
+  ,'invited'::app.resident_status
   ,'resident should still be in status of invited'
+);
+------------------------------------
+select app_fn.assume_residency(
+  _resident_id => (select id from app.resident where email = :'_superadmin_email'::citext)
+  ,_email => :'_superadmin_email'::citext
+);
+select is(
+  (select status from app.resident where email = :'_superadmin_email'::citext)::app.resident_status
+  ,'active'::app.resident_status
+  ,'resident should be in status of active'
 );
 ------------------------------------ logout so we can evaluate data as postgres user
 select test_helpers.logout();
@@ -86,8 +102,8 @@ select is(
 ------------------------------------ test permissions
 select is(
   (select auth_ext.has_permission('p:app-admin'))
-  ,false
-  ,'super admin user should not have p:app-admin permission'
+  ,true
+  ,'super admin user should have p:app-admin permission'
 );
 ------------------------------------ test permissions
 select is(

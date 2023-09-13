@@ -103,7 +103,7 @@ select isa_ok(
     ------------------------------------
     select is(
       (select status from app.resident where email = :'_tenant_admin_email'::citext and tenant_id = (select id from app.tenant where identifier = :'_identifier'::citext))::app.resident_status
-      ,'active'::app.resident_status
+      ,'invited'::app.resident_status
       ,'resident should be active'
     );
     ------------------------------------

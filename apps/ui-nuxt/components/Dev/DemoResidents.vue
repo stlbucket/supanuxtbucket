@@ -1,7 +1,8 @@
 <template>
-  <UCard>
+  <UCard
+  >
     <template #header>
-      <div class="flex gap-1 justify-between items-center">
+      <div class="flex flex-col justify-start md:flex-row md:gap-1 md:justify-between md:items-center">
         <div>DEMO TENANCIES</div>
         <div><UIcon name="i-heroicons-shield-exclamation"/><span class="text-xs border-2"> Look here for more info about this component: /supabase/seed.sql</span></div>
       </div>

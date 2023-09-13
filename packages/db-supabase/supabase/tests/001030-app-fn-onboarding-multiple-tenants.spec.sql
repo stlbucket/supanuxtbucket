@@ -138,8 +138,10 @@ select test_helpers.login_as_user(
 ------------------------------------------------------------------------
 ------------------------------------------------------------------------ invite test user 1 to tenant 2
 select isa_ok(
-  app_api.invite_user(
-    _email => :'_tenant_admin_email_1'::citext
+  app_fn.invite_user(
+    _tenant_id => (select id from app.tenant where identifier = :'_identifier_2'::citext)::uuid
+    ,_email => :'_tenant_admin_email_1'::citext
+    ,_assignment_scope => 'user'::app.license_type_assignment_scope
   )
   ,'app.resident'
   ,'should create a resident'
