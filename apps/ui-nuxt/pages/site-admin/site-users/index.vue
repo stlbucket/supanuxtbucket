@@ -9,20 +9,12 @@
     <div>
       <UInput v-model="searchTerm" data-1p-ignore />
     </div>
-    <UTable
-      :rows="profiles"
-      :columns="[
-        {key: 'email', label: 'Email', sortable: true},
-        {key: 'firstName', label: 'First Name', sortable: true},
-        {key: 'lastName', label: 'Last Name', sortable: true},
-        {key: 'status', label: 'Status', sortable: true},
-      ]"
-      :sort="{ column: 'name', direction: 'asc' }"
-    >
-      <template #email-data="{ row }">
-        <NuxtLink :to="`/site-admin/site-users/${row.id}`">{{ row.email }}</NuxtLink>
-      </template>
-    </UTable>
+    <div class="hidden md:flex">
+      <SiteUsers :profiles="profiles" />   
+    </div>
+    <div class="flex md:hidden">
+      <SiteUsersSmall :profiles="profiles" />   
+    </div>
   </UCard>  
 </template>
 

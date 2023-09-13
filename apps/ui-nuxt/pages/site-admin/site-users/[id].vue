@@ -2,7 +2,7 @@
   <UCard v-if="siteUser">
     <template #header>
     </template>
-    <div class="flex justify-around">
+    <div class="flex justify-start flex-wrap md:flex-no-wrap md:justify-between">
       <div class="flex flex-col">
         <UCard>
           <template #header>
