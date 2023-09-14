@@ -1,5 +1,5 @@
 <template>
-  <UCard v-if="topic"  class="flex flex-col grow">
+  <UCard v-if="topic" class="grow">
     <template #header>
       <div class="flex justify-center">{{ title || topic.name }}</div>
     </template>
@@ -23,7 +23,14 @@
           <div class="flex flex-col w-3/4 gap-0.5">
             <div class="flex text-sm font-bold">{{ m.postedBy.displayName }}</div>
             <div class="flex text-xs italic">{{ useFormatDateTimeString(m.createdAt) }}</div>
-            <div :class="m.display.content">{{ m.content }}</div>
+            <div :class="m.display.content">
+              <UTextarea 
+                :model-value="m.content"
+                textareaClass="bg-red-400"
+                color="red"
+              />
+            </div>
+            <!-- <div :class="m.display.content">{{ m.content }}</div> -->
           </div>
         </div>
       </div>
@@ -54,7 +61,7 @@
         ...m,
         display: {
           justify: user.value?.user_metadata.display_name === m.postedBy.displayName ? 'flex justify-end' : 'flex justify-start',
-          content: user.value?.user_metadata.display_name === m.postedBy.displayName ? 'flex bg-blue-700 p-1 rounded grow break-normal' :  'flex bg-green-700 p-1 rounded grow break-normal'
+          content: user.value?.user_metadata.display_name === m.postedBy.displayName ? 'flex p-1 rounded grow break-normal' :  'flex p-1 rounded grow break-normal'
         }
       }
     })

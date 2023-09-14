@@ -6,6 +6,7 @@
         { key:'status', label: 'Status' },
         { key:'assigned-to', label: 'Assigned To'}
       ]"
+      class="grow"
     >
     <template #name-data="{row}">
         <NuxtLink :to="`/tools/todo/${row.id}`">{{ row.name }}</NuxtLink>

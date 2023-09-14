@@ -16,7 +16,7 @@
       <div class="flex min-h-[300px]">
         <MarkerMap :locations="markedLocations" />
       </div>
-      <LocationList 
+      <LocationListSmall
         :locations="locations" 
         @locationSelected="onLocationSelected"
         :preSelected="[]"

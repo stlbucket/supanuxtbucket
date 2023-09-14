@@ -1,21 +1,36 @@
 <template>
   <UCard>
     <template #header>
-      <div class="flex gap-2">
+      <div class="flex justify-between">
         <TodoModal
           :todo="todo"
           @updated="onUpdated"
         />
-        <UButton color="red" @click="onDelete">Delete</UButton>                
-        <div class="flex" v-if="!todo.isTemplate">
-          <UButton v-if="String(todo.status) === 'OPEN'" color="yellow" @click="onClose">Close</UButton>
-          <UButton v-if="String(todo.status) === 'CLOSED'" color="yellow" @click="onOpen">Reopen</UButton>
-        </div>
-        <div class="flex" v-if="!todo.isTemplate">
-          <UButton color="blue" @click="onMakeTemplate" v-if="showMakeTemplate">Make Template</UButton>
-        </div>
-        <div class="flex" v-if="todo.isTemplate">
-          <UButton color="blue" @click="onNewTodo">New Todo</UButton>
+        <div class="flex gap-2">
+          <div class="flex" v-if="!todo.isTemplate">
+            <UButton 
+              icon="i-heroicons-document-duplicate"
+              size="xs"
+              color="blue" 
+              square 
+              variant="solid" 
+              title="Make Template"
+              @click="onMakeTemplate"
+              v-if="showMakeTemplate"
+            />
+          </div>
+          <div class="flex" v-if="todo.isTemplate">
+            <UButton color="blue" @click="onNewTodo">New Todo</UButton>
+          </div>
+          <UButton 
+            icon="i-heroicons-minus-circle"
+            size="xs"
+            color="red" 
+            square 
+            variant="solid" 
+            title="Delete"
+            @click="onDelete"
+          />
         </div>
       </div>
     </template>
@@ -75,6 +90,6 @@
   }
 
   const showMakeTemplate = computed(() => {
-    return useHasPermission(user, 'p:todos-admin')
+    return useHasPermission(user, 'p:todo-admin')
   })
 </script>

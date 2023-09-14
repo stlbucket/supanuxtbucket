@@ -1,5 +1,5 @@
 <template>
-  <UCard>
+  <UCard class="grow">
     <template #header>
       <div class="flex justify-between">
         <div class="flex flex-col">

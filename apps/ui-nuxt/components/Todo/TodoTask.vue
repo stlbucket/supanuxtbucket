@@ -37,7 +37,7 @@
         @click="onCloseDetail"
       />
       <div
-        class="flex ml-5 px-2 rounded items-center bg-ash-grey-500"
+        class="flex ml-5 px-2 rounded items-center bg-ash-grey-800"
         @onclick="onSelected"
         :title="`TASK  ${todoTree.description || todoTree.name}`"
       >

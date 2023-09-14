@@ -8,6 +8,7 @@
       {key: 'status', label: 'Status', sortable: true},
     ]"
     :sort="{ column: 'name', direction: 'asc' }"
+    class="grow"
   >
     <template #email-data="{ row }">
       <NuxtLink :to="`/site-admin/site-users/${row.id}`">{{ row.email }}</NuxtLink>

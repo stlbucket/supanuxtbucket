@@ -6,7 +6,7 @@
     <div class="flex grow p-0 justify-between md:px-2 md:py-3 dark:bg-gray-700">
       <div class="flex">
         <UButton 
-          :icon="`${navCollapsed ? 'i-heroicons-bars-4' : 'i-heroicons-arrow-left-on-rectangle'}`"
+          icon="i-heroicons-bars-4"
           size="xs"
           color="white" 
           square 
@@ -32,12 +32,8 @@
   })
 
   const onToggleCollapsed = async () => {
-    appStateStore.setNavCollapsed(!appStateStore.navCollapsed)
+    appStateStore.toggleNavCollapsed()
   }
-
-  const minWidthValue = computed(() => {
-    return appStateStore.screenWidth
-  })
 
   onMounted(() => {
     appStateStore.setScreenWidth(useScreenWidth())

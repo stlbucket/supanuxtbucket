@@ -83,7 +83,9 @@
     // navigateTo(`/incidents/${result.cloneIncidentTemplate.incident.id}`)
   }
 
-  const onDelete = async() => {
+  const onDelete = async(todoId: string) => {
+    const forSure = confirm(`Are you sure you want to delete: ${todoId}`)
+    alert(forSure)
     // const result = await GqlDeleteIncident({
     //   incidentId: incident.value.id
     // })

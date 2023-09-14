@@ -106,10 +106,6 @@ export default defineNuxtConfig({
         "global": true
       },
       {
-        "path": "~/components/Inc",
-        "global": true
-      },
-      {
         "path": "~/components/Loc",
         "global": true
       },

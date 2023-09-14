@@ -1,5 +1,8 @@
 <template>
-  <UVerticalNavigation :links="links" />
+  <UVerticalNavigation 
+    :links="links"
+    
+  />
 </template>
 
 <script lang="ts" setup>
@@ -36,7 +39,7 @@
         label: 'Locations',
         icon: 'i-heroicons-globe-americas',
         to: '/tools/maps',
-        title: 'Locations',
+        title: 'Locations'
         // permissionKey: ['p:maps']
       }
     ]

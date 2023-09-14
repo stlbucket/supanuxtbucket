@@ -9,7 +9,7 @@ interface AppState {
 export const useAppStateStore = defineStore('appState', {
   persist: true,
   state: (): AppState => ({
-    navCollapsed: true,
+    navCollapsed: false,
     loggedIn: false,
     screenWidth: undefined
   }),
@@ -17,8 +17,8 @@ export const useAppStateStore = defineStore('appState', {
     
   },
   actions: {
-    setNavCollapsed (navCollapsed: boolean) {
-      this.navCollapsed = navCollapsed
+    toggleNavCollapsed () {
+      this.navCollapsed = !this.navCollapsed
     },
     async setLoggedIn (loggedIn: boolean) {
       this.loggedIn = loggedIn

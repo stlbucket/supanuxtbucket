@@ -4,6 +4,7 @@
     :columns="columns"
     :sort="{ column: 'tenantName', direction: 'asc' }"
     :sortable="!disableSort"
+    class="grow"
   >
     <template #email-data="{ row }">
       <NuxtLink :to="`/admin/app-tenant-residencies/${row.id}`">{{ row.email }}</NuxtLink>

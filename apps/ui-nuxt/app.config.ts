@@ -11,7 +11,7 @@ export default defineAppConfig({
       "rounded": "rounded-lg",
       "shadow": "shadow",
       "body": {
-        "base": "flex",
+        "base": "",
         "background": "dark:bg-gray-700",
         "padding": "px-2 py-2 sm:p-6"
       },

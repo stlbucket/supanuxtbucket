@@ -6,14 +6,16 @@
         <div class="flex text-xs">Users who have actually joined the system - not including invitees</div>
       </div>
     </template>
-    <div>
-      <UInput v-model="searchTerm" data-1p-ignore />
-    </div>
-    <div class="hidden md:flex">
-      <SiteUsers :profiles="profiles" />   
-    </div>
-    <div class="flex md:hidden">
-      <SiteUsersSmall :profiles="profiles" />   
+    <div class="flex flex-col grow">
+      <div>
+        <UInput v-model="searchTerm" data-1p-ignore />
+      </div>
+      <div class="hidden md:flex">
+        <SiteUsersList :profiles="profiles" />   
+      </div>
+      <div class="flex md:hidden">
+        <SiteUsersListSmall :profiles="profiles" />   
+      </div>
     </div>
   </UCard>  
 </template>

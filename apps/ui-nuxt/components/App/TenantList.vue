@@ -9,6 +9,7 @@
       {key: 'identifier', label: 'Identifier', sortable: true},
     ]"
     :sort="{ column: 'name', direction: 'asc' }"
+    class="grow"
   >
     <template #name-data="{ row }">
       <NuxtLink :to="`/site-admin/tenant/${row.id}`">{{ row.name }}</NuxtLink>

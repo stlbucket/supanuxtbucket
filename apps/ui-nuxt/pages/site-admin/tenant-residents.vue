@@ -1,33 +1,36 @@
 <template>
-    <UCard>
+    <UCard
+      class="flex flex-col grow"
+    >
       <template #header>
         <div class="flex justify-between">
           <div class="flex text-2xl">TENANT RESIDENTS</div>
         </div>
       </template>
-      <div class="flex flex-col">
-        <div class="text-xs">SEARCH TERM</div>
-        <UInput v-model="searchTerm" data-1p-ignore />
+      <div class="flex flex-col grow">
+        <div class="flex flex-col">
+          <div class="text-xs">SEARCH TERM</div>
+          <UInput v-model="searchTerm" data-1p-ignore />
+        </div>
+        <div class="hidden md:flex grow">
+          <ResidentsList 
+            :residents="residents" 
+            @row-action="onRowAction" 
+            row-action-name="Support"
+            show-display-name
+            show-email
+          />
+        </div>
+        <div class="flex grow md:hidden">
+          <ResidentsListSmall
+            :residents="residents" 
+            @row-action="onRowAction" 
+            row-action-name="Support"
+            show-display-name
+            show-email
+          />
+        </div>  
       </div>
-      <div class="hidden md:flex">
-        <ResidentsList 
-          :residents="residents" 
-          @row-action="onRowAction" 
-          row-action-name="Support"
-          show-display-name
-          show-email
-        />
-      </div>
-      <div class="flex md:hidden">
-        <ResidentsListSmall
-          :residents="residents" 
-          @row-action="onRowAction" 
-          row-action-name="Support"
-          show-display-name
-          show-email
-        />
-      </div>
-
     </UCard>
 </template>
 
