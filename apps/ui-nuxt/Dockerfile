@@ -11,7 +11,7 @@ RUN apk --no-cache add openssh g++ make python3 git
 
 # copy over package.json files
 COPY package.json /app/
-COPY pnpm-lock.json /app/
+# COPY pnpm-lock.json /app/
 
 # install all depencies
 RUN npm ci && npm cache clean --force

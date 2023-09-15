@@ -20,3 +20,4 @@ The combination of Nuxt, Postgraphile, and Supabase is a core aspect of this cod
 - [is_supabase_rls_enough_for_an_mvp](https://www.reddit.com/r/Supabase/comments/151xp3w/is_supabase_rls_enough_for_an_mvp/)
 - [is_supabase_capable_of_multi_tenancy](https://www.reddit.com/r/Supabase/comments/165kbqs/is_supabase_capable_of_multi_tenancy/)
 - [how_would_one_set_up_supabase_with_multitenant](https://www.reddit.com/r/Supabase/comments/zauwim/how_would_one_set_up_supabase_with_multitenant/)
+- [updated_multitenant_rolebased_access_control_for](https://www.reddit.com/r/Supabase/comments/16iz7gz/updated_multitenant_rolebased_access_control_for/)
